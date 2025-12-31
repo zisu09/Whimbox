@@ -9,6 +9,7 @@ from whimbox.common.path_lib import ASSETS_PATH
 # 错误替换表
 REPLACE_DICT = {
     "拋掷": "抛掷",
+    "占土进入游戏": "点击进入游戏",
 }
 
 class RapidOcr():
