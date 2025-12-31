@@ -35,7 +35,7 @@ class MinigameTask(TaskTemplate):
     @register_step("开始小游戏")
     def step2(self):
         while not self.need_stop():
-            time.sleep(0.2)
+            time.sleep(0.01)
             if itt.get_img_existence(IconPageMainFeature):
                 break
         logger.info("可以开始动了")
