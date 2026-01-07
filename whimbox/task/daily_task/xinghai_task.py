@@ -137,7 +137,6 @@ class XinghaiTask(TaskTemplate):
     def __init__(self):
         super().__init__("xinghai_task")
         self.current_score = 0
-        self.todo_list = []
 
     @register_step("传送到星海无界枢纽")
     def step0(self):
@@ -167,7 +166,7 @@ class XinghaiTask(TaskTemplate):
             return "step5"
         else:
             self.log_to_gui(f"星海拾光完成度：{score}/500")
-            return "step3"
+            return
 
     @register_step("查看星海拾光具体任务")
     def step3(self):
@@ -200,7 +199,7 @@ class XinghaiTask(TaskTemplate):
                 continue
             else:
                 self.log_to_gui(f"未完成任务：{unfinished_task['task_name']}")
-                self.unfinished_task.append(unfinished_task)
+                self.unfinished_tasks.append(unfinished_task)
         
         # 根据优先级和分数排序
         self.unfinished_tasks.sort(

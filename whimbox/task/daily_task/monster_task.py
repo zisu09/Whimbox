@@ -2,11 +2,9 @@
 from whimbox.task.task_template import TaskTemplate, register_step
 from whimbox.ui.ui import ui_control
 from whimbox.ui.page_assets import *
-from whimbox.interaction.interaction_core import itt
 from whimbox.common.utils.ui_utils import *
 from whimbox.common.cvars import DEBUG_MODE
 from whimbox.config.config import global_config
-from whimbox.common.keybind import keybind
 
 class MonsterTask(TaskTemplate):
     def __init__(self, level_name=None):
