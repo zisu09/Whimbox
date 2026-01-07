@@ -171,6 +171,7 @@ def scroll_find_click(area: Area, target, threshold=0, hsv_limit=None, scale=0, 
             break
         
     if box:
+        time.sleep(0.3)
         area.click(target_box=box, offset=click_offset)
         return True
     else:

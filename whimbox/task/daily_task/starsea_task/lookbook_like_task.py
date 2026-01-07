@@ -18,13 +18,14 @@ class LookbookLikeTask(TaskTemplate):
         if not scroll_find_click(AreaEscEntrances, "星绘图册"):
             raise Exception("星绘图册入口未找到")
         itt.wait_until_stable(threshold=0.95)
+        itt.delay(1, comment="等待页面稳定")
     
     @register_step("随机点赞")
     def step2(self):
-        if scroll_find_click(AreaXhsgBooklookWaterfall, IconXhsgBooklookLikeButton):
-            itt.move_to((100, 100))
-            itt.delay(1, comment="点赞移开鼠标看看")
-            return
+        itt.move_and_click((1920/2, 1080/2))
+        itt.wait_until_stable(threshold=0.95)
+        if wait_until_appear_then_click(ButtonXhsgBooklookLike):
+            pass
         else:
             raise Exception("点赞按钮未找到")
     
