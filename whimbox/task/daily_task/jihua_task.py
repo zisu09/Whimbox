@@ -121,9 +121,9 @@ class JihuaTask(TaskTemplate):
         if wait_until_appear(IconSkip, retry_time=5):
             itt.delay(0.5, comment="以防万一，这里也加个延迟")
             itt.key_press(keybind.KEYBIND_INTERACTION)
-            if skip_get_award():
-                self.update_task_result(message="激化完成")
-                return
+        if skip_get_award():
+            self.update_task_result(message="激化完成")
+            return
         raise Exception("领取奖励失败")
 
     @register_step("退出激化幻境")
