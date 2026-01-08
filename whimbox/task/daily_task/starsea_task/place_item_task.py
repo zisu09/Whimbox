@@ -1,4 +1,4 @@
-from whimbox.common.utils.ui_utils import scroll_find_click
+from whimbox.common.utils.ui_utils import *
 from whimbox.task.task_template import *
 from whimbox.interaction.interaction_core import itt
 from whimbox.ui.ui_assets import *
@@ -10,20 +10,26 @@ class PlaceItemTask(TaskTemplate):
 
     @register_step("选择摆饰")
     def step1(self):
-        if itt.get_img_existence(IconItemPlaceable):
-            return
-        else:
-            itt.key_down(keybind.KEYBIND_ITEM)
-            time.sleep(3)
-            itt.key_up(keybind.KEYBIND_ITEM)
-            if not scroll_find_click(AreaItemQuickList, IconItemPlaceable, scale=1.05, threshold=IconItemPlaceable.threshold, need_scroll=False):
-                self.update_task_result(status=STATE_TYPE_FAILED, message="快捷物品中未找到摆饰")
-                return STEP_NAME_FINISH
+        itt.key_down(keybind.KEYBIND_ITEM)
+        time.sleep(3)
+        itt.key_up(keybind.KEYBIND_ITEM)
+        if not wait_until_appear_then_click(ButtonItemSetting):
+            raise Exception("未找到物品设置按钮")
+        if not wait_until_appear_then_click(ButtonItemFinishSetting):
+            raise Exception("未找到完成设置按钮")
+        if not wait_until_appear_then_click(ButtonItemPlaceableItem):
+            raise Exception("未找到摆饰按钮")
+        itt.delay(0.5, comment="等待摆饰界面加载完成")
+        AreaItemFirstItem.click()
+        itt.delay(0.5, comment="等待退出摆饰选择界面")
+        if itt.get_img_existence(ButtonItemPlaceableItem):
+            AreaItemFirstItem.click()
+            itt.delay(0.5, comment="等待退出摆饰选择界面")
+            if itt.get_img_existence(ButtonItemPlaceableItem):
+                raise Exception("选择摆饰失败")
 
     @register_step("放置摆饰")
     def step2(self):
-        itt.key_press(keybind.KEYBIND_ITEM)
-
         # 等待进入摆放界面，第一次掏出摆饰，可能会卡住
         while not self.need_stop():
             time.sleep(1)
