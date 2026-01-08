@@ -14,7 +14,7 @@ from whimbox.common.keybind import keybind
 from whimbox.common.handle_lib import HANDLE_OBJ
 from whimbox.common.utils.img_utils import process_with_hsv_limit, similar_img
 import cv2
-from pynput import keyboard
+from pynput import mouse
 from whimbox.ability.ability import ability_manager
 from whimbox.ability.cvar import ABILITY_NAME_FLOURISH
 
@@ -197,38 +197,22 @@ class BackgroundTask:
         self.was_paused = False  # 上一次循环是否处于暂停状态
         self.stop_event = threading.Event()  # 停止事件
 
-        self.listener = keyboard.Listener(on_press=self.on_key_press)
-        self.listener.daemon = True
-        self.listener.start()
+        self.mouse_listener = mouse.Listener(on_click=self.on_mouse_click)
+        self.mouse_listener.daemon = True
+        self.mouse_listener.start()
 
+        self.is_auto_click = False
         self.need_flourish = False
 
-    def on_key_press(self, key):
-        if HANDLE_OBJ.is_foreground():
-            # 处理普通键和特殊键
-            key_str = self._get_key_str(key)
-            if key_str == 'tab':
+    def on_mouse_click(self, x, y, button, pressed):
+        if button == mouse.Button.right and pressed and not self.is_auto_click:
+            if HANDLE_OBJ.is_foreground():
                 if self.need_flourish:
-                    itt.key_press(keybind.KEYBIND_SPRINT)
                     self.need_flourish = False
+                    itt.key_press(keybind.KEYBIND_SPRINT)
                 else:
                     if ability_manager.get_current_ability() == ABILITY_NAME_FLOURISH:
                         self.need_flourish = True
-    
-    def _get_key_str(self, key):
-        """将 pynput 的 key 对象转换为字符串"""
-        try:
-            # 普通字符键
-            if hasattr(key, 'char') and key.char:
-                return key.char.lower()
-        except AttributeError:
-            pass
-        
-        # 特殊键
-        if hasattr(key, 'name'):
-            return key.name.lower()
-        
-        return None
 
     def log_to_gui(self, msg, is_error=False, type="update_ai_message"):
         from whimbox.ingame_ui.ingame_ui import win_ingame_ui
@@ -305,8 +289,10 @@ class BackgroundTask:
                     flourish_config = self.manager.get_feature_config(BackgroundFeature.AUTO_FLOURISH)
                     if self.need_flourish and flourish_config and flourish_config.should_execute():
                         if self._detect_flourish_opportunity(cap):
+                            self.is_auto_click = True
                             itt.right_click()
-                            time.sleep(0.4)
+                            self.is_auto_click = False
+                            time.sleep(0.3)
 
                     # 检测清洁跳过状态
                     clear_config = self.manager.get_feature_config(BackgroundFeature.AUTO_CLEAR)

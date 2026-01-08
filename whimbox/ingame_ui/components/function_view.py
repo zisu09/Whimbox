@@ -237,7 +237,7 @@ class FunctionView(QWidget):
             (BackgroundFeature.AUTO_DIALOGUE, "自动对话"),
             (BackgroundFeature.AUTO_PICKUP, "自动采集"),
             (BackgroundFeature.AUTO_CLEAR, "自动清洁跳过"),
-            (BackgroundFeature.AUTO_FLOURISH, "自动芳间巡游（按tab启停）"),
+            (BackgroundFeature.AUTO_FLOURISH, "自动芳间巡游（按鼠标右键启停）"),
         ]
         
         # 创建网格布局，每行2个
