@@ -198,6 +198,14 @@ class AutoPathTask(TaskTemplate):
                     else:
                         self.log_to_gui("测试跑图路线中，不进行采集")
                         time.sleep(2)
+                elif self.target_point.action == ACTION_FLOURISH:
+                    if not self.path_info.test_mode:
+                        from whimbox.action.flourish import FlourishTask
+                        flourish_task = FlourishTask()
+                        task_result = flourish_task.task_run()
+                    else:
+                        self.log_to_gui("测试跑图路线中，不进行芳间巡游")
+                        time.sleep(2)
                 elif self.target_point.action == ACTION_CATCH_INSECT:
                     if not self.path_info.test_mode:
                         excepted_count = int(self.target_point.action_params or 1)
@@ -384,6 +392,6 @@ class AutoPathTask(TaskTemplate):
 
 
 if __name__ == "__main__":
-    task = AutoPathTask(path_name="星海拾光_拾取漂流瓶")
+    task = AutoPathTask(path_name="鎏金蜜鎏金蜜南北绿豆")
     task_result = task.task_run()
     print(task_result.to_dict())

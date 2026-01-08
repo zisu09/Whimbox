@@ -212,6 +212,7 @@ class AbilityManager:
         if key:
             itt.key_press(key)
             self.current_ability = ability_name
+            itt.delay(0.5, comment="等待能力切换完成")
             return True
         else:
             return False

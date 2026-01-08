@@ -205,8 +205,9 @@ class BackgroundTask:
         self.need_flourish = False
 
     def on_mouse_click(self, x, y, button, pressed):
-        if button == mouse.Button.right and pressed and not self.is_auto_click:
-            if HANDLE_OBJ.is_foreground():
+        if (not self.was_paused) and (button == mouse.Button.right) and pressed and (not self.is_auto_click):
+            flourish_config = self.manager.get_feature_config(BackgroundFeature.AUTO_FLOURISH)
+            if flourish_config and flourish_config.enabled and HANDLE_OBJ.is_foreground():
                 if self.need_flourish:
                     self.need_flourish = False
                     itt.key_press(keybind.KEYBIND_SPRINT)

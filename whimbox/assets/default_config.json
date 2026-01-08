@@ -162,6 +162,10 @@
             "value": "x",
             "description": "摇铃"
         },
+        "ability_derivation_world_1":{
+            "value": "g",
+            "description": "能力衍生功能1"
+        },
         "ability_derivation_1":{
             "value": "r",
             "description": "家园能力衍生功能1"
