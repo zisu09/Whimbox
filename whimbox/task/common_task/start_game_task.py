@@ -39,7 +39,10 @@ class StartGameTask(TaskTemplate):
                     global_config.save()
             
             if not os.path.exists(launcher_path):
-                self.task_stop("未能自动找到叠纸启动器路径，请手动打开游戏或在奇想盒设置中设置")
+                self.task_stop("叠纸启动器路径不存在，请手动打开游戏或在奇想盒设置中设置")
+                return
+            if not os.path.isfile(launcher_path) or not os.path.basename(launcher_path).lower() == "launcher.exe":
+                self.task_stop("请确认设置的叠纸启动器路径以launcher.exe结尾")
                 return
 
             try:

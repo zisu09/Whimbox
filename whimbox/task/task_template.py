@@ -252,8 +252,12 @@ class TaskTemplate:
         self.update_task_result(status=STATE_TYPE_STOP, message=message or "停止任务", data=data)
 
     def need_stop(self):
-        # 综合判断是否需要停止
-        return self.stop_flag.is_set()
+        if self.stop_flag.is_set():
+            if self.task_result.status != STATE_TYPE_STOP:
+                self.update_task_result(status=STATE_TYPE_STOP)
+            return True
+        else:
+            return False
 
     def get_state_msg(self):
         """获得当前任务的状态信息，供agent显示"""
