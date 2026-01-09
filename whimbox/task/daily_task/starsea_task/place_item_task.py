@@ -21,8 +21,16 @@ class PlaceItemTask(TaskTemplate):
             raise Exception("未找到摆饰按钮")
         itt.delay(0.5, comment="等待摆饰界面加载完成")
         AreaItemFirstItem.click()
-        itt.delay(0.5, comment="等待退出摆饰选择界面")
+
+        if wait_until_appear_then_click(ButtonItemLanternConfirm, retry_time=2):
+            # 选中了河灯摆饰
+            time.sleep(0.5)
+            scroll_find_click(AreaDialog, "确认", str_match_mode=0, need_scroll=False)
+            itt.delay(0.5, comment="等待退出摆饰选择界面")
+            return
+
         if itt.get_img_existence(ButtonItemPlaceableItem):
+            # 刚好这个摆饰之前放出去了，现在收回来了，需要再放一次
             AreaItemFirstItem.click()
             itt.delay(0.5, comment="等待退出摆饰选择界面")
             if itt.get_img_existence(ButtonItemPlaceableItem):
@@ -36,6 +44,7 @@ class PlaceItemTask(TaskTemplate):
             if not itt.get_img_existence(IconPageMainFeature):
                 break
 
+        itt.move_to((-200, 0), relative=True) # 先把摆饰挪远一点
         retry_time = 20
         while not self.need_stop() and retry_time > 0:
             itt.left_click()

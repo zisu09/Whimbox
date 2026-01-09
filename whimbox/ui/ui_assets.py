@@ -221,3 +221,4 @@ ButtonItemFinishSetting = Button(print_log=LOG_WHEN_TRUE, anchor=ANCHOR_BOTTOM_R
 ButtonItemPlaceableItem = Button(print_log=LOG_WHEN_TRUE, anchor=ANCHOR_RIGHT_CENTER, threshold=0.80, gray_limit=(250, 255))
 AreaItemFirstItem = Area(anchor=ANCHOR_TOP_RIGHT)
 IconItemCantPlace = ImgIcon(print_log=LOG_WHEN_TRUE, threshold=0.90, hsv_limit=([0,0,210], [179,130,255]), anchor=ANCHOR_TOP_CENTER)
+ButtonItemLanternConfirm = Button(print_log=LOG_WHEN_TRUE, anchor=ANCHOR_CENTER)
