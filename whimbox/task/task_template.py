@@ -212,7 +212,6 @@ class TaskTemplate:
             self.handle_exception(e)
             self.error_step.state.msg = str(e)
             self.current_step = self.error_step
-            self.log_to_gui(self.error_step.state.msg, is_error=True)
             self.task_result = TaskResult(STATE_TYPE_ERROR, self.error_step.state.msg)
             logger.error(traceback.format_exc())
         
@@ -224,6 +223,12 @@ class TaskTemplate:
                 if self.listener.is_alive():
                     self.listener.stop()
                     self.listener.join()
+            # 显示任务结果
+            if self.task_result.message:
+                if self.task_result.status == STATE_TYPE_SUCCESS:
+                    self.log_to_gui(self.task_result.message)
+                else:
+                    self.log_to_gui(self.task_result.message, is_error=True)
             return self.task_result
 
 

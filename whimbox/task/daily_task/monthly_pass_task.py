@@ -1,10 +1,9 @@
 '''领取大月卡奖励'''
-from whimbox.task.task_template import TaskTemplate, register_step
+from whimbox.task.task_template import *
 from whimbox.ui.ui import ui_control
 from whimbox.ui.page_assets import *
 import time
 from whimbox.common.utils.ui_utils import *
-from whimbox.common.keybind import keybind
 
 class MonthlyPassTask(TaskTemplate):
     def __init__(self):
@@ -26,7 +25,8 @@ class MonthlyPassTask(TaskTemplate):
                         self.update_task_result(message="成功领取奇迹之旅奖励")
                         return
                     else:
-                        raise Exception("领取奖励失败")
+                        self.update_task_result(status=STATE_TYPE_FAILED, message="领取奇迹之旅奖励失败")
+                        return
         self.update_task_result(message="奇迹之旅无奖励可领取")
         
     @register_step("退出奇迹之旅")

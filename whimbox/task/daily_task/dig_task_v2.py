@@ -32,10 +32,10 @@ class DigTaskV2(TaskTemplate):
                 raise Exception(f"挖掘数量识别异常:{dig_num_str}")
             if diging_num > 0:
                 self.log_to_gui(f"当前正在挖掘{dig_num_str}")
-                self.update_task_result(status=STATE_TYPE_STOP, message=f"正在挖掘，无法收获", data=False)
+                self.update_task_result(status=STATE_TYPE_FAILED, message=f"正在挖掘，无法收获", data=False)
                 return "step4" # 有东西正在挖掘，退出
             else:
-                self.update_task_result(status=STATE_TYPE_STOP, message=f"没有东西在挖掘，请手动设置挖掘目标", data=False)
+                self.update_task_result(status=STATE_TYPE_FAILED, message=f"没有东西在挖掘，请手动设置挖掘目标", data=False)
                 return "step4" # 没东西在挖掘，退出
 
 
@@ -43,8 +43,8 @@ class DigTaskV2(TaskTemplate):
     def step3(self):
         if wait_until_appear_then_click(ButtonDigAgain):
             self.update_task_result(message=f"成功一键收获并再次挖掘", data=True)
-            return "step4"
-        raise Exception("未弹出挖掘结果窗口")
+        self.update_task_result(status=STATE_TYPE_FAILED, message="未弹出挖掘结果窗口", data=False)
+        return "step4"
 
     @register_step("退出美鸭梨挖掘")
     def step4(self):

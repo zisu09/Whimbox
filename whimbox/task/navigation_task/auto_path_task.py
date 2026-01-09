@@ -77,7 +77,6 @@ class AutoPathTask(TaskTemplate):
     def task_stop(self, message="手动停止跑图"):
         if not self.need_stop():
             super().task_stop(message=message)
-            self.log_to_gui(message, is_error=True)
 
     def _update_next_target_point(self):
         """更新下一个必经点"""
@@ -296,7 +295,7 @@ class AutoPathTask(TaskTemplate):
                     task_result = trans_animal_task.task_run()
                     
                 if task_result is not None and task_result.status != STATE_TYPE_SUCCESS:
-                    raise Exception(task_result.message)
+                    self.update_task_result(status=STATE_TYPE_FAILED, message=task_result.message)
 
             if self.curr_target_point_id >= len(self.path_points) - 1:
                 # 走到终点了
@@ -382,8 +381,6 @@ class AutoPathTask(TaskTemplate):
                 res.append(f"{material_name} x {count}")
             message += ", ".join(res)
             self.update_task_result(message=message)
-        else:
-            self.update_task_result(message="自动跑图完成")
 
 
     def handle_finally(self):

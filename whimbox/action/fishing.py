@@ -167,7 +167,6 @@ class FishingTask(TaskTemplate):
         if not self.need_stop():
             if len(self.material_count_dict) == 0:
                 self.update_task_result(message="未钓到鱼")
-                self.log_to_gui("未钓到鱼")
                 return
             else:
                 res = []

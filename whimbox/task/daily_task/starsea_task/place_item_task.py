@@ -43,12 +43,10 @@ class PlaceItemTask(TaskTemplate):
             if itt.get_img_existence(IconItemCantPlace):
                 itt.move_to((-200, 0), relative=True)
             else:
-                self.log_to_gui("摆饰放置成功")
                 self.update_task_result(status=STATE_TYPE_SUCCESS, message="摆饰放置成功")
                 break
             retry_time -= 1
         if retry_time == 0:
-            self.log_to_gui("摆饰放置失败", is_error=True)
             self.update_task_result(status=STATE_TYPE_FAILED, message="摆饰放置失败")
             itt.right_click()
 

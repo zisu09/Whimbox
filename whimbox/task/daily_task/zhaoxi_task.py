@@ -192,14 +192,20 @@ class ZhaoxiTask(TaskTemplate):
             if DAILY_TASK_JIHUA not in self.done_task_names:
                 task = daily_task.JihuaTask()
                 task.task_run()
+            else:
+                self.log_to_gui("体力在做日常时以消耗，跳过")
         elif energy_cost == "祝福闪光幻境":
             if DAILY_TASK_GET_BLESS not in self.done_task_names:
                 task = daily_task.BlessTask()
                 task.task_run()
+            else:
+                self.log_to_gui("体力在做日常时以消耗，跳过")
         elif energy_cost == "魔物试炼幻境":
             if DAILY_TASK_MONSTER not in self.done_task_names:
                 task = daily_task.MonsterTask()
                 task.task_run()
+            else:
+                self.log_to_gui("体力在做日常时以消耗，跳过")
         else:
             self.log_to_gui("未配置默认消耗体力方式", is_error=True)
 

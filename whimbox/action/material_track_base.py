@@ -99,7 +99,6 @@ class MaterialTrackBaseTask(TaskTemplate):
         itt.key_up(keybind.KEYBIND_FORWARD)
         if len(self.material_count_dict) == 0:
             self.update_task_result(message="未采集到材料")
-            self.log_to_gui("未采集到材料")
             return
         else:
             self.update_task_result(

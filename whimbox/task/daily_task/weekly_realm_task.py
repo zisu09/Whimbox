@@ -21,7 +21,6 @@ class WeeklyRealmTask(TaskTemplate):
     @register_step("检查周本完成情况")
     def step1(self):
         if len(self.realm_target) == 0:
-            self.log_to_gui("已设置不做周本，跳过")
             self.update_task_result(status=STATE_TYPE_SUCCESS, message="已设置不做周本，跳过")
             return STEP_NAME_FINISH
         ui_control.goto_page(page_daily_task)
@@ -71,7 +70,6 @@ class WeeklyRealmTask(TaskTemplate):
 
     @register_step("完成每周幻境")
     def step4(self):
-        self.log_to_gui("每周幻境已完成")
         self.update_task_result(message="每周幻境已完成", data=True)
 
 if __name__ == "__main__":

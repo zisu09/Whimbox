@@ -58,7 +58,7 @@ class MinigameTask(TaskTemplate):
                 scroll_find_click(AreaMinigameEscSelect, "退出", str_match_mode=1)
                 wait_until_appear_then_click(ButtonMinigameRetryOk)
                 wait_until_appear_then_click(ButtonMinigameQuit, retry_time=5)
-                self.update_task_result(status=STATE_TYPE_STOP, message="小游戏失败了")
+                self.update_task_result(status=STATE_TYPE_FAILED, message="小游戏失败了")
                 return 'step4'
             else:
                 self.retry_times += 1
@@ -72,7 +72,7 @@ class MinigameTask(TaskTemplate):
             if self.retry_times >= self.max_retry_times:
                 self.log_to_gui(f"小游戏已重试{self.max_retry_times}次，依旧失败，只能退出了")
                 wait_until_appear_then_click(ButtonMinigameQuit)
-                self.update_task_result(status=STATE_TYPE_STOP, message="小游戏失败了")
+                self.update_task_result(status=STATE_TYPE_FAILED, message="小游戏失败了")
                 return 'step4'
             else:
                 self.retry_times += 1

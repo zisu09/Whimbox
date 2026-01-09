@@ -20,7 +20,6 @@ class MonsterTask(TaskTemplate):
     @register_step("正在前往魔物试炼幻境")
     def step1(self):
         if self.level_name == '不做魔物试炼幻境':
-            self.log_to_gui("已设置不做魔物试炼幻境，跳过")
             self.update_task_result(status=STATE_TYPE_FAILED, message="已设置不做魔物试炼幻境，跳过")
             return STEP_NAME_FINISH
         ui_control.goto_page(page_huanjing_monster)
@@ -57,7 +56,7 @@ class MonsterTask(TaskTemplate):
         if skip_get_award():
             self.update_task_result(message="魔物试炼幻境完成")
         else:
-            raise Exception("领取奖励失败")
+            self.update_task_result(status=STATE_TYPE_FAILED, message="领取魔物试炼幻境奖励失败")
 
     @register_step("退出魔物试炼幻境")
     def step5(self):

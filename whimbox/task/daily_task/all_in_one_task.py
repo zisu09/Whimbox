@@ -30,10 +30,8 @@ class AllInOneTask(TaskTemplate):
             msg = f"当前游戏分辨率：{width}x{height}。推荐分辨率为：1920x1080或1920x1200或2560x1440或2560x1600。如遇到bug，请修改游戏分辨率后重试"
             self.log_to_gui(msg)
         if task_result.status == STATE_TYPE_SUCCESS:
-            self.log_to_gui(task_result.message)
             return "step1"
         else:
-            self.log_to_gui(task_result.message, is_error=True)
             return STEP_NAME_FINISH
 
     @register_step("美鸭梨挖掘")

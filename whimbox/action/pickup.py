@@ -41,7 +41,6 @@ class PickupTask(TaskTemplate):
         
         if len(self.material_count_dict) == 0:
             self.update_task_result(message="未采集到物品")
-            self.log_to_gui("未采集到物品")
             return
         count_str_list = []
         for key, value in self.material_count_dict.items():
@@ -52,7 +51,6 @@ class PickupTask(TaskTemplate):
             message=res,
             data=self.material_count_dict
         )
-        self.log_to_gui(res)
 
 if __name__ == "__main__":
     while True:
