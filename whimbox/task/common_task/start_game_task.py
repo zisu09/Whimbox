@@ -115,21 +115,27 @@ class StartGameTask(TaskTemplate):
     @register_step("进入游戏")
     def step3(self):
         HANDLE_OBJ.set_foreground()
-        # 检测是否已经进入游戏
-        if ui_control.is_valid_page():
-            self.update_task_result(status=STATE_TYPE_SUCCESS, message="成功进入游戏")
-            return STEP_NAME_FINISH
+        # 判断游戏是否在加载中
+        ui_control.ui_additional()
 
         # 检测是否在登录界面
         while not self.need_stop():
             time.sleep(1)
+            # 检测是否已经进入游戏
+            if ui_control.is_valid_page():
+                self.update_task_result(status=STATE_TYPE_SUCCESS, message="已成功进入游戏")
+                return STEP_NAME_FINISH
+
+            # 可能因为更新，游戏重启了
+            if not HANDLE_OBJ.is_alive():
+                self.log_to_gui("游戏窗口已关闭")
+                return "step2"
+
             text_box_dict = itt.ocr_and_detect_posi(AreaLoginOCR)
             logger.info(f"登录界面文字: {text_box_dict.keys()}")
             if "确认" in text_box_dict and "退出游戏" not in text_box_dict and "账号登出" not in text_box_dict:
                 self.log_to_gui("有确认按钮我直接点！")
                 AreaLoginOCR.click(target_box=text_box_dict["确认"])
-                time.sleep(5)
-                return "step2"
             elif "点击进入游戏" in text_box_dict:
                 AreaLoginOCR.click(target_box=text_box_dict["点击进入游戏"])
                 break
