@@ -100,8 +100,9 @@ class ZhaoxiTask(TaskTemplate):
     @register_step("检查朝夕心愿完成情况")
     def step1(self):
         ui_control.goto_page(page_zxxy)
+        itt.delay(1, comment="等待页面稳定")
+        itt.wait_until_stable(threshold=0.95)
         try:
-            itt.wait_until_stable(threshold=0.95)
             score_str = itt.ocr_single_line(AreaZxxyScore, hsv_limit=([0, 0, 250], [0, 0, 255]))
             score = int(score_str.strip())
             if score % 100 != 0:
