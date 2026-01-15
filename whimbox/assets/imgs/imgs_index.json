@@ -50,8 +50,11 @@
   "AreaBlessHuanjingLevelsSelect": {
     "rel_path": "imgs\\Windows\\UI\\huanjing\\bless\\AreaBlessHuanjingLevelsSelect.jpg"
   },
+  "AreaDialog": {
+    "rel_path": "imgs\\Windows\\General\\AreaDialog.png"
+  },
   "AreaDialogSelection": {
-    "rel_path": "imgs\\Windows\\General\\AreaDialogSelection.png"
+    "rel_path": "imgs\\Windows\\General\\AreaDialogSelection.jpg"
   },
   "AreaDigItemSelect": {
     "rel_path": "imgs\\Windows\\UI\\dig\\AreaDigItemSelect.jpg"
@@ -89,6 +92,9 @@
   "AreaHuanjingZiyangEntrace": {
     "rel_path": "imgs\\Windows\\UI\\huanjing\\AreaHuanjingZiyangEntrace.png"
   },
+  "AreaItemFirstItem": {
+    "rel_path": "imgs\\Windows\\UI\\item\\AreaItemFirstItem.png"
+  },
   "AreaJihuaCostSelect": {
     "rel_path": "imgs\\Windows\\UI\\huanjing\\jihua\\AreaJihuaCostSelect.jpg"
   },
@@ -98,11 +104,26 @@
   "AreaLaunchButton": {
     "rel_path": "imgs\\Windows\\UI\\AreaLaunchButton.png"
   },
+  "AreaLoginOCR": {
+    "rel_path": "imgs\\Windows\\UI\\AreaLoginOCR.jpg"
+  },
   "AreaMaterialGetText": {
     "rel_path": "imgs\\Windows\\General\\AreaMaterialGetText.png"
   },
+  "AreaMinigameEscSelect": {
+    "rel_path": "imgs\\Windows\\UI\\minigame\\AreaMinigameEscSelect.png"
+  },
+  "AreaMiraCrownAutoMatchButton": {
+    "rel_path": "imgs\\Windows\\UI\\mira_crown\\AreaMiraCrownAutoMatchButton.jpg"
+  },
+  "AreaMiraCrownEntrance": {
+    "rel_path": "imgs\\Windows\\UI\\mira_crown\\AreaMiraCrownEntrance.jpg"
+  },
   "AreaMiraCrownOverview": {
     "rel_path": "imgs\\Windows\\UI\\mira_crown\\AreaMiraCrownOverview.png"
+  },
+  "AreaMiraCrownThirdDoor": {
+    "rel_path": "imgs\\Windows\\UI\\mira_crown\\AreaMiraCrownThirdDoor.jpg"
   },
   "AreaMonopolyAnswer": {
     "rel_path": "imgs\\Windows\\UI\\event\\roll_dice\\AreaMonopolyAnswer.png"
@@ -140,6 +161,18 @@
   "AreaWardrobeTab3": {
     "rel_path": "imgs\\Windows\\UI\\wardrobe\\AreaWardrobeTab3.png"
   },
+  "AreaWeeklyCountText": {
+    "rel_path": "imgs\\Windows\\UI\\huanjing\\weekly_realm\\AreaWeeklyCountText.png"
+  },
+  "AreaXhsgScore": {
+    "rel_path": "imgs\\Windows\\UI\\xhsg\\AreaXhsgScore.png"
+  },
+  "AreaXhsgTaskText": {
+    "rel_path": "imgs\\Windows\\UI\\xhsg\\AreaXhsgTaskText.jpg"
+  },
+  "AreaZxxyEnergy": {
+    "rel_path": "imgs\\Windows\\UI\\zxxy\\AreaZxxyEnergy.png"
+  },
   "AreaZxxyScore": {
     "rel_path": "imgs\\Windows\\UI\\zxxy\\AreaZxxyScore.png"
   },
@@ -157,9 +190,6 @@
   },
   "ButtonBigMapZoom": {
     "rel_path": "imgs\\Windows\\BigMap\\ButtonBigMapZoom.png"
-  },
-  "ButtonBlessHuanjingConfirm": {
-    "rel_path": "imgs\\Windows\\UI\\huanjing\\bless\\ButtonBlessHuanjingConfirm.png"
   },
   "ButtonBlessHuanjingNumMax": {
     "rel_path": "imgs\\Windows\\UI\\huanjing\\bless\\ButtonBlessHuanjingNumMax.png"
@@ -203,8 +233,29 @@
   "ButtonDigType3": {
     "rel_path": "imgs\\Windows\\UI\\dig\\ButtonDigType3.png"
   },
+  "ButtonDungeonQuitOK": {
+    "rel_path": "imgs\\Windows\\UI\\ButtonDungeonQuitOK.png"
+  },
+  "ButtonHuanjingCancel": {
+    "rel_path": "imgs\\Windows\\UI\\huanjing\\ButtonHuanjingCancel.png"
+  },
+  "ButtonHuanjingConfirm": {
+    "rel_path": "imgs\\Windows\\UI\\huanjing\\ButtonHuanjingConfirm.png"
+  },
   "ButtonHuanjingGo": {
     "rel_path": "imgs\\Windows\\UI\\ButtonHuanjingGo.png"
+  },
+  "ButtonItemFinishSetting": {
+    "rel_path": "imgs\\Windows\\UI\\item\\ButtonItemFinishSetting.png"
+  },
+  "ButtonItemLanternConfirm": {
+    "rel_path": "imgs\\Windows\\UI\\item\\ButtonItemLanternConfirm.png"
+  },
+  "ButtonItemPlaceableItem": {
+    "rel_path": "imgs\\Windows\\UI\\item\\ButtonItemPlaceableItem.png"
+  },
+  "ButtonItemSetting": {
+    "rel_path": "imgs\\Windows\\UI\\item\\ButtonItemSetting.png"
   },
   "ButtonJihuaFinallyConfirm": {
     "rel_path": "imgs\\Windows\\UI\\huanjing\\jihua\\ButtonJihuaFinallyConfirm.png"
@@ -227,8 +278,20 @@
   "ButtonMinigameRetryOk": {
     "rel_path": "imgs\\Windows\\UI\\minigame\\ButtonMinigameRetryOk.png"
   },
-  "ButtonMiraCrownQuickPlay": {
-    "rel_path": "imgs\\Windows\\UI\\mira_crown\\ButtonMiraCrownQuickPlay.png"
+  "ButtonMiraCrownConfirmMatch": {
+    "rel_path": "imgs\\Windows\\UI\\mira_crown\\ButtonMiraCrownConfirmMatch.png"
+  },
+  "ButtonMiraCrownNextStep": {
+    "rel_path": "imgs\\Windows\\UI\\mira_crown\\ButtonMiraCrownNextStep.png"
+  },
+  "ButtonMiraCrownQuickReward": {
+    "rel_path": "imgs\\Windows\\UI\\mira_crown\\ButtonMiraCrownQuickReward.png"
+  },
+  "ButtonMiraCrownSkipAll": {
+    "rel_path": "imgs\\Windows\\UI\\mira_crown\\ButtonMiraCrownSkipAll.png"
+  },
+  "ButtonMiraCrownStartChallenge": {
+    "rel_path": "imgs\\Windows\\UI\\mira_crown\\ButtonMiraCrownStartChallenge.png"
   },
   "ButtonMonopolyCloseBullet": {
     "rel_path": "imgs\\Windows\\UI\\event\\roll_dice\\ButtonMonopolyCloseBullet.png"
@@ -269,14 +332,29 @@
   "ButtonMonthlyPassTab2": {
     "rel_path": "imgs\\Windows\\UI\\monthly_pass\\ButtonMonthlyPassTab2.png"
   },
+  "ButtonPageChatClose": {
+    "rel_path": "imgs\\Windows\\UI\\ButtonPageChatClose.png"
+  },
+  "ButtonPhotoDelete": {
+    "rel_path": "imgs\\Windows\\UI\\photo\\ButtonPhotoDelete.png"
+  },
   "ButtonPhotoDeleteConfirm": {
     "rel_path": "imgs\\Windows\\UI\\photo\\ButtonPhotoDeleteConfirm.png"
   },
   "ButtonWardrobeDressDIY": {
     "rel_path": "imgs\\Windows\\UI\\wardrobe\\ButtonWardrobeDressDIY.png"
   },
-  "ButtonXhsyEntrance": {
-    "rel_path": "imgs\\Windows\\UI\\xhsy\\ButtonXhsyEntrance.png"
+  "ButtonXhsgBooklookLike": {
+    "rel_path": "imgs\\Windows\\UI\\xhsg\\ButtonXhsgBooklookLike.png"
+  },
+  "ButtonXhsgBottleClose": {
+    "rel_path": "imgs\\Windows\\UI\\xhsg\\ButtonXhsgBottleClose.png"
+  },
+  "ButtonXhsgEntrance": {
+    "rel_path": "imgs\\Windows\\UI\\xhsg\\ButtonXhsgEntrance.png"
+  },
+  "ButtonXhsgRewarded": {
+    "rel_path": "imgs\\Windows\\UI\\xhsg\\ButtonXhsgRewarded.png"
   },
   "ButtonZxxyEntrance": {
     "rel_path": "imgs\\Windows\\UI\\zxxy\\ButtonZxxyEntrance.png"
@@ -287,6 +365,9 @@
   "IconAbilityAnimal": {
     "rel_path": "imgs\\Windows\\UI\\wardrobe\\IconAbilityAnimal.png"
   },
+  "IconAbilityBig": {
+    "rel_path": "imgs\\Windows\\UI\\wardrobe\\IconAbilityBig.png"
+  },
   "IconAbilityFeature": {
     "rel_path": "imgs\\Windows\\UI\\wardrobe\\IconAbilityFeature.png"
   },
@@ -296,6 +377,9 @@
   "IconAbilityFloat": {
     "rel_path": "imgs\\Windows\\UI\\wardrobe\\IconAbilityFloat.png"
   },
+  "IconAbilityFlourish": {
+    "rel_path": "imgs\\Windows\\UI\\wardrobe\\IconAbilityFlourish.png"
+  },
   "IconAbilityFly": {
     "rel_path": "imgs\\Windows\\UI\\wardrobe\\IconAbilityFly.png"
   },
@@ -304,6 +388,9 @@
   },
   "IconAbilitySmall": {
     "rel_path": "imgs\\Windows\\UI\\wardrobe\\IconAbilitySmall.png"
+  },
+  "IconAbilityStick": {
+    "rel_path": "imgs\\Windows\\UI\\wardrobe\\IconAbilityStick.png"
   },
   "IconAbilityWing": {
     "rel_path": "imgs\\Windows\\UI\\wardrobe\\IconAbilityWing.png"
@@ -328,6 +415,12 @@
   },
   "IconClickSkip": {
     "rel_path": "imgs\\Windows\\General\\IconClickSkip.png"
+  },
+  "IconDailyRewardFeature1": {
+    "rel_path": "imgs\\Windows\\UI\\IconDailyRewardFeature1.png"
+  },
+  "IconDailyRewardFeature2": {
+    "rel_path": "imgs\\Windows\\UI\\IconDailyRewardFeature2.png"
   },
   "IconDungeonFeature": {
     "rel_path": "imgs\\Windows\\UI\\IconDungeonFeature.png"
@@ -361,6 +454,9 @@
   },
   "IconGachaFeature": {
     "rel_path": "imgs\\Windows\\UI\\IconGachaFeature.png"
+  },
+  "IconItemCantPlace": {
+    "rel_path": "imgs\\Windows\\UI\\item\\IconItemCantPlace.png"
   },
   "IconMaterialTypeAnimal": {
     "rel_path": "imgs\\Windows\\Material\\IconMaterialTypeAnimal.png"
@@ -404,20 +500,23 @@
   "IconMovementWalking": {
     "rel_path": "imgs\\Windows\\General\\IconMovementWalking.png"
   },
+  "IconPageChatFeature": {
+    "rel_path": "imgs\\Windows\\UI\\IconPageChatFeature.png"
+  },
   "IconPageLoginFeature": {
     "rel_path": "imgs\\Windows\\UI\\IconPageLoginFeature.png"
   },
   "IconPageMainFeature": {
     "rel_path": "imgs\\Windows\\UI\\IconPageMainFeature.png"
   },
-  "IconPhotoDelete": {
-    "rel_path": "imgs\\Windows\\UI\\photo\\IconPhotoDelete.png"
-  },
   "IconPhotoEdit": {
     "rel_path": "imgs\\Windows\\UI\\photo\\IconPhotoEdit.png"
   },
   "IconPickupFeature": {
     "rel_path": "imgs\\Windows\\General\\IconPickupFeature.png"
+  },
+  "IconSetdownFeature": {
+    "rel_path": "imgs\\Windows\\General\\IconSetdownFeature.png"
   },
   "IconShopFeature": {
     "rel_path": "imgs\\Windows\\UI\\IconShopFeature.png"
@@ -428,6 +527,9 @@
   "IconSkipDialog": {
     "rel_path": "imgs\\Windows\\General\\IconSkipDialog.png"
   },
+  "IconTalkFeature": {
+    "rel_path": "imgs\\Windows\\General\\IconTalkFeature.png"
+  },
   "IconUIBigmap": {
     "rel_path": "imgs\\Windows\\BigMap\\IconUIBigmap.png"
   },
@@ -437,14 +539,20 @@
   "IconUILoading": {
     "rel_path": "imgs\\Windows\\UI\\IconUILoading.png"
   },
-  "IconUIXhsy": {
-    "rel_path": "imgs\\Windows\\UI\\xhsy\\IconUIXhsy.png"
+  "IconXhsgFeature": {
+    "rel_path": "imgs\\Windows\\UI\\xhsg\\IconXhsgFeature.png"
   },
-  "IconUIZxxyTaskFinished": {
-    "rel_path": "imgs\\Windows\\UI\\zxxy\\IconUIZxxyTaskFinished.png"
+  "IconXhsgGroupChatFeature": {
+    "rel_path": "imgs\\Windows\\UI\\xhsg\\IconXhsgGroupChatFeature.png"
+  },
+  "IconXhsgTaskFinished": {
+    "rel_path": "imgs\\Windows\\UI\\xhsg\\IconXhsgTaskFinished.png"
   },
   "IconZxxyFeature": {
     "rel_path": "imgs\\Windows\\UI\\zxxy\\IconZxxyFeature.png"
+  },
+  "IconZxxyTaskFinished": {
+    "rel_path": "imgs\\Windows\\UI\\zxxy\\IconZxxyTaskFinished.png"
   },
   "T_Icon_item_AN0024": {
     "rel_path": "imgs\\Game\\MaterialIcon\\T_Icon_item_AN0024.png"
