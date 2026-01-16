@@ -37,7 +37,13 @@ FUNCTION_BUTTONS = [
         'task_name': 'record_macro',
         'task_params': {},
         'start_message': '开始录制宏，按 / 停止录制\n',
-    }
+    },
+    {
+        'label': '收集星光结晶（开发中）',
+        'task_name': 'xinghai_run_task',
+        'task_params': {},
+        'start_message': '开始收集星光结晶，按 / 结束任务\n',
+    },
 ]
 
 
@@ -141,11 +147,16 @@ class FunctionView(QWidget):
         # "运行宏"和"录制宏"放在同一行
         row2_layout = QHBoxLayout()
         row2_layout.setSpacing(8)
-        for config in FUNCTION_BUTTONS[3:]:  # 索引 3, 4
+        for config in FUNCTION_BUTTONS[3:5]:  # 索引 3, 4
             button = self.create_function_button(config)
             self.buttons.append(button)
             row2_layout.addWidget(button)
         function_layout.addLayout(row2_layout)
+
+        # "收集星光结晶"单独放一行
+        button = self.create_function_button(FUNCTION_BUTTONS[5])
+        self.buttons.append(button)
+        function_layout.addWidget(button)
         
         # 添加弹性空间
         function_layout.addStretch()

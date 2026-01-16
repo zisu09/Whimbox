@@ -7,6 +7,7 @@ from whimbox.task.macro_task.record_macro_task import RecordMacroTask
 from whimbox.task.macro_task.run_macro_task import RunMacroTask
 from whimbox.task.daily_task.xinghai_task import XinghaiTask
 from whimbox.task.mira_crown_task.mira_crown_task import MiraCrownTask
+from whimbox.task.daily_task.xinghai_run_task import XinghaiRunTask
 from whimbox.task.task_template import STATE_TYPE_SUCCESS, STATE_TYPE_ERROR
 from whimbox.common.logger import logger
 from whimbox.common.cvars import MCP_CONFIG
@@ -349,6 +350,19 @@ async def mira_crown_task() -> dict:
     mira_crown_task = MiraCrownTask(force_start=True)
     task_result = mira_crown_task.task_run()
     return task_result.to_dict()
+
+@mcp.tool()
+@check_game_ok
+async def xinghai_run_task() -> dict:
+    """
+    收集星光结晶
+    Returns:
+        dict: 包含操作状态的字典，包含status和message字段
+    """
+    xinghai_run_task = XinghaiRunTask()
+    task_result = xinghai_run_task.task_run()
+    return task_result.to_dict()
+
 
 @mcp.custom_route("/health", methods=["GET"])
 async def health_check(request):
