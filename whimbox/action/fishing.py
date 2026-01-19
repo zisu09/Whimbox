@@ -112,9 +112,9 @@ class FishingTask(TaskTemplate):
             if self.get_current_state() != FishingState.REEL_IN:
                 break
             gap_time = time.time() - start_time
-            if gap_time < 0.15:
+            if gap_time < 0.18:
                 # 避免鼠标点击过快，导致吞鼠标事件
-                time.sleep(0.15 - gap_time)
+                time.sleep(0.18 - gap_time)
 
     def handle_skip(self):
         self.log_to_gui("状态: 跳过")
