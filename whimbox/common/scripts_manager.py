@@ -119,6 +119,9 @@ class ScriptsManager:
         for _, path_record in self.path_dict.items():
             match = True
             
+            if path_record.info.name.startswith("朝夕心愿_") or path_record.info.name.startswith("星海拾光_"):
+                match = False
+
             # Filter by target (exact match)
             if target is not None:
                 if path_record.info.target != target:
@@ -231,12 +234,19 @@ class ScriptsManager:
             # 模糊匹配
             res = []
             for macro_name, macro_record in self.macro_dict.items():
+                if macro_record.info.name.startswith("朝夕心愿_") or macro_record.info.name.startswith("星海拾光_"):
+                    continue
                 if name.lower() in macro_name.lower():
                     res.append(macro_record)
             return res
         
         # 返回所有宏
-        return list(self.macro_dict.values())
+        res = []
+        for _, macro_record in self.macro_dict.items():
+            if macro_record.info.name.startswith("朝夕心愿_") or macro_record.info.name.startswith("星海拾光_"):
+                continue
+            res.append(macro_record)
+        return res
     
     def delete_macro(self, macro_name: str) -> int:
         """
