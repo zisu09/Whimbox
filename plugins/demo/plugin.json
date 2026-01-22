@@ -1,0 +1,28 @@
+{
+  "id": "demo",
+  "name": "示例插件",
+  "version": "0.1.0",
+  "author": "whimbox",
+  "description": "一个最小可运行的示例插件",
+  "entry": "main.py",
+  "api_version": "1.0",
+  "min_core_version": "0.0.0",
+  "permissions": ["screen", "input"],
+  "tools": [
+    {
+      "id": "demo.hello",
+      "name": "Hello Tool",
+      "description": "返回一条问候消息",
+      "input_schema": {
+        "type": "object",
+        "properties": { "name": { "type": "string" } },
+        "required": ["name"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": { "message": { "type": "string" } }
+      }
+    }
+  ]
+}
+

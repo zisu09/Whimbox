@@ -1,21 +1,10 @@
-import asyncio
-import requests
-from langchain_mcp_adapters.client import MultiServerMCPClient
 from langgraph.prebuilt import create_react_agent
 from langchain.chat_models import init_chat_model
 from langgraph.checkpoint.memory import MemorySaver
 from whimbox.common.logger import logger
 from whimbox.config.config import global_config
-from whimbox.common.cvars import MCP_CONFIG
-
-
-def is_mcp_ready(url: str) -> bool:
-    try:
-        response = requests.get(url)
-        return response.status_code == 200
-    except Exception as e:
-        logger.error(f"检查MCP服务器是否健康失败: {e}")
-        return False
+from whimbox.plugin_runtime import get_registry
+from whimbox.plugin_tools import build_tools
 
 class Agent:
 
@@ -37,6 +26,8 @@ class Agent:
         self.llm = None
         self.memory = None
         self.tools = None
+        self._registry = None
+        self._active_session_id = "default"
 
         self._initialized = True
 
@@ -62,28 +53,18 @@ class Agent:
                 self.err_msg = f"AI初始化失败。请前往设置，检查大模型相关配置。"
                 logger.error(self.err_msg)
 
-        # 初始化mcp tool信息(不重复初始化)
+        # 初始化插件工具(不重复初始化)
         if self.tools is None:
-            server_url = f"http://127.0.0.1:{MCP_CONFIG['port']}"
-            flag = False
-            for _ in range(10):
-                if is_mcp_ready(f'{server_url}/health'):
-                    flag = True
-                    break
-                await asyncio.sleep(0.5)
-            if flag:
-                logger.debug("MCP server ready")
+            self._registry = get_registry()
+            self.tools = build_tools(
+                self._registry,
+                session_id_getter=lambda: self._active_session_id,
+            )
+            if self.tools:
                 self.mcp_ready = True
-                client = MultiServerMCPClient({
-                    "whimbox": {
-                        "url": f'{server_url}/mcp',
-                        "transport": "streamable_http",
-                        "sse_read_timeout": MCP_CONFIG["timeout"],
-                    }
-                })
-                self.tools = await client.get_tools()
+                logger.debug(f"插件工具加载完成: {len(self.tools)}")
             else:
-                self.err_msg = "MCP未就绪，请重启奇想盒"
+                self.err_msg = "未加载任何插件工具"
                 logger.error(self.err_msg)
         
         # 初始化memory（不重复初始化）
@@ -111,6 +92,8 @@ class Agent:
         logger.debug("开始调用大模型")
         config = {"configurable": {"thread_id": thread_id}}
         input = {"messages": [{"role": "user", "content": text}]}
+
+        self._active_session_id = thread_id or "default"
         
         full_response = ""
         
@@ -185,5 +168,20 @@ class Agent:
             if msg.type == 'ai':
                 ai_msgs.append(msg.content)
         return '\n'.join(ai_msgs)
+
+    def reload_tools(self):
+        self._registry = get_registry()
+        self.tools = build_tools(
+            self._registry,
+            session_id_getter=lambda: self._active_session_id,
+        )
+        if self.tools:
+            self.mcp_ready = True
+            self.err_msg = ""
+            logger.debug(f"插件工具重载完成: {len(self.tools)}")
+        else:
+            self.mcp_ready = False
+            self.err_msg = "未加载任何插件工具"
+            logger.error(self.err_msg)
 
 mcp_agent = Agent()

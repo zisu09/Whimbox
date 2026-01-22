@@ -11,6 +11,7 @@ ASSETS_PATH = os.path.join(ROOT_PATH, 'assets')
 CONFIG_PATH = os.path.join(os.getcwd(), 'configs')
 LOG_PATH = os.path.join(os.getcwd(), 'logs')
 SCRIPT_PATH = os.path.join(os.getcwd(), 'scripts')
+PLUGINS_PATH = os.path.join(os.getcwd(), 'plugins')
 
 def find_game_launcher_folder():
     # HKEY_CURRENT_USER\Software\InfinityNikki Launcher

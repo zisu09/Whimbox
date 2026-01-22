@@ -13,6 +13,11 @@ MCP_CONFIG = {
     "timeout": 24*60*60,    # mcp工具调用超时时间设为24小时
 }
 
+RPC_CONFIG = {
+    "host": "127.0.0.1",
+    "port": 8350,
+}
+
 # 使用 contextvars 来存储当前任务的 stop_flag
 # 这样每个任务都有独立的 stop_flag，无需在每个函数中显式传递
 current_stop_flag: contextvars.ContextVar[threading.Event] = contextvars.ContextVar(
