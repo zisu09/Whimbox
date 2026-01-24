@@ -27,16 +27,26 @@ FUNCTION_BUTTONS = [
         'start_message': '开始录制路线，按 / 停止录制\n',
     },
     {
-        'label': '宏脚本',
+        'label': '运行宏',
         'task_name': 'run_macro',
         'needs_dialog': True,  # 需要弹出对话框
         'dialog_type': 'macro_selection',
+        'is_play_music': False,
+        'start_message': '开始自动运行宏：{macro_name}，按 / 结束任务\n',
     },
     {
         'label': '录制宏',
         'task_name': 'record_macro',
         'task_params': {},
         'start_message': '开始录制宏，按 / 停止录制\n',
+    },
+    {
+        'label': '自动演奏',
+        'task_name': 'run_macro',
+        'needs_dialog': True,  # 需要弹出对话框
+        'dialog_type': 'macro_selection',
+        'is_play_music': True,
+        'start_message': '开始自动演奏：{macro_name}，按 / 结束任务\n',
     },
     {
         'label': '收集星光结晶（开发中）',
@@ -153,8 +163,13 @@ class FunctionView(QWidget):
             row2_layout.addWidget(button)
         function_layout.addLayout(row2_layout)
 
-        # "收集星光结晶"单独放一行
+        # "自动演奏"单独放一行
         button = self.create_function_button(FUNCTION_BUTTONS[5])
+        self.buttons.append(button)
+        function_layout.addWidget(button)
+
+        # "收集星光结晶"单独放一行
+        button = self.create_function_button(FUNCTION_BUTTONS[6])
         self.buttons.append(button)
         function_layout.addWidget(button)
         

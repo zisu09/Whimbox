@@ -28,7 +28,7 @@ class AutoPathTask(TaskTemplate):
             self.path_info = path_record.info
             self.path_points = copy.deepcopy(path_record.points)
         elif path_name is not None:
-            path_record = scripts_manager.query_path(path_name=path_name)
+            path_record = scripts_manager.query_path(path_name=path_name, return_one=True)
             if path_record is None:
                 raise ValueError(f"路线\"{path_name}\"不存在，请先下载该路线")
             self.path_info = path_record.info

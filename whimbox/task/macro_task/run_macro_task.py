@@ -1,4 +1,4 @@
-from whimbox.task.task_template import TaskTemplate, register_step
+from whimbox.task.task_template import *
 from whimbox.interaction.interaction_core import itt
 from whimbox.common.scripts_manager import *
 from whimbox.common.logger import logger
@@ -16,11 +16,14 @@ class RunMacroTask(TaskTemplate):
         super().__init__("run_macro_task")
         self.check_stop_func = check_stop_func
         self.delay = delay
-        self.macro_record = scripts_manager.query_macro(macro_filename)
+        self.macro_record = scripts_manager.query_macro(macro_filename, return_one=True)
         if not self.macro_record:
             raise ValueError(f"宏\"{macro_filename}\"不存在，请先下载该宏")
         if self.macro_record and self.macro_record.info.version != "3.0":
             raise ValueError(f"宏版本不匹配，请更新宏")
+        self.is_play_music = False
+        if self.macro_record.info.type == "乐谱":
+            self.is_play_music = True
 
         self.current_step_index = 0
         self.pressing_keys = set()
@@ -63,17 +66,24 @@ class RunMacroTask(TaskTemplate):
                     
         except Exception as e:
             logger.error(f"执行步骤失败: {e}, step: {step}")
-    
+
     @register_step(state_msg="执行宏操作")
     def execute_macro(self):
-        aspect_ratio = self.macro_record.info.aspect_ratio
-        _, width, height = HANDLE_OBJ.check_shape()
-        if aspect_ratio == "16:9" and not (1.70<width/height<1.80):
-            self.log_to_gui(f"宏\"{self.macro_record.info.name}\"只支持16:9分辨率，请修改游戏设置", is_error=True)
-            return
-        elif aspect_ratio == "16:10" and not (1.55<width/height<1.65):
-            self.log_to_gui(f"宏\"{self.macro_record.info.name}\"只支持16:10分辨率，请修改游戏设置", is_error=True)
-            return
+        if self.is_play_music:
+            # 乐谱宏，检查当前是否在演奏界面
+            if not page_play_music.is_current_page(itt):
+                self.update_task_result(status=STATE_TYPE_FAILED, message="未进入演奏界面")
+                return STEP_NAME_FINISH
+        else:
+            # 普通宏，检查分辨率
+            aspect_ratio = self.macro_record.info.aspect_ratio
+            _, width, height = HANDLE_OBJ.check_shape()
+            if aspect_ratio == "16:9" and not (1.70<width/height<1.80):
+                self.update_task_result(status=STATE_TYPE_FAILED, message=f"宏\"{self.macro_record.info.name}\"只支持16:9分辨率，请修改游戏设置")
+                return STEP_NAME_FINISH
+            elif aspect_ratio == "16:10" and not (1.55<width/height<1.65):
+                self.update_task_result(status=STATE_TYPE_FAILED, message=f"宏\"{self.macro_record.info.name}\"只支持16:10分辨率，请修改游戏设置")
+                return STEP_NAME_FINISH
 
         # 如果有延迟，先等待
         if self.delay > 0:

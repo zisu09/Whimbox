@@ -11,8 +11,9 @@ class MacroSelectionDialog(QDialog):
     """宏选择对话框"""
     macro_selected = pyqtSignal(str)  # 发送选中的宏名
     
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, is_play_music=False):
         super().__init__(parent)
+        self.is_play_music = is_play_music
         self.setModal(True)
         self.setWindowFlags(Qt.Dialog | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
@@ -42,7 +43,7 @@ class MacroSelectionDialog(QDialog):
         layout.setSpacing(8)
         
         # 标题
-        title_label = QLabel("🎬 宏选择")
+        title_label = QLabel("🎬 宏选择" if not self.is_play_music else "🎵 乐谱选择")
         title_label.setStyleSheet("""
             QLabel {
                 font-size: 9pt;
@@ -64,10 +65,10 @@ class MacroSelectionDialog(QDialog):
         # 宏名称
         name_container = QHBoxLayout()
         name_container.setSpacing(8)
-        name_label = QLabel("宏名称:")
+        name_label = QLabel("宏名称:") if not self.is_play_music else QLabel("乐谱名称:")
         name_label.setStyleSheet(label_style)
         self.name_input = QLineEdit()
-        self.name_input.setPlaceholderText("输入宏名称")
+        self.name_input.setPlaceholderText("输入宏名称" if not self.is_play_music else "输入乐谱名称")
         self.name_input.textChanged.connect(self.on_filter_changed)
         self.name_input.setStyleSheet("""
             QLineEdit {
@@ -92,7 +93,7 @@ class MacroSelectionDialog(QDialog):
         filter_row2.setSpacing(8)
         filter_row2.addStretch()
 
-        subscribe_button = QPushButton("🌐 前往宏订阅网站")
+        subscribe_button = QPushButton("🌐 前往宏订阅网站" if not self.is_play_music else "🌐 前往乐谱订阅网站")
         subscribe_button.setFixedSize(120, 24)
         subscribe_button.clicked.connect(self.open_subscribe_page)
         subscribe_button.setStyleSheet("""
@@ -113,7 +114,7 @@ class MacroSelectionDialog(QDialog):
         """)
         filter_row2.addWidget(subscribe_button)
 
-        open_folder_button = QPushButton("📁 打开宏文件夹")
+        open_folder_button = QPushButton("📁 打开宏文件夹" if not self.is_play_music else "📁 打开乐谱文件夹")
         open_folder_button.setFixedSize(120, 24)
         open_folder_button.clicked.connect(self.open_macro_folder)
         open_folder_button.setStyleSheet("""
@@ -134,7 +135,7 @@ class MacroSelectionDialog(QDialog):
         """)
         filter_row2.addWidget(open_folder_button)
         
-        refresh_button = QPushButton("🔄 刷新宏")
+        refresh_button = QPushButton("🔄 刷新宏" if not self.is_play_music else "🔄 刷新乐谱")
         refresh_button.setFixedSize(120, 24)
         refresh_button.clicked.connect(self.reload_macros)
         refresh_button.setStyleSheet("""
@@ -181,7 +182,7 @@ class MacroSelectionDialog(QDialog):
         # 宏列表区域 - 使用表格展示
         self.macro_list = QTableWidget()
         self.macro_list.setColumnCount(1)
-        self.macro_list.setHorizontalHeaderLabels(["宏名称"])
+        self.macro_list.setHorizontalHeaderLabels(["宏名称" if not self.is_play_music else "乐谱名称"])
         
         # 表格属性设置
         self.macro_list.setSelectionBehavior(QTableWidget.SelectRows)  # 选择整行
@@ -254,7 +255,7 @@ class MacroSelectionDialog(QDialog):
         button_layout.setSpacing(10)
         button_layout.addStretch()
         
-        self.start_button = QPushButton("🚀 运行宏")
+        self.start_button = QPushButton("🚀 运行宏" if not self.is_play_music else "🚀 演奏乐谱")
         self.start_button.setFixedHeight(24)
         self.start_button.setFixedWidth(80)
         self.start_button.clicked.connect(self.on_start_clicked)
@@ -280,7 +281,7 @@ class MacroSelectionDialog(QDialog):
         """)
         self.start_button.setEnabled(False)
         
-        self.delete_button = QPushButton("🗑️ 删除宏")
+        self.delete_button = QPushButton("🗑️ 删除宏" if not self.is_play_music else "🗑️ 删除乐谱")
         self.delete_button.setFixedHeight(24)
         self.delete_button.setFixedWidth(80)
         self.delete_button.clicked.connect(self.on_delete_clicked)
@@ -364,7 +365,7 @@ class MacroSelectionDialog(QDialog):
             name = self.filter_name if self.filter_name else None
             
             # 查询宏
-            macros = scripts_manager.query_macro(name=name)
+            macros = scripts_manager.query_macro(name=name, is_play_music=self.is_play_music, return_one=False)
             
             # 清空表格
             self.macro_list.setRowCount(0)
@@ -372,7 +373,7 @@ class MacroSelectionDialog(QDialog):
             if not macros:
                 # 添加一行提示信息
                 self.macro_list.setRowCount(1)
-                no_data_item = QTableWidgetItem("未找到符合条件的宏")
+                no_data_item = QTableWidgetItem("未找到符合条件的宏" if not self.is_play_music else "未找到符合条件的乐谱")
                 no_data_item.setFlags(Qt.NoItemFlags)  # 不可选择
                 no_data_item.setTextAlignment(Qt.AlignCenter)
                 self.macro_list.setItem(0, 0, no_data_item)
@@ -394,7 +395,7 @@ class MacroSelectionDialog(QDialog):
         except Exception as e:
             logger.error(f"Failed to load macros: {e}")
             self.macro_list.setRowCount(1)
-            error_item = QTableWidgetItem(f"加载宏失败: {str(e)}")
+            error_item = QTableWidgetItem(f"加载宏失败: {str(e)}" if not self.is_play_music else f"加载乐谱失败: {str(e)}")
             error_item.setFlags(Qt.NoItemFlags)
             error_item.setTextAlignment(Qt.AlignCenter)
             self.macro_list.setItem(0, 0, error_item)
@@ -468,7 +469,7 @@ class MacroSelectionDialog(QDialog):
         reply = QMessageBox.question(
             self,
             "确认删除",
-            f"确定要删除宏「{macro_name}」吗？",
+            f"确定要删除宏「{macro_name}」吗？" if not self.is_play_music else f"确定要删除乐谱「{macro_name}」吗？",
             QMessageBox.Yes | QMessageBox.No,
             QMessageBox.No
         )
@@ -480,11 +481,11 @@ class MacroSelectionDialog(QDialog):
         deleted_count = scripts_manager.delete_macro(macro_name)
         
         if deleted_count > 0:
-            QMessageBox.information(self, "成功", f"已删除宏「{macro_name}」")
+            QMessageBox.information(self, "成功", f"已删除宏「{macro_name}」" if not self.is_play_music else f"已删除乐谱「{macro_name}」")
             # 重新加载宏列表
             self.reload_macros()
         else:
-            QMessageBox.warning(self, "提示", f"未找到宏「{macro_name}」的文件")
+            QMessageBox.warning(self, "提示", f"未找到宏「{macro_name}」的文件" if not self.is_play_music else f"未找到乐谱「{macro_name}」的文件")
     
     def show_centered(self):
         screen = QApplication.desktop().screenGeometry()

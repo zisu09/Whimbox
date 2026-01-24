@@ -210,7 +210,7 @@ async def load_path(path_name: str) -> dict:
     Returns:
         dict: 包含操作状态的字典，包含status和message字段
     """
-    path_record = scripts_manager.query_path(path_name=path_name)
+    path_record = scripts_manager.query_path(path_name=path_name, return_one=True)
     if path_record is None:
         return {
             "status": STATE_TYPE_ERROR,
@@ -256,15 +256,36 @@ async def run_macro(macro_name: str) -> dict:
     Returns:
         dict: 包含操作状态的字典，包含status和message字段
     """
-    macro_record = scripts_manager.query_macro(macro_name)
+    macro_record = scripts_manager.query_macro(macro_name, is_play_music=False, return_one=True)
     if macro_record is None:
         return {
             "status": STATE_TYPE_ERROR,
             "message": f"宏\"{macro_name}\"不存在"
         }
-    run_macro_task = RunMacroTask(macro_name)
+    run_macro_task = RunMacroTask(macro_record.info.name)
     task_result = run_macro_task.task_run()
     return task_result.to_dict()
+
+@mcp.tool()
+@check_game_ok
+async def play_music(macro_name: str) -> dict:
+    """
+    演奏音乐
+    Args:
+        macro_name: 乐谱名称
+    Returns:
+        dict: 包含操作状态的字典，包含status和message字段
+    """
+    macro_record = scripts_manager.query_macro(macro_name, is_play_music=True, return_one=True)
+    if macro_record is None:
+        return {
+            "status": STATE_TYPE_ERROR,
+            "message": f"乐谱\"{macro_name}\"不存在"
+        }
+    run_macro_task = RunMacroTask(macro_record.info.name)
+    task_result = run_macro_task.task_run()
+    return task_result.to_dict()
+
 
 @mcp.tool()
 async def open_path_folder() -> dict:

@@ -26,6 +26,7 @@ page_huanjing_weekly = TitlePage("心之突破幻境")
 page_monthly_pass = TitlePage("奇迹之旅")
 page_event = TitlePage("活动大厅")
 page_setting = TitlePage("设置")
+page_play_music = TitlePage("演奏")
 
 ui_pages = [
     page_main,
@@ -50,6 +51,7 @@ ui_pages = [
     page_daily_reward_2,
     page_shop,
     page_gacha,
+    page_play_music,
 ]
 
 page_main.link(keybind.KEYBIND_CHAT, page_chat)
@@ -102,3 +104,5 @@ page_daily_reward_2.link(keybind.KEYBIND_INTERACTION, page_main)
 
 page_shop.link('esc', page_main)
 page_gacha.link('esc', page_main)
+
+page_play_music.link('esc', page_main)

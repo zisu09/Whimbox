@@ -285,7 +285,7 @@ class IngameUI(QWidget):
                 self.path_dialog.show_centered()
                 self.path_dialog.exec_()
             elif config['dialog_type'] == 'macro_selection':
-                self.macro_dialog = MacroSelectionDialog(self)
+                self.macro_dialog = MacroSelectionDialog(self, is_play_music=config.get('is_play_music', False))
                 self.macro_dialog.macro_selected.connect(lambda macro: self.start_task_with_macro(config, macro))
                 self.macro_dialog.show_centered()
                 self.macro_dialog.exec_()
@@ -325,7 +325,7 @@ class IngameUI(QWidget):
         if self.function_view:
             self.function_view.set_all_buttons_enabled(False)
         if self.chat_view:
-            self.chat_view.add_message(f'开始运行宏：{macro_name}，按 / 结束任务\n', 'ai')
+            self.chat_view.add_message(config['start_message'].format(macro_name=macro_name), 'ai')
         
         params = dict(config.get('task_params', {}))
         params['macro_name'] = macro_name

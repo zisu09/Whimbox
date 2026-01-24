@@ -433,7 +433,7 @@ class PathSelectionDialog(QDialog):
             count = self.filter_count if self.filter_count and self.filter_count > 0 else None
             
             # 查询路径
-            paths = scripts_manager.query_path(target=target, type=path_type, count=count)
+            paths = scripts_manager.query_path(target=target, type=path_type, count=count, return_one=False)
             
             # 清空表格
             self.path_list.setRowCount(0)
