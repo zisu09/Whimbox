@@ -169,18 +169,21 @@ class AutoPathTask(TaskTemplate):
 
     def check_stuck(self):
         if self.stuck_position is None:
-            if euclidean_distance(self.curr_position, self.last_position) < 2:
+            if euclidean_distance(self.curr_position, self.last_position) < 1:
                 self.stuck_time = time.time()
                 self.stuck_position = self.last_position
         else:
-            if euclidean_distance(self.curr_position, self.stuck_position) < 2:
+            if euclidean_distance(self.curr_position, self.stuck_position) < 1:
                 # 连续10秒都在同一位置，则认为卡住了
                 if time.time() - self.stuck_time > 10:
                     return True
             else:
-                self.stuck_time = None
-                self.stuck_position = None
+                self.clear_stuck()
         return False
+
+    def clear_stuck(self):
+        self.stuck_time = None
+        self.stuck_position = None
 
 
     def inner_step_update_target(self):
@@ -319,6 +322,9 @@ class AutoPathTask(TaskTemplate):
                     
                 if task_result is not None and task_result.status != STATE_TYPE_SUCCESS:
                     self.update_task_result(status=STATE_TYPE_FAILED, message=task_result.message)
+                
+                # 如果进行过动作就清除卡住状态，因为有些动作是很耗时的
+                self.clear_stuck()
 
             if self.curr_target_point_id >= len(self.path_points) - 1:
                 # 走到终点了
