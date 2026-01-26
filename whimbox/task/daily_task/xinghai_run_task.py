@@ -59,6 +59,13 @@ class XinghaiRunTask(TaskTemplate):
                 move_map_to_right_top_corner()
             else:
                 logger.info("星光结晶不在当前地图画面，点击跳转")
+                # 点击y轴第二个结晶图标，尽量保证跳转到结晶的中心
+                boxes = find_game_img(GameImgStarCrystal, itt.capture(), threshold=0.90, scale=1, count=3)
+                if boxes and len(boxes) > 1:
+                    boxes.sort(key=lambda x: x[1])
+                    box = boxes[1]
+                else:
+                    box = box[0]
                 itt.move_and_click(area_center(box))
                 itt.wait_until_stable(threshold=0.9995)
         else:
@@ -94,13 +101,14 @@ class XinghaiRunTask(TaskTemplate):
         auto_path_dict = {
             "星海拾光_星光结晶收集_星梦群屿": (2878.8, 2164.0),
             "星海拾光_星光结晶收集_泡泡梦屿": (3120.0, 1908.3),
+            "星海拾光_星光结晶收集_泡泡梦屿2": (3183.2, 1931.6),
             "星海拾光_星光结晶收集_无界枢纽": (1694.0, 2002.0),
             "星海拾光_星光结晶收集_晶簇之谷": (2264.0, 1469.2),
             "星海拾光_星光结晶收集_大舞台": (3282.8, 2437.6),
             "星海拾光_星光结晶收集_繁星之滨": (2471.6, 1680.8),
         }
         for path_name, loc in auto_path_dict.items():
-            if loc[0]-50 <self.target_loc[0] < loc[0]+50 and loc[1]-50 <self.target_loc[1] < loc[1]+50:
+            if loc[0]-30 <self.target_loc[0] < loc[0]+30 and loc[1]-30 <self.target_loc[1] < loc[1]+30:
                 auto_path_task = AutoPathTask(path_name=path_name)
                 task_result = auto_path_task.task_run()
                 if task_result.status == STATE_TYPE_SUCCESS:
