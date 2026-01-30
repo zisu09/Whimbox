@@ -80,6 +80,9 @@ async def _dispatch(method: str, params: Dict[str, Any]) -> Any:
         if not message:
             raise ValueError("message is required")
         await mcp_agent.start()
+        agent_ready, _, err_msg = mcp_agent.is_ready()
+        if not agent_ready:
+            raise ValueError(err_msg or "Agent not ready")
 
         def stream_callback(chunk: str) -> None:
             _notify(

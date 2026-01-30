@@ -89,6 +89,11 @@ class Agent:
         return agent_ready, self.mcp_ready, self.err_msg
 
     async def query_agent(self, text, thread_id="default", stream_callback=None, status_callback=None):
+        if not self.langchain_agent:
+            err_msg = self.err_msg or "Agent 未就绪，请先完成初始化。"
+            if status_callback:
+                status_callback("error", err_msg)
+            raise RuntimeError(err_msg)
         logger.debug("开始调用大模型")
         config = {"configurable": {"thread_id": thread_id}}
         input = {"messages": [{"role": "user", "content": text}]}
@@ -131,6 +136,7 @@ class Agent:
             
             elif event_type == "on_tool_end":
                 # 工具调用结束
+                tool_name = event.get("name", "")
                 tool_output = data.get("output", "")
                 if stream_callback:
                     stream_callback(f"💭 任务完成，总结成果中~\n")
@@ -140,8 +146,11 @@ class Agent:
             elif event_type == "on_tool_error":
                 # 工具调用错误
                 error = data.get("error", "")
+                tool_name = event.get("name", "")
                 if stream_callback:
                     stream_callback(f"❌ 任务失败: {error}\n")
+                if status_callback:
+                    status_callback("on_tool_error", tool_name)
             
             elif event_type == "on_chat_model_start":
                 # 开始生成回复
