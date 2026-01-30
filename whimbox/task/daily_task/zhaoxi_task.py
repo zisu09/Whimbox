@@ -35,7 +35,7 @@ zxxy_task_info_list = [
         "task_name": DAILY_TASK_GET_BLESS
     },
     {
-        "key_words": ["魔物试炼幻境"],
+        "key_words": ["魔物试炼"],
         "score": 200,
         "priority": 5,
         "task_name": DAILY_TASK_MONSTER

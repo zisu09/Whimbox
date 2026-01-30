@@ -8,6 +8,7 @@ from whimbox.task.common_task.start_game_task import StartGameTask
 from whimbox.map.detection.cvars import MAP_NAME_MIRALAND, MAP_NAME_UNSUPPORTED
 from whimbox.map.convert import convert_GameLoc_to_PngMapPx
 from whimbox.common.handle_lib import HANDLE_OBJ
+from whimbox.task.daily_task.xinghai_run_task import XinghaiRunTask
 
 class AllInOneTask(TaskTemplate):
     def __init__(self):
@@ -17,6 +18,7 @@ class AllInOneTask(TaskTemplate):
             'dig_task': False,
             'weekly_realm_task': False,
             'zhaoxi_task': False,
+            'xinghai_run_task': False,
             'xinghai_task': False,
             'mira_crown_task': False,
             'monthly_pass_task': False,
@@ -61,26 +63,32 @@ class AllInOneTask(TaskTemplate):
         task_result = zhaoxi_task.task_run()
         self.task_result_list['zhaoxi_task'] = task_result.status == STATE_TYPE_SUCCESS
     
-    @register_step("开始完成星海拾光")
+    @register_step("收集星光结晶")
     def step4(self):
+        xinghai_run_task = XinghaiRunTask()
+        task_result = xinghai_run_task.task_run()
+        self.task_result_list['xinghai_run_task'] = task_result.status == STATE_TYPE_SUCCESS
+
+    @register_step("开始完成星海拾光")
+    def step5(self):
         xinghai_task = daily_task.XinghaiTask()
         task_result = xinghai_task.task_run()
         self.task_result_list['xinghai_task'] = task_result.status == STATE_TYPE_SUCCESS
 
     @register_step("开始完成奇迹之冠巅峰赛")
-    def step5(self):
+    def step6(self):
         mira_crown_task = MiraCrownTask()
         task_result = mira_crown_task.task_run()
         self.task_result_list['mira_crown_task'] = task_result.status == STATE_TYPE_SUCCESS
 
     @register_step("领取奇迹之旅奖励")
-    def step6(self):
+    def step7(self):
         monthly_pass_task = daily_task.MonthlyPassTask()
         task_result = monthly_pass_task.task_run()
         self.task_result_list['monthly_pass_task'] = task_result.status == STATE_TYPE_SUCCESS
 
     @register_step("一条龙结束")
-    def step7(self):
+    def step8(self):
         msg = "任务结果如下：\n"
 
         if self.task_result_list['dig_task']:
@@ -97,6 +105,11 @@ class AllInOneTask(TaskTemplate):
             msg += "✅朝夕心愿已完成\n"
         else:
             msg += "❌朝夕心愿未完成\n"
+
+        if self.task_result_list['xinghai_run_task']:
+            msg += "✅星光结晶收集已完成\n"
+        else:
+            msg += "❌星光结晶收集未完成\n"
 
         if self.task_result_list['xinghai_task']:
             msg += "✅星海拾光已完成\n"

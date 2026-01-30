@@ -32,18 +32,8 @@ class XinghaiRunTask(TaskTemplate):
         def move_map(src_posi, dst_posi):
             itt.move_to(src_posi)
             itt.left_down()
-            # 瞎几把拖几下地图，防止游戏没反应过来
-            for i in range(5):
-                itt.move_to([10, 10], relative=True)
-                if i % 2 == 0:
-                    itt.left_down()
-            for i in range(5):
-                itt.move_to([-10, -10], relative=True)
-                if i % 2 == 0:
-                    itt.left_down()
-            itt.move_to(dst_posi, anchor=ANCHOR_CENTER)
-            time.sleep(0.2)
-            itt.move_to(dst_posi, anchor=ANCHOR_CENTER)
+            itt.move_to(dst_posi, anchor=ANCHOR_CENTER, smooth=True)
+            time.sleep(0.5)
             itt.left_up()
 
         def move_map_to_right_top_corner():
@@ -100,15 +90,15 @@ class XinghaiRunTask(TaskTemplate):
     def step3(self):
         auto_path_dict = {
             "星海拾光_星光结晶收集_星梦群屿": (2878.8, 2164.0),
-            "星海拾光_星光结晶收集_泡泡梦屿": (3120.0, 1908.3),
+            "星海拾光_星光结晶收集_泡泡梦屿": (3088.0, 1895.7),
             "星海拾光_星光结晶收集_泡泡梦屿2": (3183.2, 1931.6),
             "星海拾光_星光结晶收集_无界枢纽": (1694.0, 2002.0),
-            "星海拾光_星光结晶收集_晶簇之谷": (2264.0, 1469.2),
+            "星海拾光_星光结晶收集_晶簇之谷": (2224.8, 1521.2),
             "星海拾光_星光结晶收集_大舞台": (3282.8, 2437.6),
             "星海拾光_星光结晶收集_繁星之滨": (2471.6, 1680.8),
         }
         for path_name, loc in auto_path_dict.items():
-            if loc[0]-30 <self.target_loc[0] < loc[0]+30 and loc[1]-30 <self.target_loc[1] < loc[1]+30:
+            if euclidean_distance(self.target_loc, loc) < 20:
                 auto_path_task = AutoPathTask(path_name=path_name)
                 task_result = auto_path_task.task_run()
                 if task_result.status == STATE_TYPE_SUCCESS:

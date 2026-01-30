@@ -97,7 +97,59 @@ class InteractionNormal(InteractionTemplate):
         time.sleep(0.1)
         self.key_up(key)
     
-    def move_to(self, x: int, y: int, resolution=None, anchor=ANCHOR_TOP_LEFT, relative=False):
+    def smooth_move_relative(self, dx: int, dy: int, duration=0.2):
+        """
+        平滑相对移动
+        :param dx: x方向移动距离
+        :param dy: y方向移动距离  
+        :param duration: 移动总时长（秒）
+        """
+        # 根据距离自动调整步数
+        distance = (dx**2 + dy**2) ** 0.5
+        steps = max(10, int(distance / 20))  # 每20像素一步，最少10步
+        
+        step_x = dx / steps
+        step_y = dy / steps
+        delay = duration / steps
+        
+        for i in range(steps):
+            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, int(step_x), int(step_y))
+            time.sleep(delay)
+    
+    def smooth_move_absolute(self, target_x: int, target_y: int, duration=0.2):
+        """
+        平滑绝对移动（从当前位置移动到目标位置）
+        :param target_x: 目标屏幕x坐标
+        :param target_y: 目标屏幕y坐标
+        :param duration: 移动总时长（秒）
+        """
+        # 获取当前鼠标位置
+        current_x, current_y = win32api.GetCursorPos()
+        
+        # 计算移动距离
+        dx = target_x - current_x
+        dy = target_y - current_y
+        distance = (dx**2 + dy**2) ** 0.5
+        
+        # 如果距离很小，直接移动
+        if distance < 20:
+            win32api.SetCursorPos((target_x, target_y))
+            return
+        
+        # 根据距离自动调整步数
+        steps = max(2, int(distance / 20))  # 每20像素一步，最少2步
+        delay = duration / steps
+        
+        # 分步移动
+        for i in range(1, steps + 1):
+            # 线性插值
+            progress = i / steps
+            intermediate_x = int(current_x + dx * progress)
+            intermediate_y = int(current_y + dy * progress)
+            win32api.SetCursorPos((intermediate_x, intermediate_y))
+            time.sleep(delay)
+
+    def move_to(self, x: int, y: int, resolution=None, anchor=ANCHOR_TOP_LEFT, relative=False, smooth=False):
         x = int(x)
         y = int(y)
         standard_w = 1920
@@ -111,7 +163,10 @@ class InteractionNormal(InteractionTemplate):
         if relative:
             x = int(x * scale)
             y = int(y * scale)
-            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x, y)
+            if smooth:
+                self.smooth_move_relative(x, y, duration=0.2)
+            else:
+                win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x, y)
         else:
             if resolution is not None:
                 actual_h = int(resolution[0] / scale)
@@ -129,7 +184,11 @@ class InteractionNormal(InteractionTemplate):
             x = int(x * scale)
             y = int(y * scale)
             screen_x, screen_y = win32gui.ClientToScreen(self.hwnd_handler.get_handle(), (x, y))
-            win32api.SetCursorPos((screen_x, screen_y))
+            
+            if smooth:
+                self.smooth_move_absolute(screen_x, screen_y, duration=0.2)
+            else:
+                win32api.SetCursorPos((screen_x, screen_y))
 
 KEY_DOWN = 'KeyDown'
 KEY_UP = 'KeyUp'

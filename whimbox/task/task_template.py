@@ -162,6 +162,7 @@ class TaskTemplate:
                 if not self.need_stop():
                     self.log_to_gui(f"自动返回主界面，重试一次")
                     back_to_page_main()
+                    self.task_result = TaskResult() # 重置一下任务结果
                     res = self._task_run()
                     return res
                 else:
@@ -169,11 +170,14 @@ class TaskTemplate:
         finally:
             # 如果是顶层任务，清除前台任务运行标志
             if self.is_top_level_task:
+                if self.listener:
+                    self.key_callbacks.clear()
+                    if self.listener.is_alive():
+                        self.listener.stop()
+                        self.listener.join()
                 set_foreground_task_running(False)
-            
-            # 只有顶层任务才清理 context
-            if self.is_top_level_task:
                 current_stop_flag.set(None)
+
 
     def _task_run(self):
         """核心执行逻辑"""
@@ -214,17 +218,11 @@ class TaskTemplate:
             self.handle_exception(e)
             self.error_step.state.msg = str(e)
             self.current_step = self.error_step
-            self.task_result = TaskResult(STATE_TYPE_ERROR, self.error_step.state.msg)
+            self.update_task_result(status=STATE_TYPE_ERROR, message=self.error_step.state.msg)
             logger.error(traceback.format_exc())
         
         finally:
             self.handle_finally()
-            # 只有顶层任务才清理监听器
-            if self.is_top_level_task and self.listener:
-                self.key_callbacks.clear()
-                if self.listener.is_alive():
-                    self.listener.stop()
-                    self.listener.join()
             # 显示任务结果
             if self.task_result.message:
                 if self.task_result.status == STATE_TYPE_SUCCESS:
@@ -279,4 +277,8 @@ class TaskTemplate:
 
 
     def update_task_result(self, status=STATE_TYPE_SUCCESS, message="", data=None):
-        self.task_result = TaskResult(status, message, data)
+        # 如果先前是停止状态，则不更新
+        if self.task_result.status == STATE_TYPE_STOP:
+            return
+        else:
+            self.task_result = TaskResult(status, message, data)

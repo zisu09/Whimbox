@@ -441,7 +441,7 @@ class InteractionBGD:
         self.operation_lock.release()
 
     @before_operation(print_log=False)
-    def move_to(self, position, anchor=ANCHOR_TOP_LEFT, relative=False):
+    def move_to(self, position, anchor=ANCHOR_TOP_LEFT, relative=False, smooth=False):
         """移动鼠标到坐标
 
         Args:
@@ -454,7 +454,8 @@ class InteractionBGD:
             int(position[1]),
             resolution=self.capture_obj.resolution,
             anchor=anchor,
-            relative=relative)
+            relative=relative,
+            smooth=smooth)
         self.operation_lock.release()
 
 

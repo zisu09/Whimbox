@@ -48,12 +48,6 @@ FUNCTION_BUTTONS = [
         'is_play_music': True,
         'start_message': '开始自动演奏：{macro_name}，按 / 结束任务\n',
     },
-    {
-        'label': '收集星光结晶（开发中）',
-        'task_name': 'xinghai_run_task',
-        'task_params': {},
-        'start_message': '开始收集星光结晶，按 / 结束任务\n',
-    },
 ]
 
 
@@ -165,11 +159,6 @@ class FunctionView(QWidget):
 
         # "自动演奏"单独放一行
         button = self.create_function_button(FUNCTION_BUTTONS[5])
-        self.buttons.append(button)
-        function_layout.addWidget(button)
-
-        # "收集星光结晶"单独放一行
-        button = self.create_function_button(FUNCTION_BUTTONS[6])
         self.buttons.append(button)
         function_layout.addWidget(button)
         

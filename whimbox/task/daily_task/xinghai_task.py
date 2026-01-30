@@ -138,18 +138,6 @@ class XinghaiTask(TaskTemplate):
         super().__init__("xinghai_task")
         self.current_score = 0
 
-    @register_step("传送到星海无界枢纽")
-    def step0(self):
-        map_loc = convert_GameLoc_to_PngMapPx([-35070.57421875, 44421.59765625], MAP_NAME_STARSEA)
-        nikki_map.bigmap_tp(map_loc, MAP_NAME_STARSEA)
-    
-    @register_step("摇铃")
-    def step1(self):
-        itt.key_down(keybind.KEYBIND_BELL)
-        time.sleep(3)
-        itt.key_up(keybind.KEYBIND_BELL)
-        wait_until_appear(IconPageMainFeature, retry_time=10)
-
     @register_step("检查星海拾光完成情况")
     def step2(self):
         ui_control.goto_page(page_xhsg)

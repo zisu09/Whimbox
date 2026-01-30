@@ -29,7 +29,7 @@ class Map(MiniMap, BigMap):
         # Set bigmap tp arguments
         self.MAP_POSI2MOVE_POSI_RATE = 0.5  # 移动距离与力度的比例
         self.BIGMAP_TP_OFFSET = 20  # 距离目标小于该误差则停止
-        self.BIGMAP_MOVE_MAX = 130  # 最大移动力度
+        self.BIGMAP_MOVE_MAX = 200  # 最大移动力度
         self.TP_RANGE = 200  # 在该像素范围内可tp
         self.MINIMAP_UPDATE_LIMIT = 0.1  # minimap更新最短时间
         self.MINIMAP_ERROR_BASE_LIMIT = 20  # minimap基本更新误差
@@ -214,15 +214,15 @@ class Map(MiniMap, BigMap):
         itt.move_to([screen_center_x + float_posi, screen_center_y + float_posi])  # screen center
         itt.left_down()
 
-        # 瞎几把拖几下地图，防止游戏没反应过来
-        for i in range(5):
-            itt.move_to([10, 10], relative=True)
-            if i % 2 == 0:
-                itt.left_down()
-        for i in range(5):
-            itt.move_to([-10, -10], relative=True)
-            if i % 2 == 0:
-                itt.left_down()
+        # # 瞎几把拖几下地图，防止游戏没反应过来
+        # for i in range(4):
+        #     if i % 2 == 0:
+        #         itt.move_to((5, 5), relative=True)
+        #         itt.left_down()
+        #     else:
+        #         itt.move_to((-5, -5), relative=True)
+        #         itt.left_down()
+        #     time.sleep(0.2)
 
         curr_posi = self.get_bigmap_posi()
         dx = min((curr_posi[0] - target_posi[0]) * self.MAP_POSI2MOVE_POSI_RATE, self.BIGMAP_MOVE_MAX)
@@ -233,8 +233,8 @@ class Map(MiniMap, BigMap):
         logger.debug(f"curr: {curr_posi} target: {target_posi}")
         logger.debug(f"_move_bigmap: {dx} {dy}")
 
-        itt.move_to([dx, dy], relative=True)
-        itt.delay(0.2, comment="waiting bigmap move")
+        itt.move_to([dx, dy], relative=True, smooth=True)
+        itt.delay(0.5, comment="waiting bigmap move")
         itt.left_up()
 
         after_move_posi = self.get_bigmap_posi()
