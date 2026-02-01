@@ -65,7 +65,11 @@ class XinghaiRunTask(TaskTemplate):
                 logger.info("没找到星光结晶，可能被右上角ui覆盖无法识别，移动地图到右上角")
                 move_map_to_right_top_corner()
             else:
-                logger.info("星光结晶就在当前画面，不需要任何操作")
+                if 1500 < box[0] and box[1] < 400:
+                    logger.info("星光结晶在右上角，可能被右上角ui覆盖无法点击，移动地图到右上角")
+                    move_map_to_right_top_corner()
+                else:
+                    logger.info("星光结晶就在当前画面，不需要任何操作")
         # 移动地图后，再次识别当前地图画面的结晶
         boxes = find_game_img(GameImgStarCrystal, itt.capture(), threshold=0.70, scale=1, count=3)
 
