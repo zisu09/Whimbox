@@ -10,17 +10,17 @@
   "permissions": ["screen", "input"],
   "tools": [
     {
-      "id": "demo.hello",
-      "name": "Hello Tool",
-      "description": "返回一条问候消息",
-      "input_schema": {
-        "type": "object",
-        "properties": { "name": { "type": "string" } },
-        "required": ["name"]
-      },
+      "id": "demo.test",
+      "name": "Test Tool",
+      "description": "插件测试工具，返回插件运行状态",
+      "input_schema": { "type": "object", "properties": {}, "required": [] },
       "output_schema": {
-        "type": "object",
-        "properties": { "message": { "type": "string" } }
+        "type": "object", 
+        "properties": { 
+          "status": { "type": "string" }, 
+          "message": { "type": "string" }, 
+          "data": {} 
+        }
       }
     }
   ]

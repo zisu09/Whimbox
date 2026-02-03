@@ -79,7 +79,6 @@ async def _dispatch(method: str, params: Dict[str, Any]) -> Any:
         message = params.get("message", "")
         if not message:
             raise ValueError("message is required")
-        await mcp_agent.start()
         agent_ready, _, err_msg = mcp_agent.is_ready()
         if not agent_ready:
             raise ValueError(err_msg or "Agent not ready")
@@ -94,6 +93,7 @@ async def _dispatch(method: str, params: Dict[str, Any]) -> Any:
             )
 
         def status_callback(status_type: str, detail: str = "") -> None:
+            logger.info(f"Agent status: {status_type}, {detail}")
             _notify(
                 "event.agent.status",
                 {
