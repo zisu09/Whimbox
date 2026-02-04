@@ -1,4 +1,4 @@
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from threading import Event, Lock
 from typing import Any, Dict, Optional
@@ -19,6 +19,19 @@ class TaskInfo:
     stop_event: Event = field(default_factory=Event, repr=False)
     asyncio_task: Optional[Any] = field(default=None, repr=False)
 
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "task_id": self.task_id,
+            "session_id": self.session_id,
+            "tool_id": self.tool_id,
+            "state": self.state,
+            "created_at": self.created_at,
+            "started_at": self.started_at,
+            "finished_at": self.finished_at,
+            "error": self.error,
+            "result": self.result,
+        }
+
 
 class TaskManager:
     def __init__(self) -> None:
@@ -35,7 +48,7 @@ class TaskManager:
     def get(self, task_id: str) -> Optional[Dict[str, Any]]:
         with self._lock:
             task = self._tasks.get(task_id)
-            return asdict(task) if task else None
+            return task.to_dict() if task else None
 
     def set_state(
         self,
@@ -55,7 +68,7 @@ class TaskManager:
                 task.finished_at = datetime.now(timezone.utc).isoformat()
             task.error = error
             task.result = result
-            return asdict(task)
+            return task.to_dict()
 
     def attach_asyncio_task(self, task_id: str, asyncio_task: Any) -> None:
         with self._lock:
