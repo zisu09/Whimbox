@@ -25,6 +25,12 @@ current_stop_flag: contextvars.ContextVar[threading.Event] = contextvars.Context
     default=None
 )
 
+# 当前会话 ID（用于日志/状态透传）
+current_session_id: contextvars.ContextVar[str] = contextvars.ContextVar(
+    'current_session_id',
+    default="default",
+)
+
 def get_current_stop_flag() -> threading.Event:
     """获取当前上下文的 stop_flag
     
@@ -36,6 +42,11 @@ def get_current_stop_flag() -> threading.Event:
         # 如果没有设置，创建一个永远不会被设置的 flag
         flag = threading.Event()
     return flag
+
+
+def get_current_session_id() -> str:
+    """获取当前上下文的 session_id"""
+    return current_session_id.get() or "default"
 
 # 全局前台任务运行标志（用于后台任务判断是否有前台任务在运行）
 _foreground_task_running = False

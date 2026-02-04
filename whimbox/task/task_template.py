@@ -266,11 +266,29 @@ class TaskTemplate:
 
 
     def log_to_gui(self, msg, is_error=False, type="update_ai_message"):
+        raw_message = msg
         if not is_error:
-            msg = f"✅ {msg}\n"
+            msg = f"✅ {msg}"
+            level = "info"
         else:
-            msg = f"❌ {msg}\n"
+            msg = f"❌ {msg}"
+            level = "error"
+
+        from whimbox.common.cvars import get_current_session_id
+        from whimbox.rpc_server import notify_event
         from whimbox.ingame_ui.ingame_ui import win_ingame_ui
+
+        session_id = get_current_session_id()
+        notify_event(
+            "event.task.log",
+            {
+                "session_id": session_id,
+                "message": msg,
+                "raw_message": raw_message,
+                "level": level,
+                "type": type,
+            },
+        )
         if win_ingame_ui:
             win_ingame_ui.update_message(msg, type)
         logger.info(msg)

@@ -13,6 +13,7 @@ from whimbox.task_manager import task_manager
 
 
 _clients: Set[Any] = set()
+_loop: Optional[asyncio.AbstractEventLoop] = None
 
 
 async def _broadcast(method: str, params: Dict[str, Any]) -> None:
@@ -31,7 +32,26 @@ async def _broadcast(method: str, params: Dict[str, Any]) -> None:
 
 
 def _notify(method: str, params: Dict[str, Any]) -> None:
-    asyncio.create_task(_broadcast(method, params))
+    global _loop
+    if _loop is None:
+        try:
+            _loop = asyncio.get_running_loop()
+        except RuntimeError:
+            return
+
+    if _loop.is_running():
+        try:
+            running_loop = asyncio.get_running_loop()
+        except RuntimeError:
+            running_loop = None
+        if running_loop is not None and _loop == running_loop:
+            asyncio.create_task(_broadcast(method, params))
+        else:
+            asyncio.run_coroutine_threadsafe(_broadcast(method, params), _loop)
+
+
+def notify_event(method: str, params: Dict[str, Any]) -> None:
+    _notify(method, params)
 
 
 def _result_response(request_id: Any, result: Any) -> Dict[str, Any]:
@@ -321,6 +341,8 @@ async def start_rpc_server():
     host = RPC_CONFIG["host"]
     port = RPC_CONFIG["port"]
     logger.info(f"RPC server listening on ws://{host}:{port}")
+    global _loop
+    _loop = asyncio.get_running_loop()
     async with websockets.serve(_ws_handler, host, port, max_size=10 * 1024 * 1024):
         await asyncio.Future()
 
