@@ -55,7 +55,7 @@ class XinghaiRunTask(TaskTemplate):
                     boxes.sort(key=lambda x: x[1])
                     box = boxes[1]
                 else:
-                    box = box[0]
+                    box = boxes[0]
                 itt.move_and_click(area_center(box))
                 itt.wait_until_stable(threshold=0.9995)
         else:
@@ -97,13 +97,13 @@ class XinghaiRunTask(TaskTemplate):
             "星海拾光_星光结晶收集_泡泡梦屿": (3088.0, 1895.7),
             "星海拾光_星光结晶收集_泡泡梦屿2": (3140, 1960),
             "星海拾光_星光结晶收集_无界枢纽": (1667.0, 2030.0),
-            "星海拾光_星光结晶收集_晶簇之谷": (2224.8, 1521.2),
+            "星海拾光_星光结晶收集_晶簇之谷": (2248.0, 1480.0),
             "星海拾光_星光结晶收集_大舞台": (3282.8, 2437.6),
             "星海拾光_星光结晶收集_繁星之滨": (2471.6, 1680.8),
             "星海拾光_星光结晶收集_繁星之滨2": (2380, 1605),
         }
         for path_name, loc in auto_path_dict.items():
-            if euclidean_distance(self.target_loc, loc) < 20:
+            if euclidean_distance(self.target_loc, loc) < 30:
                 auto_path_task = AutoPathTask(path_name=path_name)
                 task_result = auto_path_task.task_run()
                 if task_result.status == STATE_TYPE_SUCCESS:
