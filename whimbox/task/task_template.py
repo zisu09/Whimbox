@@ -276,9 +276,9 @@ class TaskTemplate:
         logger.info(msg)
 
 
-    def update_task_result(self, status=STATE_TYPE_SUCCESS, message="", data=None):
+    def update_task_result(self, status=STATE_TYPE_SUCCESS, message="", data=None, force_update=False):
         # 如果先前是停止状态，则不更新
-        if self.task_result.status == STATE_TYPE_STOP:
+        if (not force_update) and self.task_result.status == STATE_TYPE_STOP:
             return
         else:
             self.task_result = TaskResult(status, message, data)

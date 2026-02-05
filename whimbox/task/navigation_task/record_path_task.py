@@ -134,7 +134,7 @@ class RecordPathTask(TaskTemplate):
             os.makedirs(SCRIPT_PATH)
         save_json(path_record.model_dump(exclude_none=True), json_name, SCRIPT_PATH)
         logger.info(f"路线保存成功，路径：{os.path.join(SCRIPT_PATH, json_name)}")
-        self.update_task_result(message=f"录制成功，路线名：{name}")
+        self.update_task_result(message=f"录制成功，路线名：{name}", force_update=True)
 
 
 def optimize_path(path_point_list):
@@ -167,6 +167,16 @@ def optimize_path(path_point_list):
                 rdp_optimize(path_point_list, start_target_point_index, end_target_point_index, 1)
                 start_target_point_index = index
                 end_target_point_index = -1
+
+    # 将跳跃必经点转为途径点，前一个步行点转为跳跃必经点
+    for i in range(len(path_point_list)-1):
+        curr_point = path_point_list[i]
+        next_point = path_point_list[i+1]
+        if curr_point.move_mode == MOVE_MODE_WALK and next_point.move_mode == MOVE_MODE_JUMP:
+            if next_point.point_type == POINT_TYPE_TARGET:
+                curr_point.point_type = POINT_TYPE_TARGET
+                curr_point.move_mode = MOVE_MODE_JUMP
+                next_point.point_type = POINT_TYPE_PASS
 
 
 if __name__ == "__main__":
