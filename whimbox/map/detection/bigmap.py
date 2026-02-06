@@ -56,7 +56,7 @@ class BigMap:
             cv2.imshow("image",image)
             loca = loca + precise_loca + center
             area = AnchorPosi(loca[0]-200, loca[1]-200, loca[0]+200, loca[1]+200)
-            area = AnchorPosi(area[0], area[1], area[2], area[3])
+            area = AnchorPosi(area.x1, area.y1, area.x2, area.y2)
             close_area = crop(MAP_ASSETS_DICT[self.map_name]["luma_0125x"].img, area)
             center = (close_area.shape[1] // 2, close_area.shape[0] // 2)
             cv2.circle(close_area, center, 5, (0, 0, 255), 2)
@@ -84,6 +84,7 @@ class BigMap:
         )
 
 if __name__ == '__main__':
+    CV_DEBUG_MODE = True
     bm = BigMap()
     bm.map_name = MAP_NAME_STARSEA
     from whimbox.interaction.interaction_core import itt

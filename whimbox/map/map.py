@@ -188,18 +188,16 @@ class Map(MiniMap, BigMap):
     def get_bigmap_posi(self, is_upd=True, is_log=False) -> t.Tuple[float, float]:
         self.maximize_bigmap_scale()
         if is_upd:
-            area = AnchorPosi(0, 0, 1920, 1080)
-            self.update_bigmap(itt.capture(anchor_posi=area))
+            self.update_bigmap(itt.capture())
         if is_log:
             logger.debug(f"bigmap px posi: {self.bigmap_position}")
         return self.bigmap_position
 
-    def _move_bigmap(self, target_posi, float_posi=0, force_center=False) -> list:
+    def _move_bigmap(self, target_posi, force_center=False) -> list:
         """move bigmap center to target position
 
         Args:
-            target_posi (_type_): png map上的目标坐标 
-            float_posi (int, optional): 如果点到了什么东东导致移动失败，自动增加该值. Defaults to 0.
+            target_posi (_type_): png map上的目标坐标
         
         警告：此函数为内部函数，不要在外部调用。如果一定要调用应先设置地图缩放。
         
@@ -211,7 +209,7 @@ class Map(MiniMap, BigMap):
         if stop_flag.is_set():
             return list([screen_center_x, screen_center_y])
 
-        itt.move_to([screen_center_x + float_posi, screen_center_y + float_posi])  # screen center
+        itt.move_to([screen_center_x, screen_center_y], anchor=ANCHOR_CENTER)  # screen center
         itt.left_down()
 
         # # 瞎几把拖几下地图，防止游戏没反应过来
@@ -339,7 +337,7 @@ class Map(MiniMap, BigMap):
             raise Exception(f"地图切换到'{tp_province}-{tp_region}'失败")
 
         click_posi = self._move_bigmap(tp_posi)
-        itt.move_and_click(click_posi)
+        itt.move_and_click(click_posi, anchor=ANCHOR_CENTER)
         itt.wait_until_stable()
         button_text = itt.ocr_single_line(AreaBigMapTeleportButton)
         if button_text == "传送":

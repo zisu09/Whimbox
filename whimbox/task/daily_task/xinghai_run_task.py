@@ -29,10 +29,10 @@ class XinghaiRunTask(TaskTemplate):
     @register_step("查看星光结晶位置")
     def step2(self):
 
-        def move_map(src_posi, dst_posi):
-            itt.move_to(src_posi)
+        def move_map(dst_posi):
+            itt.move_to(dst_posi)
             itt.left_down()
-            itt.move_to(dst_posi, anchor=ANCHOR_CENTER, smooth=True)
+            itt.move_to((1920/2, 1080/2), anchor=ANCHOR_CENTER, smooth=True)
             time.sleep(0.5)
             itt.left_up()
 
@@ -85,7 +85,7 @@ class XinghaiRunTask(TaskTemplate):
             return "step_finish"
         
         # 拖到屏幕中心
-        move_map(triangle_center, (1920/2, 1080/2))
+        move_map(triangle_center)
 
         self.target_loc = nikki_map.get_bigmap_posi()
         logger.debug(f"星光结晶地图坐标: {self.target_loc}")
