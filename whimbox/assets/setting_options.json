@@ -52,5 +52,12 @@
         "不做周本",
         "奇格格达",
         "卷卷"
+    ],
+    "model_provider": [
+        "openai",
+        "anthropic",
+        "google_genai",
+        "deepseek",
+        "ollama"
     ]
 }

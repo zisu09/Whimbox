@@ -54,6 +54,7 @@ include = ["whimbox*"]
 
 [tool.setuptools.package-data]
 "whimbox.assets" = ["**/*.json", "**/*.txt", "**/*.yaml", "**/*.ico", "imgs/**/*.png", "imgs/**/*.jpg"]
+"whimbox.plugins" = ["**/*.json"]
 
 [tool.setuptools.exclude-package-data]
 "*" = ["*.pyc", "__pycache__", "*.log"]
