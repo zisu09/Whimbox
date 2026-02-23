@@ -5,6 +5,7 @@ from whimbox.common.cvars import (
     get_current_stop_flag,
     set_foreground_task_running
 )
+from whimbox.config.config import global_config
 
 from pynput import keyboard
 import time
@@ -91,8 +92,8 @@ class TaskTemplate:
             self.listener = keyboard.Listener(on_press=self._on_key_press)
             self.listener.daemon = True  # 设为守护线程
             self.listener.start()
-            # 添加默认停止热键
-            self.add_hotkey("/", self.task_stop)
+            # 添加可配置的停止热键（默认 "/"）
+            self.add_hotkey(self._get_stop_hotkey(), self.task_stop)
         else:
             self.key_callbacks = None
             self.listener = None
@@ -116,6 +117,7 @@ class TaskTemplate:
         """添加热键监听（仅在顶层任务中有效）"""
         if self.key_callbacks is None:
             return
+        key_str = key_str.strip()
         # 将字符串键转换为pynput键对象
         if len(key_str) == 1:  # 单个字符
             self.key_callbacks[key_str] = callback
@@ -126,6 +128,15 @@ class TaskTemplate:
                 self.key_callbacks[key_obj] = callback
             except AttributeError:
                 logger.warning(f"无法识别的键: {key_str}")
+
+    def _get_stop_hotkey(self) -> str:
+        try:
+            key = global_config.get("Whimbox", "stop_key")
+            if isinstance(key, str) and key.strip():
+                return key.strip()
+        except Exception:
+            pass
+        return "/"
 
 
     def __auto_register_steps(self):

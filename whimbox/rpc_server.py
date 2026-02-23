@@ -1,11 +1,13 @@
 import asyncio
 import json
 import os
+import time
 from typing import Any, Dict, Optional, Set
 
 import websockets
+from pynput import keyboard
 
-from whimbox.common.cvars import RPC_CONFIG
+from whimbox.common.cvars import RPC_CONFIG, has_foreground_task
 from whimbox.common.logger import logger
 from whimbox.common.path_lib import ASSETS_PATH
 from whimbox.config.default_config import DEFAULT_CONFIG
@@ -22,6 +24,8 @@ _clients: Set[Any] = set()
 _loop: Optional[asyncio.AbstractEventLoop] = None
 _setting_options_cache: Optional[Dict[str, Any]] = None
 _material_options_cache: Optional[list[str]] = None
+_overlay_hotkey_listener: Optional[keyboard.Listener] = None
+_last_overlay_hotkey_ts = 0.0
 
 
 async def _broadcast(method: str, params: Dict[str, Any]) -> None:
@@ -60,6 +64,67 @@ def _notify(method: str, params: Dict[str, Any]) -> None:
 
 def notify_event(method: str, params: Dict[str, Any]) -> None:
     _notify(method, params)
+
+
+def _get_stop_hotkey() -> str:
+    try:
+        key = global_config.get("Whimbox", "stop_key")
+        if isinstance(key, str) and key.strip():
+            return key.strip()
+    except Exception:
+        pass
+    return "/"
+
+
+def _is_hotkey_match(key: keyboard.Key | keyboard.KeyCode, configured: str) -> bool:
+    if not configured:
+        return False
+    configured = configured.strip()
+    if not configured:
+        return False
+    if len(configured) == 1:
+        return hasattr(key, "char") and key.char == configured
+    try:
+        return key == getattr(keyboard.Key, configured)
+    except AttributeError:
+        return False
+
+
+def _start_overlay_hotkey_listener() -> None:
+    global _overlay_hotkey_listener, _last_overlay_hotkey_ts
+    if _overlay_hotkey_listener is not None:
+        return
+
+    def on_press(key):
+        global _last_overlay_hotkey_ts
+        try:
+            # 有前台任务时，停止热键由任务链自己处理，避免同次按键双触发。
+            if has_foreground_task():
+                return
+            configured = _get_stop_hotkey()
+            if not _is_hotkey_match(key, configured):
+                return
+
+            now = time.monotonic()
+            if now - _last_overlay_hotkey_ts < 0.2:
+                return
+            _last_overlay_hotkey_ts = now
+
+            _notify(
+                "event.overlay.show",
+                {
+                    "reason": "hotkey",
+                    "hotkey": configured,
+                },
+            )
+        except Exception as exc:  # noqa: BLE001
+            logger.debug(f"overlay hotkey listener error: {exc}")
+
+    listener = keyboard.Listener(on_press=on_press)
+    listener.daemon = True
+    listener.start()
+    _overlay_hotkey_listener = listener
+    logger.info("Overlay global hotkey listener started")
 
 
 def _load_setting_options() -> Dict[str, Any]:
@@ -579,6 +644,7 @@ async def start_rpc_server():
     logger.info(f"RPC server listening on ws://{host}:{port}")
     global _loop
     _loop = asyncio.get_running_loop()
+    _start_overlay_hotkey_listener()
     async with websockets.serve(_ws_handler, host, port, max_size=10 * 1024 * 1024):
         await asyncio.Future()
 
