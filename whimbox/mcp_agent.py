@@ -153,8 +153,6 @@ class Agent:
                     tool_name = event.get("name", "")
                     tool_running = True
                     self._tool_running_sessions.add(session_id)
-                    if stream_callback:
-                        stream_callback(f"🔧 任务进行中，按“/”键，随时终止任务\n")
                     if status_callback:
                         status_callback("on_tool_start", tool_name)
 

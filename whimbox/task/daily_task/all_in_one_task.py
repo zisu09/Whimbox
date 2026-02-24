@@ -31,7 +31,7 @@ class AllInOneTask(TaskTemplate):
         if task_result.status == STATE_TYPE_SUCCESS:
             _, width, height = HANDLE_OBJ.check_shape()
             if width > 2560 or width < 1920:
-                msg = f"当前游戏分辨率：{width}x{height}。推荐分辨率为：1920x1080或1920x1200或2560x1440或2560x1600。如遇到bug，请修改游戏分辨率后重试"
+                msg = f"❗当前游戏分辨率：{width}x{height}。推荐使用1920x1080或1920x1200或2560x1440或2560x1600分辨率，窗口模式。如遇到bug，请修改游戏分辨率和显示模式后重试"
                 self.log_to_gui(msg)
             return "step1"
         else:

@@ -259,9 +259,7 @@ class BackgroundTask:
             msg = f"✅ {msg}\n"
             level = "info"
 
-        from whimbox.common.cvars import get_current_session_id
         from whimbox.rpc_server import notify_event
-        from whimbox.ingame_ui.ingame_ui import win_ingame_ui
 
         session_id = self._resolve_session_id()
         payload = {
@@ -274,8 +272,6 @@ class BackgroundTask:
         if session_id and session_id != "default":
             payload["session_id"] = session_id
         notify_event("event.task.log", payload)
-        if win_ingame_ui:
-            win_ingame_ui.update_message(msg, type)
         logger.info(msg)
 
     def stop(self):

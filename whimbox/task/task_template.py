@@ -167,6 +167,7 @@ class TaskTemplate:
             # 如果是顶层任务，设置前台任务运行标志
             if self.is_top_level_task:
                 set_foreground_task_running(True)
+                self.log_to_gui("你可以按 " + self._get_stop_hotkey() + " 键随时停止任务")
             
             res = self._task_run()
             if res.status in [STATE_TYPE_SUCCESS, STATE_TYPE_STOP, STATE_TYPE_FAILED]:
@@ -298,7 +299,6 @@ class TaskTemplate:
             level = "error"
 
         from whimbox.rpc_server import notify_event
-        from whimbox.ingame_ui.ingame_ui import win_ingame_ui
 
         payload = {
             "session_id": self.session_id,
@@ -308,8 +308,6 @@ class TaskTemplate:
             "type": type,
         }
         notify_event("event.task.log", payload)
-        if win_ingame_ui:
-            win_ingame_ui.update_message(msg, type)
         logger.info(msg)
 
 

@@ -3,6 +3,7 @@ from typing import Any, Dict
 from whimbox.common.handle_lib import HANDLE_OBJ
 from whimbox.common.logger import logger
 from whimbox.common.notification import send_notification
+from whimbox.rpc_server import notify_event
 from whimbox.common.scripts_manager import scripts_manager
 from whimbox.task.daily_task import (
     JihuaTask,
@@ -30,7 +31,7 @@ def _error(message: str) -> Dict[str, Any]:
     return TaskResult(STATE_TYPE_ERROR, message).to_dict()
 
 
-def _check_game_ok() -> Dict[str, Any]:
+def _check_game_ok(session_id: str = "default") -> Dict[str, Any]:
     if not HANDLE_OBJ.is_alive():
         return _error("游戏未启动，请先启动游戏")
     shape_ok, width, height = HANDLE_OBJ.check_shape()
@@ -38,28 +39,32 @@ def _check_game_ok() -> Dict[str, Any]:
         return _error("奇想盒只支持16:9与16:10的游戏分辨率")
     logger.info(f"游戏分辨率：{width}x{height}")
     if width > 2560 or width < 1920:
-        from whimbox.ingame_ui.ingame_ui import win_ingame_ui
-
         msg = (
             f"❗当前游戏分辨率：{width}x{height}。"
-            "推荐分辨率为：1920x1080或1920x1200或2560x1440或2560x1600。"
-            "如遇到bug，请修改游戏分辨率后重试\n"
+            "推荐使用1920x1080或1920x1200或2560x1440或2560x1600分辨率，窗口模式。"
+            "如遇到bug，请修改游戏分辨率和显示模式后重试\n"
         )
-        if win_ingame_ui:
-            win_ingame_ui.update_message(msg, "update_ai_message")
+        payload = {
+            "message": msg,
+            "raw_message": msg,
+            "level": "info",
+            "type": "update_ai_message",
+        }
+        if session_id and session_id != "default":
+            payload["session_id"] = session_id
+        notify_event("event.task.log", payload)
         logger.info(msg)
     return {}
 
 
 def _with_game_check(func):
     def wrapper(session_id: str, input: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
-        result = _check_game_ok()
+        result = _check_game_ok(session_id=session_id)
         if result:
             return result
         return func(session_id, input, context)
 
     return wrapper
-
 
 def _with_windows_notify(func):
     def wrapper(session_id: str, input: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
