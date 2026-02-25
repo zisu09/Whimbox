@@ -46,7 +46,7 @@ class Agent:
         api_key = global_config.get("Agent", "api_key")
         if not api_key:
             self.langchain_agent = None
-            self.err_msg = "请先前往设置，配置大模型的api密钥。不会配置？启动器公告里有详细白嫖教程！"
+            self.err_msg = "请先前往设置，配置大模型的api密钥。不会配置？点开通知，里面有详细白嫖教程！"
             self.llm = None
             logger.error(self.err_msg)
         else:
