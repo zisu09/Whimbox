@@ -10,6 +10,7 @@ from whimbox.common.path_lib import ASSETS_PATH
 REPLACE_DICT = {
     "拋掷": "抛掷",
     "占土进入游戏": "点击进入游戏",
+    "注冊": "注册",
 }
 
 class RapidOcr():

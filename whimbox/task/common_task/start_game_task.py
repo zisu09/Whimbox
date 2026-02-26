@@ -136,6 +136,12 @@ class StartGameTask(TaskTemplate):
             if "确认" in text_box_dict and "退出游戏" not in text_box_dict and "账号登出" not in text_box_dict:
                 self.log_to_gui("有确认按钮我直接点！")
                 AreaLoginOCR.click(target_box=text_box_dict["确认"])
+            elif "登录" in text_box_dict:
+                self.log_to_gui("有登录按钮我直接点！")
+                AreaLoginOCR.click(target_box=text_box_dict["登录"])
+            elif "注册\\登录" in text_box_dict:
+                self.log_to_gui("有登录按钮我直接点！")
+                AreaLoginOCR.click(target_box=text_box_dict["注册\\登录"])
             elif "点击进入游戏" in text_box_dict:
                 AreaLoginOCR.click(target_box=text_box_dict["点击进入游戏"])
                 break
