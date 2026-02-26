@@ -45,8 +45,8 @@ class PlaceItemTask(TaskTemplate):
             time.sleep(1)
             if not itt.get_img_existence(IconPageMainFeature):
                 break
-
-        itt.move_to((-200, 0), relative=True) # 先把摆饰挪远一点
+        time.sleep(0.5)
+        itt.move_to((0, -200), relative=True) # 先把摆饰挪远一点
         retry_time = 20
         while not self.need_stop() and retry_time > 0:
             itt.left_click()
@@ -64,6 +64,9 @@ class PlaceItemTask(TaskTemplate):
     @register_step("收回摆饰")
     def step3(self):
         if not self.chose_lantern:
+            if not itt.get_img_existence(IconPageMainFeature):
+                # 可能是烟花这类能不停摆放的，要右键退出一下摆放
+                itt.right_click()
             itt.key_down(keybind.KEYBIND_ITEM)
             time.sleep(3)
             itt.key_up(keybind.KEYBIND_ITEM)
@@ -76,6 +79,7 @@ class PlaceItemTask(TaskTemplate):
             itt.delay(0.5, comment="等待摆饰界面加载完成")
             AreaItemFirstItem.click()
             itt.move_and_click((0, 0)) #点一下屏幕，退出摆饰界面
+                
         else:
             self.log_to_gui("放置的摆饰是河灯，无法收回")
         
