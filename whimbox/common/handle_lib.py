@@ -72,13 +72,23 @@ class ProcessHandler():
 
             attached_fg = False
             attached_target = False
+
+            def _safe_attach(src_tid, dst_tid, attach, label):
+                if not src_tid or not dst_tid or src_tid == dst_tid:
+                    return False
+                try:
+                    win32process.AttachThreadInput(src_tid, dst_tid, attach)
+                    return True
+                except Exception as exc:
+                    logger.warning(
+                        f"AttachThreadInput {label} failed: {exc}; "
+                        f"src_tid={src_tid}, dst_tid={dst_tid}, fg_hwnd={fg_hwnd}, hwnd={hwnd}"
+                    )
+                    return False
+
             try:
-                if fg_tid and fg_tid != current_tid:
-                    win32process.AttachThreadInput(current_tid, fg_tid, True)
-                    attached_fg = True
-                if target_tid and target_tid != current_tid:
-                    win32process.AttachThreadInput(current_tid, target_tid, True)
-                    attached_target = True
+                attached_fg = _safe_attach(current_tid, fg_tid, True, "foreground")
+                attached_target = _safe_attach(current_tid, target_tid, True, "target")
 
                 win32gui.BringWindowToTop(hwnd)
                 win32gui.SetForegroundWindow(hwnd)
@@ -86,9 +96,9 @@ class ProcessHandler():
                 win32gui.SetFocus(hwnd)
             finally:
                 if attached_target:
-                    win32process.AttachThreadInput(current_tid, target_tid, False)
+                    _safe_attach(current_tid, target_tid, False, "target-detach")
                 if attached_fg:
-                    win32process.AttachThreadInput(current_tid, fg_tid, False)
+                    _safe_attach(current_tid, fg_tid, False, "foreground-detach")
 
         try:
             if not self.is_alive():

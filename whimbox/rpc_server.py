@@ -175,8 +175,8 @@ def _emit_agent_stopping(session_id: str, *, detail: str = "manual_stop") -> Non
         session_id=sid,
         run_id=sid,
         source="agent",
-        message="⏳ 停止任务中，请稍后...",
-        raw_message="停止任务中，请稍后...",
+        message="⏳ 停止任务中，请稍等...",
+        raw_message="停止任务中，请稍等...",
         tool_call_id=tool_call_id,
     )
 
@@ -201,8 +201,8 @@ def _emit_task_stopping(task_info: Dict[str, Any], *, detail: str = "manual_stop
         session_id=session_id,
         run_id=run_id,
         source="task",
-        message="⏳ 停止任务中，请稍后...",
-        raw_message="停止任务中，请稍后...",
+        message="⏳ 停止任务中，请稍等...",
+        raw_message="停止任务中，请稍等...",
     )
 
 
@@ -266,9 +266,7 @@ def _start_overlay_hotkey_listener() -> None:
             _last_overlay_hotkey_ts = now
 
             if has_foreground_task():
-                stopped = _request_global_stop(detail="hotkey_stop")
-                if stopped:
-                    return
+                _request_global_stop(detail="hotkey_stop")
 
             _notify(
                 "event.overlay.show",
