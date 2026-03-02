@@ -141,7 +141,7 @@ class TaskTemplate:
     def __auto_register_steps(self):
         """自动注册带有_register_step标记的方法"""
         # 获取类的所有方法，包括继承的
-        for method_name in dir(self):
+        for method_name in self.__class__.__dict__.keys():
             # 跳过私有方法和特殊方法
             if method_name.startswith('__'):
                 continue

@@ -72,6 +72,10 @@
         }
     },
     "OneDragon": {
+        "start_magnet": {
+            "value": "false",
+            "description": "开启扇子套衍生能力"
+        },
         "energy_cost": {
             "value": "素材激化幻境",
             "description": "默认消耗体力的幻境"

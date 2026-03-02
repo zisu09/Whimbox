@@ -25,7 +25,7 @@ class AllInOneTask(TaskTemplate):
         }
 
     @register_step("自动启动游戏")
-    def step0(self):
+    def step_start_game(self):
         start_game_task = StartGameTask(session_id=self.session_id)
         task_result = start_game_task.task_run()
         if task_result.status == STATE_TYPE_SUCCESS:
@@ -33,22 +33,36 @@ class AllInOneTask(TaskTemplate):
             if width > 2560 or width < 1920:
                 msg = f"❗当前游戏分辨率：{width}x{height}。推荐使用1920x1080或1920x1200或2560x1440或2560x1600分辨率，窗口模式。如遇到bug，请修改游戏分辨率和显示模式后重试"
                 self.log_to_gui(msg)
-            return "step1"
         else:
             self.update_task_result(STATE_TYPE_FAILED, task_result.message)
             return STEP_NAME_FINISH
 
 
+    @register_step("开启扇子套衍生能力")
+    def step_start_magnet(self):
+        should_start = global_config.get_bool("OneDragon", "start_magnet")
+        if should_start:
+            from whimbox.action.magnet import MagnetTask
+            magnet_task = MagnetTask(session_id=self.session_id)
+            magnet_task.task_run()
+        else:
+            self.log_to_gui("未设置开启扇子套衍生能力")
+
+
     @register_step("美鸭梨挖掘")
-    def step1(self):
+    def step_dig(self):
         dig_task = daily_task.DigTaskV2(session_id=self.session_id)
         task_result = dig_task.task_run()
         self.task_result_list['dig_task'] = task_result.status == STATE_TYPE_SUCCESS
-        self.log_to_gui("检查是否在家园")
+    
+
+    @register_step("检查是否在家园")
+    def step_check_in_home(self):
         from whimbox.map.map import nikki_map
         nikki_map.reinit_smallmap()
         # 如果在不支持的地图（比如家园），就传送到花愿镇
         if nikki_map.map_name == MAP_NAME_UNSUPPORTED:
+            self.log_to_gui("传送到大世界")
             loc = convert_GameLoc_to_PngMapPx([-13172.34765625, -54273.6171875], MAP_NAME_MIRALAND)
             nikki_map.bigmap_tp(loc, MAP_NAME_MIRALAND)
 
@@ -132,7 +146,7 @@ class AllInOneTask(TaskTemplate):
 
 if __name__ == "__main__":
     task = AllInOneTask(session_id="debug")
-    # result = task.task_run()
-    # print(result.to_dict())
-    task.step3()
+    result = task.task_run()
+    print(result.to_dict())
+    # task.step3()
         
