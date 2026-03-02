@@ -134,7 +134,8 @@ class StartGameTask(TaskTemplate):
 
             text_box_dict = itt.ocr_and_detect_posi(AreaLoginOCR)
             logger.info(f"登录界面文字: {text_box_dict.keys()}")
-            if "确认" in text_box_dict and "退出游戏" not in text_box_dict and "账号登出" not in text_box_dict:
+            if (("确认" in text_box_dict) or ("同意" in text_box_dict)) and \
+                ("退出游戏" not in text_box_dict) and ("账号登出" not in text_box_dict):
                 self.log_to_gui("有确认按钮我直接点！")
                 AreaLoginOCR.click(target_box=text_box_dict["确认"])
             elif "登录" in text_box_dict:
