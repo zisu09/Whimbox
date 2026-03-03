@@ -140,6 +140,12 @@
   "AreaMonopolyQuestion": {
     "rel_path": "imgs\\Windows\\UI\\event\\roll_dice\\AreaMonopolyQuestion.png"
   },
+  "AreaMonthlyPassTab1": {
+    "rel_path": "imgs\\Windows\\UI\\monthly_pass\\AreaMonthlyPassTab1.png"
+  },
+  "AreaMonthlyPassTab2": {
+    "rel_path": "imgs\\Windows\\UI\\monthly_pass\\AreaMonthlyPassTab2.png"
+  },
   "AreaMovementWalk": {
     "rel_path": "imgs\\Windows\\General\\AreaMovementWalk.png"
   },
@@ -346,12 +352,6 @@
   },
   "ButtonMonthlyPassAward": {
     "rel_path": "imgs\\Windows\\UI\\monthly_pass\\ButtonMonthlyPassAward.png"
-  },
-  "ButtonMonthlyPassTab1": {
-    "rel_path": "imgs\\Windows\\UI\\monthly_pass\\ButtonMonthlyPassTab1.png"
-  },
-  "ButtonMonthlyPassTab2": {
-    "rel_path": "imgs\\Windows\\UI\\monthly_pass\\ButtonMonthlyPassTab2.png"
   },
   "ButtonPageChatClose": {
     "rel_path": "imgs\\Windows\\UI\\ButtonPageChatClose.png"

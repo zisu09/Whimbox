@@ -15,11 +15,11 @@ class MonthlyPassTask(TaskTemplate):
     
     @register_step("领取奖励")
     def step2(self):
-        if wait_until_appear_then_click(ButtonMonthlyPassTab2):
+        if wait_until_appear_then_click(TextMonthlyPassTab2):
             if wait_until_appear_then_click(ButtonMonthlyPassAward):
                 skip_get_award()
             time.sleep(0.5)
-            if wait_until_appear_then_click(ButtonMonthlyPassTab1):
+            if wait_until_appear_then_click(TextMonthlyPassTab1):
                 if wait_until_appear_then_click(ButtonMonthlyPassAward):
                     if skip_get_award():
                         self.update_task_result(message="成功领取奇迹之旅奖励")

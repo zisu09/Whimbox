@@ -190,8 +190,10 @@ ButtonPhotoDeleteConfirm = Button(print_log=LOG_WHEN_TRUE, anchor=ANCHOR_CENTER)
 
 # 大月卡，奇迹之旅
 ButtonMonthlyPassAward = Button(print_log=LOG_WHEN_TRUE, anchor=ANCHOR_CENTER)
-ButtonMonthlyPassTab1 = Button(print_log=LOG_WHEN_TRUE, threshold=0.95, anchor=ANCHOR_TOP_LEFT)
-ButtonMonthlyPassTab2 = Button(print_log=LOG_WHEN_TRUE, threshold=0.95, anchor=ANCHOR_TOP_LEFT)
+AreaMonthlyPassTab1 = Area(anchor=ANCHOR_TOP_CENTER)
+TextMonthlyPassTab1 = Text("旅行秘宝", cap_area=AreaMonthlyPassTab1)
+AreaMonthlyPassTab2 = Area(anchor=ANCHOR_TOP_CENTER)
+TextMonthlyPassTab2 = Text("旅行任务", cap_area=AreaMonthlyPassTab2)
 
 # 奇迹之冠
 AreaMiraCrownOverview = Area(anchor=ANCHOR_CENTER)
