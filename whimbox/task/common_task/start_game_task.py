@@ -9,7 +9,6 @@ from whimbox.ui.ui import ui_control
 from whimbox.ui.ui_assets import *
 from whimbox.interaction.interaction_core import itt
 from whimbox.common.logger import logger
-from whimbox.common.utils.posi_utils import area_center
 
 import os, time
 

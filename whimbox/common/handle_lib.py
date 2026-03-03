@@ -1,5 +1,5 @@
 import psutil
-import ctypes
+import time
 import win32api
 import win32gui, win32process, win32con
 from whimbox.common.cvars import PROCESS_NAME
@@ -116,6 +116,78 @@ class ProcessHandler():
         if not win32gui.IsWindow(self.handle):
             return False
         return True
+
+    def _get_process_pid(self):
+        if self.pid is not None:
+            return self.pid
+
+        if self.handle and win32gui.IsWindow(self.handle):
+            try:
+                _, pid = win32process.GetWindowThreadProcessId(self.handle)
+                if pid:
+                    return pid
+            except Exception as e:
+                logger.warning(f"通过窗口句柄获取进程ID失败: {e}")
+
+        if self.process_name is not None:
+            for proc in psutil.process_iter(['pid', 'name']):
+                if proc.info['name'] == self.process_name:
+                    return proc.info['pid']
+
+        return None
+
+    def close_handle(self):
+        pid = self._get_process_pid()
+        process = None
+        if pid is not None:
+            try:
+                process = psutil.Process(pid)
+            except psutil.NoSuchProcess:
+                process = None
+            except Exception as e:
+                logger.warning(f"获取进程对象失败: {e}")
+
+        try:
+            if self.is_alive():
+                win32gui.PostMessage(self.handle, win32con.WM_CLOSE, 0, 0)
+        except Exception as e:
+            logger.error(e)
+
+        for _ in range(10):
+            if not self.is_alive():
+                self.refresh_handle()
+                return
+            if process is not None:
+                try:
+                    if not process.is_running():
+                        self.refresh_handle()
+                        return
+                except psutil.NoSuchProcess:
+                    self.refresh_handle()
+                    return
+                except Exception as e:
+                    logger.warning(f"检查进程状态失败: {e}")
+                    break
+            time.sleep(0.2)
+
+        if process is None:
+            return
+
+        try:
+            logger.warning(f"窗口关闭失败，尝试结束进程: pid={process.pid}")
+            process.terminate()
+            try:
+                process.wait(timeout=2)
+            except psutil.TimeoutExpired:
+                logger.warning(f"进程未在超时内退出，强制结束: pid={process.pid}")
+                process.kill()
+                process.wait(timeout=2)
+        except psutil.NoSuchProcess:
+            pass
+        except Exception as e:
+            logger.error(f"结束进程失败: {e}")
+        finally:
+            self.refresh_handle()
 
     def check_shape(self):
         if self.is_alive():
