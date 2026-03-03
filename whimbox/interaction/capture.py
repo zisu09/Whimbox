@@ -76,9 +76,10 @@ class Capture():
         if (self.fps_timer.get_diff_time() >= 1/self.max_fps) or force:
             self.fps_timer.reset()
             self.capture_times += 1
-            normalized_img = self._normalize_shape(self._get_capture())
-            if normalized_img is not None:
-                self.capture_cache = normalized_img
+            if self.hwnd_handler.is_alive():
+                normalized_img = self._normalize_shape(self._get_capture())
+                if normalized_img is not None:
+                    self.capture_cache = normalized_img
 
     
 class PrintWindowCapture(Capture):
