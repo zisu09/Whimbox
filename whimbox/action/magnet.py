@@ -14,6 +14,7 @@ class MagnetTask(TaskTemplate):
             self.update_task_result(status=STATE_TYPE_FAILED, message="切换化万相能力失败")
             return STEP_NAME_FINISH
         
+        itt.delay(1, comment="稍等片刻")
         _, px_count = ability_manager.check_subability_active()
         itt.key_press(keybind.KEYBIND_ABILITY_DERIVATION_WORLD_1)
         itt.delay(0.5, comment="等待化万相小技能开启")

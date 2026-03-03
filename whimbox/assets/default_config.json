@@ -128,7 +128,7 @@
         },
         "step_zhaoxi": {
             "value": "true",
-            "description": "完成朝夕心愿"
+            "description": "完成朝夕心愿+消耗体力"
         },
         "step_xinghai_run": {
             "value": "true",
