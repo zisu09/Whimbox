@@ -162,6 +162,7 @@ class AutoPathTask(TaskTemplate):
             if self.need_stop():
                 break
             self.inner_step_control_move()
+            self.check_interruption()
             time.sleep(self.step_sleep)
             self.once_loop_time = time.time() - start_time
         return "step2"
@@ -184,6 +185,20 @@ class AutoPathTask(TaskTemplate):
     def clear_stuck(self):
         self.stuck_time = None
         self.stuck_position = None
+
+
+    def check_interruption(self):
+        # 如果不在主界面了，可能是用户自己操作中断，或者跳进水里重置了
+        need_log = True
+        if not itt.get_img_existence(IconPageMainFeature):
+            while not itt.get_img_existence(IconPageMainFeature):
+                if need_log:
+                    self.log_to_gui("意外中断，等待回到主界面……", is_loading=True)
+                    need_log = False
+                time.sleep(1)
+            self.log_to_gui("已回到主界面，重新定位坐标")
+            nikki_map.reinit_smallmap()
+            back_to_page_main()
 
 
     def inner_step_update_target(self):
