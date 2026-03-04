@@ -190,12 +190,14 @@ class AutoPathTask(TaskTemplate):
     def check_interruption(self):
         # 如果不在主界面了，可能是用户自己操作中断，或者跳进水里重置了
         need_log = True
-        if not itt.get_img_existence(IconPageMainFeature):
-            while not itt.get_img_existence(IconPageMainFeature):
-                if need_log:
-                    self.log_to_gui("意外中断，等待回到主界面……", is_loading=True)
-                    need_log = False
-                time.sleep(1)
+        should_reinit = False
+        while not itt.get_img_existence(IconPageMainFeature):
+            should_reinit = True
+            if need_log:
+                self.log_to_gui("意外中断，等待回到主界面……", is_loading=True)
+                need_log = False
+            time.sleep(1)
+        if should_reinit:
             self.log_to_gui("已回到主界面，重新定位坐标")
             nikki_map.reinit_smallmap()
             back_to_page_main()
