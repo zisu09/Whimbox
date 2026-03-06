@@ -80,8 +80,11 @@ class AllInOneTask(TaskTemplate):
         if self.default_step_enabled.get("step_dig", True):
             step_order.append("step_dig")
 
+        if self.default_step_enabled.get("step_home_task", True):
+            step_order.append("step_home_task")
+
         later_enabled_keys = [
-            key for key, _, _ in DEFAULT_STEP_CONFIG[1:]
+            key for key, _, _ in DEFAULT_STEP_CONFIG[2:]
             if self.default_step_enabled.get(key, True)
         ]
         if later_enabled_keys:
