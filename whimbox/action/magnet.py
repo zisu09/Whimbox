@@ -14,13 +14,13 @@ class MagnetTask(TaskTemplate):
             self.update_task_result(status=STATE_TYPE_FAILED, message="切换化万相能力失败")
             return STEP_NAME_FINISH
         
-        itt.delay(2, comment="稍等片刻")
+        itt.delay(1, comment="稍等片刻")
         _, px_count = ability_manager.check_subability_active()
         itt.key_press(keybind.KEYBIND_ABILITY_DERIVATION_WORLD_1)
-        itt.delay(0.5, comment="等待化万相小技能开启")
+        itt.delay(2, comment="等待化万相小技能开启")
         _, new_px_count = ability_manager.check_subability_active()
         logger.info(f"化万相小技能开启前px_count: {px_count}, 开启后px_count: {new_px_count}")
-        if new_px_count - px_count > 30:
+        if new_px_count > px_count:
             self.update_task_result(status=STATE_TYPE_SUCCESS, message="化万相小技能开启成功")
             return
         else:
