@@ -120,16 +120,17 @@ class StartGameTask(TaskTemplate):
 
         # 检测是否在登录界面
         while not self.need_stop():
-            time.sleep(1)
-            # 检测是否已经进入游戏
-            if ui_control.is_valid_page():
-                self.update_task_result(status=STATE_TYPE_SUCCESS, message="已成功进入游戏")
-                return STEP_NAME_FINISH
+            time.sleep(3)
 
             # 可能因为更新，游戏重启了
             if not HANDLE_OBJ.is_alive():
                 self.log_to_gui("游戏窗口已关闭")
                 return "step2"
+
+            # 检测是否已经进入游戏
+            if ui_control.is_valid_page():
+                self.update_task_result(status=STATE_TYPE_SUCCESS, message="已成功进入游戏")
+                return STEP_NAME_FINISH
 
             text_box_dict = itt.ocr_and_detect_posi(AreaLoginOCR)
             logger.info(f"登录界面文字: {text_box_dict.keys()}")
