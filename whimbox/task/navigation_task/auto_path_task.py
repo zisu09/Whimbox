@@ -11,7 +11,7 @@ from whimbox.ability.ability import ability_manager
 from whimbox.action.pickup import PickupTask
 from whimbox.action.catch_insect import CatchInsectTask
 from whimbox.action.clean_animal import CleanAnimalTask
-from whimbox.action.fishing import FishingTask
+from whimbox.action.fishing import FishingTask, FISHING_TYPE_MIRALAND, FISHING_TYPE_HOME
 from whimbox.common.scripts_manager import *
 from whimbox.map.convert import convert_GameLoc_to_PngMapPx
 from whimbox.ui.ui import ui_control
@@ -280,11 +280,19 @@ class AutoPathTask(TaskTemplate):
                         time.sleep(2)
                 elif self.target_point.action == ACTION_FISHING:
                     if not self.path_info.test_mode:
-                        fishing_task = FishingTask(session_id=self.session_id)
+                        fishing_task = FishingTask(session_id=self.session_id, fishing_type=FISHING_TYPE_MIRALAND)
                         task_result = fishing_task.task_run()
                         self.merge_material_count_dict(task_result.data)
                     else:
                         self.log_to_gui("测试跑图路线中，不进行钓鱼")
+                        time.sleep(2)
+                elif self.target_point.action == ACTION_FISHING_STAR:
+                    if not self.path_info.test_mode:
+                        fishing_task = FishingTask(session_id=self.session_id, fishing_type=FISHING_TYPE_HOME)
+                        task_result = fishing_task.task_run()
+                        self.merge_material_count_dict(task_result.data)
+                    else:
+                        self.log_to_gui("测试跑图路线中，不进行钓星")
                         time.sleep(2)
                 elif self.target_point.action == ACTION_BIG:
                     from whimbox.action.big import BigTask

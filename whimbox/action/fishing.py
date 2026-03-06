@@ -11,7 +11,7 @@ from whimbox.ui.ui import ui_control
 from whimbox.ui.ui_assets import *
 from whimbox.common.utils.img_utils import count_px_with_hsv_limit
 from whimbox.ability.ability import ability_manager
-from whimbox.ability.cvar import ABILITY_NAME_FISH
+from whimbox.ability.cvar import ABILITY_NAME_FISH, ABILITY_NAME_STAR_COLLECT
 from whimbox.common.logger import logger
 from whimbox.common.keybind import keybind
 
@@ -44,9 +44,9 @@ FISHING_TYPE_MIRALAND = "钓鱼"
 FISHING_TYPE_HOME = "钓陨星"
 
 class FishingTask(TaskTemplate):
-    def __init__(self, session_id):
+    def __init__(self, session_id, fishing_type=FISHING_TYPE_MIRALAND):
         super().__init__(session_id=session_id, name="fishing_task")
-        self.fishing_type = None # 大世界钓鱼or家园钓星
+        self.fishing_type = fishing_type # 大世界钓鱼or家园钓星
         self.material_count_dict = {}
 
     def get_fishing_type(self):
@@ -147,9 +147,18 @@ class FishingTask(TaskTemplate):
 
     @register_step("切换钓鱼能力")
     def step1(self):
-        if not ability_manager.change_ability(ABILITY_NAME_FISH):
-            self.update_task_result(status=STATE_TYPE_FAILED, message="切换钓鱼能力失败")
-            return STEP_NAME_FINISH
+        if self.fishing_type == FISHING_TYPE_HOME:
+            if not ability_manager.change_ability(ABILITY_NAME_STAR_COLLECT):
+                self.update_task_result(status=STATE_TYPE_FAILED, message="切换采星能力失败")
+                return STEP_NAME_FINISH
+            else:
+                itt.right_click()
+                itt.delay(0.5, comment="等待采星能力开启完毕")
+        else:
+            if not ability_manager.change_ability(ABILITY_NAME_FISH):
+                self.update_task_result(status=STATE_TYPE_FAILED, message="切换钓鱼能力失败")
+                return STEP_NAME_FINISH
+
 
     @register_step("开始钓鱼")
     def step2(self):
@@ -171,13 +180,16 @@ class FishingTask(TaskTemplate):
         if not self.need_stop():
             if len(self.material_count_dict) == 0:
                 self.update_task_result(message="未钓到鱼")
-                return
             else:
                 res = []
                 for fish_name, fish_weight in self.material_count_dict.items():
                     res.append(f"{fish_name}x{fish_weight}")
                 res_str = ", ".join(res)
                 self.update_task_result(message=f"获得{res_str}", data=self.material_count_dict)
+            
+            if self.fishing_type == FISHING_TYPE_HOME:
+                self.log_to_gui("结束采星能力")
+                itt.right_click()
 
     def switch_fishing(self):
         if self.fishing_type == FISHING_TYPE_MIRALAND:

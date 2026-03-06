@@ -80,6 +80,10 @@
             "value": "false",
             "description": "开启扇子套衍生能力"
         },
+        "home_name": {
+            "value": "",
+            "description": "家园名称"
+        },
         "energy_cost": {
             "value": "素材激化幻境",
             "description": "默认消耗体力的幻境"
@@ -112,10 +116,6 @@
             "value": "全部",
             "description": "周本的默认目标"
         },
-        "home_name": {
-            "value": "",
-            "description": "家园名称"
-        },
         "ability_plan": {
             "value": 3,
             "description": "允许奇想盒使用第几号能力配置方案"
@@ -129,6 +129,10 @@
         "step_dig": {
             "value": "true",
             "description": "美鸭梨挖掘"
+        },
+        "step_home_task": {
+            "value": "true",
+            "description": "家园日常，钓星+点赞+收集星实"
         },
         "step_weekly_realm": {
             "value": "true",

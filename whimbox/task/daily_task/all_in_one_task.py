@@ -17,6 +17,7 @@ from whimbox.task.daily_task.xinghai_run_task import XinghaiRunTask
 
 DEFAULT_STEP_CONFIG = [
     ("step_dig", "step_dig", "美鸭梨挖掘"),
+    ("step_home_task", "step_home_task", "家园日常"),
     ("step_weekly_realm", "step2", "每周幻境"),
     ("step_zhaoxi", "step3", "朝夕心愿"),
     ("step_xinghai_run", "step4", "星光结晶收集"),
@@ -196,6 +197,15 @@ class AllInOneTask(TaskTemplate):
         dig_task = daily_task.DigTaskV2(session_id=self.session_id)
         task_result = dig_task.task_run()
         self._set_default_step_result("step_dig", task_result)
+
+    @register_step("开始家园日常")
+    def step_home_task(self):
+        if global_config.get("OneDragon", "home_name") == "":
+            self.log_to_gui("请先前往一条龙配置中，设置家园名称", is_error=True)
+        else:
+            task = AutoPathTask(session_id=self.session_id, path_name="家园日常"),
+            task_result = task.task_run()
+            self._set_default_step_result("step_home_task", task_result)
 
     @register_step("检查是否在家园")
     def step_check_in_home(self):

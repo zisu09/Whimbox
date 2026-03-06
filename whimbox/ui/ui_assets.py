@@ -147,7 +147,7 @@ TextDeliveryBottle = Text("投递", cap_area = AreaPickup)
 GameImgStarCrystal = GameImg(name="T_UI_map_img_icon_star_02")
 
 # 换装界面
-ButtonWardrobeDressDIY = Button(print_log=LOG_WHEN_TRUE, anchor=ANCHOR_LEFT_CENTER)
+ButtonWardrobeDressDIY = Button(print_log=LOG_WHEN_TRUE, threshold=0.99, anchor=ANCHOR_LEFT_CENTER)
 
 # 能力配置界面
 AreaWardrobeTab3 = Area(anchor=ANCHOR_TOP_CENTER)
@@ -166,6 +166,7 @@ IconAbilityBig = ImgIcon()    # 变大
 IconAbilityStick = ImgIcon()    # 黏黏爪
 IconAbilityFlourish = ImgIcon()    # 芳间巡游
 IconAbilityShapeshifting = ImgIcon()    # 化万相
+IconAbilityStarCollect = ImgIcon() # 采星
 AreaAbilityChange = Area(anchor=ANCHOR_RIGHT_CENTER)
 ButtonAbilitySave = Button(print_log=LOG_WHEN_TRUE, anchor=ANCHOR_BOTTOM_RIGHT)
 AreaAbilityPlanChangeButton = Area(anchor=ANCHOR_TOP_LEFT)

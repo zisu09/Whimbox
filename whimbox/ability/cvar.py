@@ -28,6 +28,7 @@ ability_hsv_icons = [
     IconAbilityStick, 
     IconAbilityFlourish,
     IconAbilityShapeshifting,
+    IconAbilityStarCollect,
 ]
 jump_ability_hsv_icons = [IconAbilityFloat, IconAbilityWing]
 
@@ -40,6 +41,7 @@ ABILITY_NAME_BIG = '变大'
 ABILITY_NAME_STICK = '黏黏爪'
 ABILITY_NAME_FLOURISH = '芳间巡游'
 ABILITY_NAME_SHAPESHIFTING = '化万相'
+ABILITY_NAME_STAR_COLLECT = '采星'
 
 ABILITY_NAME_FLOAT = '漂浮'
 ABILITY_NAME_WING = '悬羽'
@@ -56,4 +58,5 @@ icon_name_to_ability_name = {
     'IconAbilityStick': ABILITY_NAME_STICK,
     'IconAbilityFlourish': ABILITY_NAME_FLOURISH,
     'IconAbilityShapeshifting': ABILITY_NAME_SHAPESHIFTING,
+    'IconAbilityStarCollect': ABILITY_NAME_STAR_COLLECT,
 }
