@@ -44,7 +44,7 @@ FISHING_TYPE_MIRALAND = "钓鱼"
 FISHING_TYPE_HOME = "钓陨星"
 
 class FishingTask(TaskTemplate):
-    def __init__(self, session_id, fishing_type=FISHING_TYPE_MIRALAND):
+    def __init__(self, session_id, fishing_type=None):
         super().__init__(session_id=session_id, name="fishing_task")
         self.fishing_type = fishing_type # 大世界钓鱼or家园钓星
         self.material_count_dict = {}
