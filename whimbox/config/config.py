@@ -30,12 +30,9 @@ class GlobalConfig:
             return
         
         self.config_file = os.path.join(CONFIG_PATH, "config.json")
-        self.prompt_file = os.path.join(CONFIG_PATH, "prompt.txt")
         self.config = {}
-        self.prompt = ""
         self._update_user_config()
         self._load_config()
-        self._load_prompt()
         self._initialized = True
     
     def _update_user_config(self):
@@ -87,18 +84,6 @@ class GlobalConfig:
             # 保存更新后的配置
             with open(self.config_file, 'w', encoding='utf-8') as f:
                 json.dump(user_config, f, ensure_ascii=False, indent=4)
-
-        # 如果提示词不存在，就直接复制默认提示词
-        if not os.path.exists(self.prompt_file):
-            shutil.copy2(os.path.join(ASSETS_PATH, "default_prompt.txt"), self.prompt_file)
-    
-    def _load_prompt(self):
-        """加载提示词文件"""
-        if os.path.exists(self.prompt_file):
-            with open(self.prompt_file, 'r', encoding='utf-8') as f:
-                self.prompt = f.read()
-        else:
-            self.prompt = ""
 
     def _load_config(self):
         """加载配置文件"""
