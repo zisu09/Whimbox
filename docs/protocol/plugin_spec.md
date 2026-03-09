@@ -63,14 +63,6 @@ TOOL_FUNCS = {
 { "entry": "main.py" }
 ```
 
-## 4. 调用约定
-- Core 统一维护 `tool.list` / `tool.invoke`
-- 工具函数签名建议为：
-```python
-def tool_func(session_id: str, input: dict, context: dict) -> dict:
-    ...
-```
-
 ## 5. 权限建议
 可选权限：`screen` / `input` / `net` / `filesystem`
 
