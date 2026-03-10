@@ -32,7 +32,7 @@ class Agent:
             return
         self.langchain_agent = None
         self.err_msg = ""
-        self.mcp_ready = False
+        self.tools_ready = False
         self.llm = None
         self.tools = None
         self._registry = None
@@ -55,7 +55,7 @@ class Agent:
         return self._session_stop_events.get(self._active_session_id)
 
     async def start(self):
-        logger.debug("开始初始化agent")
+        logger.info("开始初始化agent")
         self.err_msg = "准备中，请稍等..."
         self.workspace.ensure()
         if self.context_builder is None:
@@ -64,6 +64,7 @@ class Agent:
             self.memory_store = MemoryStore(self.workspace.root)
         if self.session_manager is None:
             self.session_manager = ChatSessionManager(self.workspace.sessions_dir)
+        logger.info("agent wokrspace准备就绪")
 
         api_key = global_config.get("Agent", "api_key")
         if not api_key:
@@ -87,6 +88,7 @@ class Agent:
                 logger.error(self.err_msg)
 
         self._rebuild_tools()
+        logger.info("agent tools准备就绪")
 
         if self.llm and self.tools and self.context_builder and self.session_manager:
             self.langchain_agent = create_agent(
@@ -95,14 +97,14 @@ class Agent:
                 debug=DEBUG_MODE,
             )
             self.err_msg = ""
-            logger.debug("MCP AGENT 初始化完成")
+            logger.info("AGENT 初始化完成")
         else:
             self.langchain_agent = None
-            logger.error("MCP AGENT 初始化失败")
+            logger.error("AGENT 初始化失败")
 
     def is_ready(self):
         agent_ready = self.langchain_agent is not None
-        return agent_ready, self.mcp_ready, self.err_msg
+        return agent_ready, self.tools_ready, self.err_msg
 
     def request_stop(self, session_id: str):
         logger.debug(f"request_stop: session_id={session_id}")
@@ -264,11 +266,11 @@ class Agent:
     def reload_tools(self):
         self._rebuild_tools()
         if self.tools:
-            self.mcp_ready = True
+            self.tools_ready = True
             self.err_msg = ""
             logger.debug(f"插件工具重载完成: {len(self.tools)}")
         else:
-            self.mcp_ready = False
+            self.tools_ready = False
             self.err_msg = "未加载任何插件工具"
             logger.error(self.err_msg)
 
@@ -286,7 +288,7 @@ class Agent:
             image_analyzer=self._analyze_image,
         )
         self.tools = [*plugin_tools, *workspace_tools]
-        self.mcp_ready = bool(plugin_tools)
+        self.tools_ready = bool(plugin_tools)
 
     def _save_session_turn(
         self,

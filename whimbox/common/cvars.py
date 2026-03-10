@@ -8,11 +8,6 @@ from whimbox.config.config import global_config
 DEBUG_MODE = global_config.get_bool('General', 'debug') and IS_DEV_MODE
 CV_DEBUG_MODE = global_config.get_bool('General', 'cv_debug') and IS_DEV_MODE
 
-MCP_CONFIG = {
-    "port": 8333,
-    "timeout": 24*60*60,    # mcp工具调用超时时间设为24小时
-}
-
 RPC_CONFIG = {
     "host": "127.0.0.1",
     "port": 8350,
