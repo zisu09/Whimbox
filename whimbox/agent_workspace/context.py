@@ -70,9 +70,9 @@ class ContextBuilder:
 你是奇想盒AI游戏助手。
 
 ## Workspace
-- 根目录：{workspace}
-- 长期记忆：{workspace}/memory/MEMORY.md
-- 历史归档：{workspace}/memory/HISTORY.md
+你的工作目录：{workspace}
+- 长期记忆：{workspace}/memory/MEMORY.md（记录了重要的事实）
+- 历史归档：{workspace}/memory/HISTORY.md（可使用`grep_history`工具搜索）每条记录以[YYYY-MM-DD HH:MM]开头
 - skills：{workspace}/skills/<skill_name>/SKILL.md
 
 ## Guidelines

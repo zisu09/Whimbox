@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import difflib
 import json
+import re
 import shutil
 import uuid
 from threading import Event
@@ -65,6 +66,13 @@ class EditFileArgs(BaseModel):
 
 class ListDirArgs(BaseModel):
     path: str = Field(..., description="Workspace-relative directory path to inspect")
+
+
+class GrepHistoryArgs(BaseModel):
+    query: str = Field(..., description="Keyword or regular expression to search in memory/HISTORY.md.")
+    case_sensitive: bool = Field(False, description="Whether the search should be case-sensitive.")
+    regex: bool = Field(False, description="Whether query should be treated as a regular expression.")
+    max_results: int = Field(10, description="Maximum number of matching lines to return.")
 
 
 class AnalyzeImageArgs(BaseModel):
@@ -153,6 +161,48 @@ def build_workspace_tools(
 
         return _invoke_serialized(_do_list, resource_group="workspace_fs", owner_suffix="workspace_fs")
 
+    def _grep_history(
+        query: str,
+        case_sensitive: bool = False,
+        regex: bool = False,
+        max_results: int = 10,
+    ) -> str:
+        def _do_grep() -> str:
+            history_path = workspace_root / "memory" / "HISTORY.md"
+            if not history_path.exists():
+                return "memory/HISTORY.md does not exist yet."
+
+            content = history_path.read_text(encoding="utf-8")
+            if not content.strip():
+                return "memory/HISTORY.md is empty."
+
+            lines = content.splitlines()
+            limit = max(1, min(int(max_results), 50))
+            matches: list[str] = []
+
+            if regex:
+                flags = 0 if case_sensitive else re.IGNORECASE
+                pattern = re.compile(query, flags)
+                for index, line in enumerate(lines, start=1):
+                    if pattern.search(line):
+                        matches.append(f"{index}: {line}")
+                        if len(matches) >= limit:
+                            break
+            else:
+                needle = query if case_sensitive else query.lower()
+                for index, line in enumerate(lines, start=1):
+                    haystack = line if case_sensitive else line.lower()
+                    if needle in haystack:
+                        matches.append(f"{index}: {line}")
+                        if len(matches) >= limit:
+                            break
+
+            if not matches:
+                return f'No matches found in memory/HISTORY.md for "{query}".'
+            return "\n".join(matches)
+
+        return _invoke_serialized(_do_grep, resource_group="workspace_fs", owner_suffix="workspace_fs")
+
     def _analyze_image(mode: str, prompt: str, path: str | None = None) -> str:
         if image_analyzer is None:
             return json.dumps(
@@ -221,6 +271,12 @@ def build_workspace_tools(
             name="list_dir",
             description="List files and directories within the agent workspace.",
             args_schema=ListDirArgs,
+        ),
+        StructuredTool.from_function(
+            func=_grep_history,
+            name="grep_history",
+            description="Search memory/HISTORY.md for past archived events. Use this when you need to look up older conversation history that is not loaded into context.",
+            args_schema=GrepHistoryArgs,
         ),
         StructuredTool.from_function(
             func=_analyze_image,

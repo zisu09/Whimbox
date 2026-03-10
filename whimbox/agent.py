@@ -6,7 +6,7 @@ from langchain.agents import create_agent
 from langchain.chat_models import init_chat_model
 from langchain_core.messages import HumanMessage
 
-from whimbox.agent_workspace import AgentWorkspace, ContextBuilder, MemoryStore, SessionManager
+from whimbox.agent_workspace import AgentWorkspace, ContextBuilder, MemoryStore, ChatSessionManager
 from whimbox.agent_workspace.session import MessageContent, content_to_model_content, has_content
 from whimbox.agent_workspace.tools import build_workspace_tools
 from whimbox.common.logger import logger
@@ -19,7 +19,7 @@ from whimbox.common.cvars import DEBUG_MODE
 class Agent:
     _instance = None
     _initialized = False
-    _memory_window = 100
+    _memory_window = 10
 
     def __new__(cls):
         """单例模式"""
@@ -63,7 +63,7 @@ class Agent:
         if self.memory_store is None:
             self.memory_store = MemoryStore(self.workspace.root)
         if self.session_manager is None:
-            self.session_manager = SessionManager(self.workspace.sessions_dir)
+            self.session_manager = ChatSessionManager(self.workspace.sessions_dir)
 
         api_key = global_config.get("Agent", "api_key")
         if not api_key:

@@ -225,7 +225,7 @@ def _resolve_image_format(image: Image.Image, mime_type: str, path: Path) -> str
 
 
 @dataclass
-class Session:
+class ChatSession:
     session_id: str
     messages: list[dict[str, Any]] = field(default_factory=list)
     created_at: datetime = field(default_factory=datetime.now)
@@ -262,24 +262,26 @@ class Session:
         self.updated_at = datetime.now()
 
 
-class SessionManager:
+class ChatSessionManager:
+    """Persist agent conversation history under agent_workspace/sessions."""
+
     def __init__(self, sessions_dir: Path) -> None:
         self.sessions_dir = sessions_dir
         self.sessions_dir.mkdir(parents=True, exist_ok=True)
-        self._cache: dict[str, Session] = {}
+        self._cache: dict[str, ChatSession] = {}
 
     def _path_for(self, session_id: str) -> Path:
         return self.sessions_dir / f"{_safe_name(session_id)}.jsonl"
 
-    def get_or_create(self, session_id: str) -> Session:
+    def get_or_create(self, session_id: str) -> ChatSession:
         sid = session_id or "default"
         if sid in self._cache:
             return self._cache[sid]
-        session = self._load(sid) or Session(session_id=sid)
+        session = self._load(sid) or ChatSession(session_id=sid)
         self._cache[sid] = session
         return session
 
-    def save(self, session: Session) -> None:
+    def save(self, session: ChatSession) -> None:
         path = self._path_for(session.session_id)
         with path.open("w", encoding="utf-8") as handle:
             metadata = {
@@ -294,7 +296,7 @@ class SessionManager:
                 handle.write(json.dumps(message, ensure_ascii=False) + "\n")
         self._cache[session.session_id] = session
 
-    def _load(self, session_id: str) -> Session | None:
+    def _load(self, session_id: str) -> ChatSession | None:
         path = self._path_for(session_id)
         if not path.exists():
             return None
@@ -319,10 +321,15 @@ class SessionManager:
                     continue
                 messages.append(item)
 
-        return Session(
+        return ChatSession(
             session_id=session_id,
             messages=messages,
             created_at=created_at,
             updated_at=updated_at,
             last_consolidated=last_consolidated,
         )
+
+
+# Backward-compatible aliases. Prefer the explicit Chat* names in new code.
+Session = ChatSession
+SessionManager = ChatSessionManager
