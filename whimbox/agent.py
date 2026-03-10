@@ -19,7 +19,7 @@ from whimbox.common.cvars import DEBUG_MODE
 class Agent:
     _instance = None
     _initialized = False
-    _memory_window = 10
+    _memory_window = 64
 
     def __new__(cls):
         """单例模式"""

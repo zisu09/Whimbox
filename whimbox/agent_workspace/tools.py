@@ -223,9 +223,20 @@ def build_workspace_tools(
             if mode == "screenshot":
                 screenshot_dir = get_screenshot_cache_dir()
                 screenshot_path = screenshot_dir / f"{session_id or 'default'}_{uuid.uuid4().hex}.png"
-                image = itt.capture()
-                cv2.imwrite(str(screenshot_path), image)
-                resolved_path = str(screenshot_path)
+                try:
+                    image = itt.capture()
+                    cv2.imwrite(str(screenshot_path), image)
+                    resolved_path = str(screenshot_path)
+                except Exception as e:
+                    return json.dumps(
+                        {
+                            "status": "error",
+                            "message": "无所对游戏截屏，游戏可能未启动",
+                            "analysis": "",
+                        },
+                        ensure_ascii=False,
+                    )
+                
             if mode == "path":
                 if not resolved_path:
                     raise ValueError("path is required when mode is 'path'")
