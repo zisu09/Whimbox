@@ -68,7 +68,7 @@ class StartGameTask(TaskTemplate):
         retry_time = 10
         while not self.need_stop() and retry_time > 0:
             time.sleep(1)
-            text = launcher_itt.ocr_single_line(AreaLaunchButton)
+            text = launcher_itt.ocr_single_line(AreaLaunchButton).lower()
             logger.info(f"启动器按钮文字: {text}")
             if text == "":
                 retry_time -= 1
@@ -85,7 +85,7 @@ class StartGameTask(TaskTemplate):
                     if "启动" in text:
                         self.log_to_gui("更新游戏完成")
                         break
-            elif "启动" in text:
+            elif "启动" in text or "start" in text or "啟動" in text:
                 launcher_handle.set_foreground()
                 launcher_itt.move_and_click(AreaLaunchButton.center_position())
                 self.log_to_gui("点击启动游戏按钮")
