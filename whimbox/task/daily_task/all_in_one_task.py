@@ -75,7 +75,7 @@ class AllInOneTask(TaskTemplate):
         return items
 
     def _rebuild_step_order(self):
-        step_order = ["step_start_game", "step_start_magnet"]
+        step_order = ["step_start_game"]
 
         if self.default_step_enabled.get("step_dig", True):
             step_order.append("step_dig")
@@ -183,17 +183,6 @@ class AllInOneTask(TaskTemplate):
         else:
             self.update_task_result(STATE_TYPE_FAILED, task_result.message)
             return STEP_NAME_FINISH
-
-    @register_step("开启扇子套衍生能力")
-    def step_start_magnet(self):
-        should_start = global_config.get_bool("OneDragon", "start_magnet")
-        if should_start:
-            from whimbox.action.magnet import MagnetTask
-
-            magnet_task = MagnetTask(session_id=self.session_id)
-            magnet_task.task_run()
-        else:
-            self.log_to_gui("未设置开启扇子套衍生能力")
 
     @register_step("美鸭梨挖掘")
     def step_dig(self):

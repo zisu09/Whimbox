@@ -90,6 +90,17 @@ class XinghaiRunTask(TaskTemplate):
         self.target_loc = nikki_map.get_bigmap_posi()
         logger.debug(f"星光结晶地图坐标: {self.target_loc}")
 
+    @register_step("开启扇子套吸金能力")
+    def step_start_magnet(self):
+        should_start = global_config.get_bool("OneDragon", "start_magnet")
+        if should_start:
+            from whimbox.action.magnet import MagnetTask
+
+            magnet_task = MagnetTask(session_id=self.session_id)
+            magnet_task.task_run()
+        else:
+            self.log_to_gui("未设置开启扇子套衍生能力")
+
     @register_step("开始跑图收集星光结晶")
     def step3(self):
         auto_path_dict = {
