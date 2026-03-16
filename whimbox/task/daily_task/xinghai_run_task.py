@@ -39,7 +39,14 @@ class XinghaiRunTask(TaskTemplate):
         def move_map_to_right_top_corner():
             nikki_map._move_bigmap((2329, 1534))
 
-        ui_control.goto_page(page_bigmap)
+        # 加快进入地图的速度，避免结晶消失
+        itt.key_press(keybind.KEYBIND_MAP)
+        time.sleep(0.2)
+        while not self.need_stop() and not itt.get_img_existence(IconUIBigmap):
+            itt.key_press(keybind.KEYBIND_MAP)
+            time.sleep(0.2)
+        logger.info("进入地图成功")
+        
         # 阈值0.9，搜索不在当前地图画面的结晶，并点击跳转
         box = find_game_img(GameImgStarCrystal, itt.capture(), threshold=0.90, scale=1)
         if box:

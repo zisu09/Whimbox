@@ -27,9 +27,9 @@ class Map(MiniMap, BigMap):
         BigMap.__init__(self)
 
         # Set bigmap tp arguments
-        self.MAP_POSI2MOVE_POSI_RATE = 0.5  # 移动距离与力度的比例
+        self.MAP_POSI2MOVE_POSI_RATE = 0.6  # 移动距离与力度的比例
         self.BIGMAP_TP_OFFSET = 20  # 距离目标小于该误差则停止
-        self.BIGMAP_MOVE_MAX = 200  # 最大移动力度
+        self.BIGMAP_MOVE_MAX = 300  # 最大移动力度
         self.TP_RANGE = 200  # 在该像素范围内可tp
         self.MINIMAP_UPDATE_LIMIT = 0.1  # minimap更新最短时间
         self.MINIMAP_ERROR_BASE_LIMIT = 20  # minimap基本更新误差
@@ -375,7 +375,7 @@ if __name__ == '__main__':
     # position = convert_GameLoc_to_PngMapPx([-523254.75,-156153.0], MAP_NAME_MIRALAND)
     # nikki_map.bigmap_tp(position, MAP_NAME_MIRALAND)
     # 传送到星海
-    position = convert_GameLoc_to_PngMapPx([28715.5390625, 54790.9140625], MAP_NAME_STARSEA)
+    position = convert_GameLoc_to_PngMapPx([-35070.57421875, 44421.59765625], MAP_NAME_STARSEA)
     nikki_map.bigmap_tp(position, MAP_NAME_STARSEA)
     # 传送到心愿原野
     # position = convert_GameLoc_to_PngMapPx([-13172.34765625, -54273.6171875], MAP_NAME_MIRALAND)
