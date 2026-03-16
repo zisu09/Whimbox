@@ -191,11 +191,17 @@ class AutoPathTask(TaskTemplate):
         # 如果不在主界面了，可能是用户自己操作中断，或者跳进水里重置了
         need_log = True
         should_reinit = False
+        interruption_time = 0
         while not itt.get_img_existence(IconPageMainFeature):
-            should_reinit = True
-            if need_log:
-                self.log_to_gui("意外中断，等待回到主界面……", is_loading=True)
-                need_log = False
+            # 连续检测到2次中断，才进行重置
+            interruption_time += 1
+            if interruption_time <= 1:
+                pass
+            else:
+                should_reinit = True
+                if need_log:
+                    self.log_to_gui("意外中断，等待回到主界面……", is_loading=True)
+                    need_log = False
             time.sleep(1)
         if should_reinit:
             self.log_to_gui("已回到主界面，重新定位坐标")
@@ -280,7 +286,9 @@ class AutoPathTask(TaskTemplate):
                         time.sleep(2)
                 elif self.target_point.action == ACTION_FISHING:
                     if not self.path_info.test_mode:
-                        fishing_task = FishingTask(session_id=self.session_id, fishing_type=FISHING_TYPE_MIRALAND)
+                        fishing_task = FishingTask(
+                            session_id=self.session_id, 
+                            fishing_type=FISHING_TYPE_MIRALAND)
                         task_result = fishing_task.task_run()
                         self.merge_material_count_dict(task_result.data)
                     else:
@@ -288,7 +296,10 @@ class AutoPathTask(TaskTemplate):
                         time.sleep(2)
                 elif self.target_point.action == ACTION_FISHING_STAR:
                     if not self.path_info.test_mode:
-                        fishing_task = FishingTask(session_id=self.session_id, fishing_type=FISHING_TYPE_HOME)
+                        fishing_task = FishingTask(
+                            session_id=self.session_id, 
+                            fishing_type=FISHING_TYPE_HOME, 
+                            already_material_count_dict=self.material_count_dict)
                         task_result = fishing_task.task_run()
                         self.merge_material_count_dict(task_result.data)
                     else:

@@ -1,6 +1,7 @@
 ﻿import time
 from enum import Enum
 import re
+import cv2
 
 from whimbox.common.timer_module import AdvanceTimer
 from whimbox.common.utils.ui_utils import skip_to_page_main
@@ -9,7 +10,7 @@ from whimbox.interaction.interaction_core import itt
 from whimbox.ui.page_assets import page_main
 from whimbox.ui.ui import ui_control
 from whimbox.ui.ui_assets import *
-from whimbox.common.utils.img_utils import count_px_with_hsv_limit
+from whimbox.common.utils.img_utils import count_px_with_hsv_limit, process_with_hsv_limit, similar_img
 from whimbox.ability.ability import ability_manager
 from whimbox.ability.cvar import ABILITY_NAME_FISH, ABILITY_NAME_STAR_COLLECT
 from whimbox.common.logger import logger
@@ -44,10 +45,11 @@ FISHING_TYPE_MIRALAND = "钓鱼"
 FISHING_TYPE_HOME = "钓陨星"
 
 class FishingTask(TaskTemplate):
-    def __init__(self, session_id, fishing_type=None):
+    def __init__(self, session_id, fishing_type=None, already_material_count_dict=None):
         super().__init__(session_id=session_id, name="fishing_task")
         self.fishing_type = fishing_type # 大世界钓鱼or家园钓星
         self.material_count_dict = {}
+        self.already_material_count_dict = already_material_count_dict
 
     def get_fishing_type(self):
         cap = itt.capture(anchor_posi=AreaFishingIcons.position)
@@ -128,32 +130,54 @@ class FishingTask(TaskTemplate):
     def record_material(self):
         # 从“笔刷鱼×1.6kg”文本中提取鱼名，并记录数量
         # 为了和其他采集任务统一，这里不记录重量，而是个数
-        texts = itt.ocr_multiple_lines(AreaMaterialGetText)
-        for line in texts:
-            pattern = r"^(.+?)[×xX]([0-9]+(?:\.[0-9]+)?)kg$"
-            match = re.match(pattern, line)
-            if match:
-                fish_name = match.group(1)
-                self.log_to_gui(f"获得{fish_name}")
-                # 通过材料名再判断一下钓鱼类型，避免误判
-                if "陨星" in fish_name:
-                    self.fishing_type = FISHING_TYPE_HOME
-                if fish_name in self.material_count_dict:
-                    self.material_count_dict[fish_name] += 1
-                else:
-                    self.material_count_dict[fish_name] = 1
-                break
+        if self.fishing_type == FISHING_TYPE_HOME:
+            self.log_to_gui(f"获得陨星")
+            if "陨星" in self.material_count_dict:
+                self.material_count_dict["陨星"] += 1
+            else:
+                self.material_count_dict["陨星"] = 1
+        else:
+            texts = itt.ocr_multiple_lines(AreaMaterialGetText)
+            for line in texts:
+                pattern = r"^(.+?)[×xX]([0-9]+(?:\.[0-9]+)?)kg$"
+                match = re.match(pattern, line)
+                if match:
+                    fish_name = match.group(1)
+                    self.log_to_gui(f"获得{fish_name}")
+                    if fish_name in self.material_count_dict:
+                        self.material_count_dict[fish_name] += 1
+                    else:
+                        self.material_count_dict[fish_name] = 1
+                    break
 
+    def check_subability(self):
+        cap = itt.capture(anchor_posi=AreaSubAbilityButton.position)
+        lower_white = [0, 0, 230]
+        upper_white = [180, 60, 255]
+        img = process_with_hsv_limit(cap, lower_white, upper_white)
+        resize_icon = cv2.resize(IconAbilityFish.image, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_LINEAR)
+        rate = similar_img(img, resize_icon[:, :, 0], ret_mode=IMG_RATE)
+        return rate > 0.8
 
     @register_step("切换钓鱼能力")
     def step1(self):
         if self.fishing_type == FISHING_TYPE_HOME:
+            if self.already_material_count_dict:
+                if "陨星" in self.already_material_count_dict:
+                    self.update_task_result(status=STATE_TYPE_SUCCESS, message="之前已完成钓星，无需再钓")
+                    return STEP_NAME_FINISH 
             if not ability_manager.change_ability(ABILITY_NAME_STAR_COLLECT):
                 self.update_task_result(status=STATE_TYPE_FAILED, message="切换采星能力失败")
                 return STEP_NAME_FINISH
             else:
                 itt.right_click()
-                itt.delay(0.5, comment="等待采星能力开启完毕")
+                itt.delay(2, comment="等待采星能力开启完毕")
+                if not self.check_subability():
+                    self.update_task_result(STATE_TYPE_SUCCESS, message="当前位置无法钓星")
+                    itt.right_click()
+                    return STEP_NAME_FINISH
+                else:
+                    self.material_count_dict["陨星"] = 0
         else:
             if not ability_manager.change_ability(ABILITY_NAME_FISH):
                 self.update_task_result(status=STATE_TYPE_FAILED, message="切换钓鱼能力失败")
@@ -188,6 +212,7 @@ class FishingTask(TaskTemplate):
                 self.update_task_result(message=f"获得{res_str}", data=self.material_count_dict)
             
             if self.fishing_type == FISHING_TYPE_HOME:
+                itt.delay(2, comment="等待钓星彻底结束")
                 self.log_to_gui("结束采星能力")
                 itt.right_click()
 
@@ -281,10 +306,11 @@ class FishingTask(TaskTemplate):
 
 if __name__ == "__main__":
     # # CV_DEBUG_MODE = True
-    task = FishingTask(session_id="debug")
-    # task.task_run()
-    from whimbox.common.utils.img_utils import IMG_RATE
-    while True:
-        time.sleep(1)
-        print(task.get_fishing_type())
+    task = FishingTask(session_id="debug", fishing_type=FISHING_TYPE_HOME)
+    # task.check_subability()
+    task.task_run()
+    # from whimbox.common.utils.img_utils import IMG_RATE
+    # while True:
+    #     time.sleep(1)
+    #     print(task.get_fishing_type())
 
