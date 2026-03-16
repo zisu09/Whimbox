@@ -1,15 +1,15 @@
 ﻿"""
 路线记录（开发者工具）
 """
+import time
+import os
 
 from whimbox.task.task_template import TaskTemplate, register_step
 from whimbox.ui.ui import ui_control
 from whimbox.ui.page_assets import *
-import time
 from whimbox.common.path_lib import *
-from whimbox.map.map import nikki_map
+from whimbox.map.map import nikki_map, MAP_NAME_HOME
 from threading import Lock
-import os
 from whimbox.task.navigation_task.rdp import rdp_optimize
 from whimbox.task.navigation_task.common import *
 from whimbox.view_and_move.move import *
@@ -113,6 +113,8 @@ class RecordPathTask(TaskTemplate):
         name = f"我的路线_{date_str}"
         json_name = f"{name}.json"
         region_name, map_name = nikki_map.update_region_and_map_name(use_cache=True)
+        if map_name == MAP_NAME_HOME:
+            region_name = MAP_NAME_HOME
         # 将坐标转换为游戏原生坐标，便于永久保存
         for pp in self.path_point_list:
             position = convert_PngMapPx_to_GameLoc(pp.position, map_name, decimal=2)

@@ -122,7 +122,10 @@ class ScriptsManager:
         for _, path_record in self.path_dict.items():
             match = True
             
-            if (not show_default) and (path_record.info.name.startswith("朝夕心愿_") or path_record.info.name.startswith("星海拾光_")):
+            if (not show_default) and (
+                path_record.info.name.startswith("朝夕心愿_") 
+                or path_record.info.name.startswith("星海拾光_")
+                or path_record.info.name.startswith("家园日常")):
                 match = False
 
             if name is not None:
@@ -267,7 +270,10 @@ class ScriptsManager:
             # 模糊匹配
             res = []
             for macro_name, macro_record in self.macro_dict.items():
-                if (not show_default) and (macro_record.info.name.startswith("朝夕心愿_") or macro_record.info.name.startswith("星海拾光_")):
+                if (not show_default) and (
+                    macro_record.info.name.startswith("朝夕心愿_") 
+                    or macro_record.info.name.startswith("星海拾光_")
+                    or macro_record.info.name.startswith("家园日常")):
                     continue
                 if name.lower() in macro_name.lower():
                     if macro_record.info.type == "乐谱" and is_play_music:
@@ -288,7 +294,10 @@ class ScriptsManager:
         # 返回所有宏
         res = []
         for _, macro_record in self.macro_dict.items():
-            if (not show_default) and (macro_record.info.name.startswith("朝夕心愿_") or macro_record.info.name.startswith("星海拾光_")):
+            if (not show_default) and (
+                macro_record.info.name.startswith("朝夕心愿_") 
+                or macro_record.info.name.startswith("星海拾光_")
+                or macro_record.info.name.startswith("家园日常")):
                 continue
             if macro_record.info.type == "乐谱" and is_play_music:
                 if return_one:
