@@ -150,7 +150,7 @@ TextDeliveryBottle = Text("投递", cap_area = AreaPickup)
 GameImgStarCrystal = GameImg(name="T_UI_map_img_icon_star_02")
 
 # 换装界面
-ButtonWardrobeDressDIY = Button(print_log=LOG_WHEN_TRUE, threshold=0.99, anchor=ANCHOR_LEFT_CENTER)
+IconWardrobeFeature = ImgIcon(print_log=LOG_WHEN_TRUE, threshold=0.99, anchor=ANCHOR_TOP_CENTER)
 
 # 能力配置界面
 AreaWardrobeTab3 = Area(anchor=ANCHOR_TOP_CENTER)
