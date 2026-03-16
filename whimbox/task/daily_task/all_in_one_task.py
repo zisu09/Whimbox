@@ -102,12 +102,12 @@ class AllInOneTask(TaskTemplate):
         status = getattr(task_result, "status", "")
         if status == STATE_TYPE_SUCCESS:
             self.default_step_states[key] = STEP_RESULT_SUCCESS
-            self.log_to_gui(task_result.message)
+            # self.log_to_gui(task_result.message)
         elif status == STATE_TYPE_STOP:
             self.default_step_states[key] = STEP_RESULT_SKIPPED
         else:
             self.default_step_states[key] = STEP_RESULT_FAILED
-            self.log_to_gui(task_result.message, is_error=True)
+            # self.log_to_gui(task_result.message, is_error=True)
 
     def _append_custom_step_result(self, step, status, message=""):
         self.custom_step_results.append(
