@@ -250,11 +250,16 @@ class TaskTemplate:
                 self.error_step.state.msg = str(e)
                 self.current_step = self.error_step
                 self.update_task_result(status=STATE_TYPE_ERROR, message=self.error_step.state.msg)
-                self.log_to_gui(self.error_step.state.msg, is_error=True)
                 logger.error(traceback.format_exc())
         
         finally:
             self.handle_finally()
+            if self.task_result.status in [STATE_TYPE_ERROR, STATE_TYPE_FAILED]:
+                self.log_to_gui(self.task_result.message, is_error=True)
+            elif self.task_result.status == STATE_TYPE_STOP:
+                self.log_to_gui(self.task_result.message, is_stopped=True)
+            else:
+                self.log_to_gui(self.task_result.message)
             return self.task_result
 
 
@@ -292,6 +297,8 @@ class TaskTemplate:
 
 
     def log_to_gui(self, msg, is_error=False, is_stopped=False, is_loading=False, type="update_ai_message"):
+        if not msg:
+            return
         raw_message = msg
         if is_stopped:
             msg = f"🛑 {msg}"

@@ -412,16 +412,19 @@ if __name__ == "__main__":
     #     print(itt.get_img_existence(IconDungeonFeature, ret_mode=IMG_RATE))
     #     time.sleep(1)
     # back_to_page_main()
-    # CV_DEBUG_MODE = True
-    # from whimbox.ui.material_icon_assets import material_icon_dict
+    CV_DEBUG_MODE = True
+    from whimbox.ui.material_icon_assets import material_icon_dict
     # material_name = "纯真丝线"
-    # material_name = "玉簪蚱蜢"
-    # target = material_icon_dict[material_name]["icon"]
+    material_name = "扣扣毛球"
+    target = material_icon_dict[material_name]["icon"]
     # scroll_find_click(AreaBigMapMaterialSelect, target, threshold=0.8, scale=0.45)
     # cap = itt.capture(posi=AreaDigItemSelect.position)
     # find_game_img(target, cap, threshold=0.7, scale=0.46)
     # cap = itt.capture(posi=AreaBigMapMaterialSelect.position)
     # find_game_img(target, cap, threshold=0.9, scale=0.45)
+    scroll_find_click(AreaJihuaCostSelect, target, threshold=0.70, scale=0.5)
+    # cap = itt.capture(AreaJihuaCostSelect.position)
+    # find_game_img(target, cap, threshold=0.73, scale=0.5)
 
     # hsv_limit = [np.array([0, 0, 100]), np.array([180, 60, 255])]
     # # scroll_find_click(AreaDigMainTypeSelect, IconMaterialTypeMonster, threshold=0.85, hsv_limit=hsv_limit, scale=1.233)
@@ -432,6 +435,6 @@ if __name__ == "__main__":
     # cap = cv2.imread(r"D:\workspaces\python\Whimbox\tools\snapshot\1768526354.406669.png")
     # print(find_game_img(GameImgStarCrystal, cap, threshold=0.70, scale=1, count=3))
     
-    print(get_daily_reward(AreaXhsgRewards))
+    # print(get_daily_reward(AreaXhsgRewards))
 
     
