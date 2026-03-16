@@ -59,14 +59,18 @@ class Track:
             AreaBigMapMaterialTypeSelect, 
             material_type_icon, 
             threshold=0.75, 
-            hsv_limit=([0, 0, 230], [180, 60, 255])
-        )
+            hsv_limit=([0, 0, 230], [180, 60, 255]))
         if not result:
             raise Exception("材料类别选择失败")
         
         # 选择材料
         time.sleep(0.2) # 等待类别切换完成
-        result = scroll_find_click(AreaBigMapMaterialSelect, material_icon, threshold=0.8, scale=0.45)
+        result = scroll_find_click(
+            AreaBigMapMaterialSelect, 
+            material_icon, 
+            threshold=0.8, 
+            scale=0.45, 
+            scroll_distance=10)
         if not result:
             raise Exception("材料选择失败")
 
@@ -166,13 +170,13 @@ material_track = Track()
 
 if __name__ == "__main__":
     CV_DEBUG_MODE = True
-    # material_track.change_tracking_material("发卡蚱蜢")
+    material_track.change_tracking_material("美甲金龟")
     # while True:
     #     print(material_track.get_material_track_degree())
     #     time.sleep(0.2)
-    while True:
-        res = material_track.get_material_track_degree()
-        if not res:
-            input("no material near")
-        # material_track.is_ability_active()
-        time.sleep(0.2)
+    # while True:
+    #     res = material_track.get_material_track_degree()
+    #     if not res:
+    #         input("no material near")
+    #     # material_track.is_ability_active()
+    #     time.sleep(0.2)
