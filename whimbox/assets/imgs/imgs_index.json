@@ -159,7 +159,7 @@
     "rel_path": "imgs\\Windows\\General\\AreaSubAbilityButton.png"
   },
   "AreaTextJihuatai": {
-    "rel_path": "imgs\\Windows\\UI\\huanjing\\jihua\\AreaTextJihuatai.png"
+    "rel_path": "imgs\\Windows\\UI\\huanjing\\jihua\\AreaTextJihuatai.jpg"
   },
   "AreaUIJihuaSelect": {
     "rel_path": "imgs\\Windows\\UI\\huanjing\\jihua\\AreaUIJihuaSelect.jpg"
@@ -362,9 +362,6 @@
   "ButtonPhotoDeleteConfirm": {
     "rel_path": "imgs\\Windows\\UI\\photo\\ButtonPhotoDeleteConfirm.png"
   },
-  "ButtonWardrobeDressDIY": {
-    "rel_path": "imgs\\Windows\\UI\\wardrobe\\ButtonWardrobeDressDIY.png"
-  },
   "ButtonXhsgBooklookLike": {
     "rel_path": "imgs\\Windows\\UI\\xhsg\\ButtonXhsgBooklookLike.png"
   },
@@ -562,6 +559,9 @@
   },
   "IconUILoading": {
     "rel_path": "imgs\\Windows\\UI\\IconUILoading.png"
+  },
+  "IconWardrobeFeature": {
+    "rel_path": "imgs\\Windows\\UI\\wardrobe\\IconWardrobeFeature.png"
   },
   "IconXhsgFeature": {
     "rel_path": "imgs\\Windows\\UI\\xhsg\\IconXhsgFeature.png"

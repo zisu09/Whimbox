@@ -58,7 +58,7 @@
         "openai",
         "anthropic",
         "google_genai",
-        "deepseek",
+        "deepseek（如果不行，请使用openai兼容API）",
         "ollama"
     ]
 }
