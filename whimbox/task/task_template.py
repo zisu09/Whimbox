@@ -254,12 +254,12 @@ class TaskTemplate:
         
         finally:
             self.handle_finally()
-            if self.task_result.status in [STATE_TYPE_ERROR, STATE_TYPE_FAILED]:
-                self.log_to_gui(self.task_result.message, is_error=True)
-            elif self.task_result.status == STATE_TYPE_STOP:
-                self.log_to_gui(self.task_result.message, is_stopped=True)
-            else:
-                self.log_to_gui(self.task_result.message)
+            # 如果是子任务，就打印任务结果，顶层任务会由最外层统一打印
+            if not self.is_top_level_task:
+                if self.task_result.status in [STATE_TYPE_ERROR, STATE_TYPE_FAILED]:
+                    self.log_to_gui(self.task_result.message, is_error=True)
+                elif self.task_result.status == STATE_TYPE_SUCCESS:
+                    self.log_to_gui(self.task_result.message)
             return self.task_result
 
 
