@@ -84,7 +84,7 @@ class JihuaTask(TaskTemplate):
             if not material_info["jihua"]:
                 self.log_to_gui(f"{cost_material}不能用于激化，尝试使用备选素材", is_error=True)
                 continue
-            if not scroll_find_click(AreaJihuaCostSelect, material_info["icon"], threshold=0.73, scale=0.5):
+            if not scroll_find_click(AreaJihuaCostSelect, material_info["icon"], threshold=0.70, scale=0.5):
                 self.log_to_gui(f"未找到消耗材料{cost_material}，尝试使用备选素材", is_error=True)
                 continue
             return
