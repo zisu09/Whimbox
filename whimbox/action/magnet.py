@@ -10,6 +10,7 @@ class MagnetTask(TaskTemplate):
     
     @register_step("开启化万相小技能")
     def step1(self):
+        ability_manager.reinit()
         if not ability_manager.change_ability(ABILITY_NAME_SHAPESHIFTING):
             self.update_task_result(status=STATE_TYPE_FAILED, message="切换化万相能力失败")
             return STEP_NAME_FINISH
