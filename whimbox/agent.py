@@ -76,6 +76,8 @@ class Agent:
             try:
                 self._model_name = str(global_config.get("Agent", "model") or "")
                 self._model_provider = str(global_config.get("Agent", "model_provider") or "")
+                if self._model_provider.startswith("deepseek"):
+                    self._model_provider = "deepseek"
                 self.llm = init_chat_model(
                     model=self._model_name,
                     model_provider=self._model_provider,
