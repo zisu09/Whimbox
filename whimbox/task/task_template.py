@@ -281,6 +281,12 @@ class TaskTemplate:
         if not self.stop_flag.is_set():
             self.stop_flag.set()
         self.update_task_result(status=STATE_TYPE_STOP, message=message or "任务已停止", data=data)
+
+        # 如果手动停止任务，就清空一下视角转速，因为有可能是因为视角乱转而导致用户手动停止了任务
+        # 暂时没想到更合适的，判断视角转速是否计算错误的方法了
+        from whimbox.view_and_move.view import reset_view_rotation_ratio
+        reset_view_rotation_ratio()
+
         logger.info(f"停止任务: {self.name}")
 
     def need_stop(self):

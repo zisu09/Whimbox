@@ -45,6 +45,9 @@ def get_safe_rotation(last_angle=None, offset=5):
     return angle_list[-1]
 
 
+def reset_view_rotation_ratio():
+    config["view_rotation_ratio"] = 1
+
 def calibrate_view_rotation_ratio(offset=5):
     """校准视角旋转比例"""
     if config["view_rotation_ratio"] != 1:
