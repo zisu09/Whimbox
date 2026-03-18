@@ -192,19 +192,16 @@ class AllInOneTask(TaskTemplate):
 
     @register_step("开始家园日常")
     def step_home_task(self):
-        if global_config.get("OneDragon", "home_name") == "":
-            self.log_to_gui("请先前往一条龙配置中，设置家园名称", is_error=True)
-        else:
-            home_task = AutoPathTask(session_id=self.session_id, path_name="家园日常")
-            task_result = home_task.task_run()
-            self._set_default_step_result("step_home_task", task_result)
+        home_task = AutoPathTask(session_id=self.session_id, path_name="家园日常")
+        task_result = home_task.task_run()
+        self._set_default_step_result("step_home_task", task_result)
 
     @register_step("检查是否在家园")
     def step_check_in_home(self):
         from whimbox.map.map import nikki_map
-
-        nikki_map.reinit_smallmap()
-        if nikki_map.map_name in [MAP_NAME_UNSUPPORTED, MAP_NAME_HOME]:
+        if not nikki_map.small_map_init_flag:
+            nikki_map.reinit_smallmap()
+        if nikki_map.map_name == MAP_NAME_HOME:
             self.log_to_gui("传送到大世界")
             loc = convert_GameLoc_to_PngMapPx([-13172.34765625, -54273.6171875], MAP_NAME_MIRALAND)
             nikki_map.bigmap_tp(loc, MAP_NAME_MIRALAND)

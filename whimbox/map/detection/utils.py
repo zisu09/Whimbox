@@ -4,13 +4,13 @@ from whimbox.common.utils.asset_utils import *
 from whimbox.map.detection.cvars import *
 
 def trans_region_name_to_map_name(region_name):
-    home_name = global_config.get("OneDragon", "home_name")
-    if region_name == home_name:
+    if region_name in UNSUPPORTED_REGIN_LIST:
+        return MAP_NAME_UNSUPPORTED
+    else:
+        for map_name, region_names in REGION_NAME_TO_MAP_NAME_DICT.items():
+            if region_name in region_names:
+                return map_name
         return MAP_NAME_HOME
-    for map_name, region_names in REGION_NAME_TO_MAP_NAME_DICT.items():
-        if region_name in region_names:
-            return map_name
-    return MAP_NAME_UNSUPPORTED
 
 
 class MapAsset(AssetBase):

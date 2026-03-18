@@ -1,24 +1,25 @@
-# PROVINCE_NAMES = [
-#     "心愿原野",
-#     "星海",
-#     "家园",
-# ]
-
 MAP_NAME_UNSUPPORTED = "unsupported"
 MAP_NAME_MIRALAND = "miraland"
 MAP_NAME_STARSEA = "starsea"
 # MAP_NAME_WISHFIELD = "wishfield"
 # MAP_NAME_ITZALAN = "itzalan"
-# MAP_NAME_FIREWORK = "firework"  # 花焰群岛
-# MAP_NAME_SERNITY = "sernity"    # 无忧岛
-# MAP_NAME_DANQING_OUTSIDE = "danqing_outside"    # 丹青屿
-# MAP_NAME_DANQING_INSIDE = "danqing_inside"      # 丹青之境
+MAP_NAME_FIREWORK = "firework"  # 花焰群岛
+MAP_NAME_SERNITY = "sernity"    # 无忧岛
+MAP_NAME_DANQING = "danqing"    # 丹青屿
+MAP_NAME_WANXIANG = "wanxiang"  # 万相境
 MAP_NAME_HOME = "home"
+REGION_NAME_HOME = "家园"
 
 REGION_NAME_TO_MAP_NAME_DICT = {
-    MAP_NAME_MIRALAND: ["纪念山地", "花愿镇", "微风绿野", "小石树田村", "石树田无人区", "祈愿树林", "巨木之森", "伊地峡谷"],
+    MAP_NAME_MIRALAND: ["纪念山地", "花愿镇", "微风绿野", "小石树田村", "石树田无人区", "祈愿树林", "巨木之森", "伊地峡谷", "蜗牛城"],
     MAP_NAME_STARSEA: ["星海"],
+    MAP_NAME_FIREWORK: ["花焰群岛"],
+    MAP_NAME_SERNITY: ["无忧岛"],
+    MAP_NAME_DANQING: ["丹青屿"],
+    MAP_NAME_WANXIANG: ["万相境"],
 }
+
+UNSUPPORTED_REGIN_LIST = ["蜗牛城", "花焰群岛", "无忧岛", "丹青屿", "万相境"]
 
 GAMELOC_TO_PNGMAP_SCALE = 2/90
 GAMELOC_TO_PNGMAP_OFFSET_DICT = {

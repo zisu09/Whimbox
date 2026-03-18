@@ -110,8 +110,10 @@ class Map(MiniMap, BigMap):
         else:
             hsv_lower = [0, 0, 0]
             hsv_upper = [180, 255, 180] # hsv阈值处理，排除地图背景图案和文字的干扰
-            self.region_name= itt.ocr_single_line(AreaBigMapRegionName, padding=50, hsv_limit=(hsv_lower, hsv_upper))
+            self.region_name = itt.ocr_single_line(AreaBigMapRegionName, padding=50, hsv_limit=(hsv_lower, hsv_upper))
             self.map_name = trans_region_name_to_map_name(self.region_name)
+            if self.map_name == MAP_NAME_HOME:
+                self.region_name = REGION_NAME_HOME
             return self.region_name, self.map_name
 
 
@@ -120,15 +122,18 @@ class Map(MiniMap, BigMap):
         self.update_region_and_map_name()
         if self.map_name == MAP_NAME_UNSUPPORTED:
             self.init_position((0, 0))
+            self.small_map_init_flag = True
+            self.last_valid_position = self.position
+            self.smallmap_upd_timer.reset()
             return False
         else:
             posi = self.get_bigmap_posi()
             self.init_position(tuple(map(int, list(posi))))
-        # ui_control.goto_page(page_main)
-        self.small_map_init_flag = True
-        self.last_valid_position = self.position
-        self.smallmap_upd_timer.reset()
-        return True
+            # ui_control.goto_page(page_main)
+            self.small_map_init_flag = True
+            self.last_valid_position = self.position
+            self.smallmap_upd_timer.reset()
+            return True
 
     def get_smallmap_from_teleporter(self, area=None):
         if area == None:
@@ -260,10 +265,6 @@ class Map(MiniMap, BigMap):
             if dist < min_dist:
                 min_teleporter = checkpoint
                 min_dist = dist
-        if map_name == MAP_NAME_HOME:
-            home_name = global_config.get("OneDragon", "home_name")
-            min_teleporter.region = home_name
-            min_teleporter.province = home_name
         return min_teleporter
 
     def _switch_to_area(self, tp_province, tp_region):
@@ -275,38 +276,49 @@ class Map(MiniMap, BigMap):
                 AreaBigMapRegionSelect.click(target_box=box)
                 time.sleep(0.5)
 
-        home_name = global_config.get("OneDragon", "home_name")
         # 判断当前区域是否是目标区域
-        current_region, _ = self.update_region_and_map_name()
-        if current_region != tp_region:
-            # 不是目标区域，就进行区域选择
+        if tp_region == REGION_NAME_HOME:
+            # 如果目标区域是家园，则特殊处理，因为家园的名字不是固定的，使用图标进行判断
             AreaBigMapRegionName.click()
             time.sleep(0.5)
-            text_box_dict = itt.ocr_and_detect_posi(AreaBigMapRegionSelect)
-            if tp_province not in text_box_dict or tp_province in ["星海", home_name]:
-                # 如果目标province不在当前页面，说明当前province不是目标，就滑动并点击展开
-                if not scroll_find_click(AreaBigMapRegionSelect, tp_province):
-                    return False
+            if scroll_find_click(AreaBigMapRegionSelect, IconBigMapHomeFeature, threshold=IconBigMapHomeFeature.threshold):
+                self.region_name = REGION_NAME_HOME
+                self.map_name = MAP_NAME_HOME
                 itt.wait_until_stable()
-            else:
-                # 如果目标province在当前页面，需要判断是否已经展开
-                if tp_province == "心愿原野":
-                    expand_province_dropdown(tp_province, "纪念山地", text_box_dict)
-                elif tp_province == "伊赞之土":
-                    expand_province_dropdown(tp_province, "巨木之森", text_box_dict)
-
-            if tp_province in ["星海", home_name]:
-                self.update_region_and_map_name()
                 return True
             else:
-                if scroll_find_click(AreaBigMapRegionSelect, tp_region):
+                return False
+        else:
+            current_region, _ = self.update_region_and_map_name()
+            if current_region != tp_region:
+                # 不是目标区域，就进行区域选择
+                AreaBigMapRegionName.click()
+                time.sleep(0.5)
+                text_box_dict = itt.ocr_and_detect_posi(AreaBigMapRegionSelect)
+                if tp_province not in text_box_dict or tp_province in ["星海"]:
+                    # 如果目标province不在当前页面，说明当前province不是目标，就滑动并点击展开
+                    if not scroll_find_click(AreaBigMapRegionSelect, tp_province):
+                        return False
                     itt.wait_until_stable()
+                else:
+                    # 如果目标province在当前页面，需要判断是否已经展开
+                    if tp_province == "心愿原野":
+                        expand_province_dropdown(tp_province, "纪念山地", text_box_dict)
+                    elif tp_province == "伊赞之土":
+                        expand_province_dropdown(tp_province, "巨木之森", text_box_dict)
+
+                if tp_province in ["星海"]:
                     self.update_region_and_map_name()
                     return True
                 else:
-                    return False
-        else:
-            return True
+                    if scroll_find_click(AreaBigMapRegionSelect, tp_region):
+                        itt.wait_until_stable()
+                        self.update_region_and_map_name()
+                        return True
+                    else:
+                        return False
+            else:
+                return True
 
     def bigmap_tp(self, posi: list, map_name: str) -> t.Tuple[float, float]:
         """传送到指定坐标。
@@ -318,8 +330,6 @@ class Map(MiniMap, BigMap):
             TianLiPosition: _description_
         """
         logger.debug(f'bigmap tp to: {posi}')
-        if map_name == MAP_NAME_HOME and global_config.get("OneDragon", "home_name") == "":
-            raise Exception("家园名称未设置，请先前往一条龙配置中设置")
         ui_control.ensure_page(page_bigmap)
         target_teleporter = self.find_closest_teleporter(posi, map_name)
         tp_posi = target_teleporter.position

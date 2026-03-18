@@ -80,10 +80,6 @@
             "value": "false",
             "description": "收集结晶时开启扇子套吸金能力"
         },
-        "home_name": {
-            "value": "",
-            "description": "家园名称"
-        },
         "energy_cost": {
             "value": "素材激化幻境",
             "description": "默认消耗体力的幻境"
