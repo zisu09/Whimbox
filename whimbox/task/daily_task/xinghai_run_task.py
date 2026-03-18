@@ -32,9 +32,11 @@ class XinghaiRunTask(TaskTemplate):
         def move_map(dst_posi):
             itt.move_to(dst_posi)
             itt.left_down()
+            time.sleep(0.1)
             itt.move_to((1920/2, 1080/2), anchor=ANCHOR_CENTER, smooth=True)
-            time.sleep(0.5)
+            time.sleep(0.1)
             itt.left_up()
+            time.sleep(0.1)
 
         def move_map_to_right_top_corner():
             nikki_map._move_bigmap((2329, 1534))
@@ -77,22 +79,31 @@ class XinghaiRunTask(TaskTemplate):
                     move_map_to_right_top_corner()
                 else:
                     logger.info("星光结晶就在当前画面，不需要任何操作")
-        # 移动地图后，再次识别当前地图画面的结晶
-        boxes = find_game_img(GameImgStarCrystal, itt.capture(), threshold=0.70, scale=1, count=3)
-
-        if boxes and len(boxes) > 0:
-            centers = [area_center(box) for box in boxes]
-            # 计算三个box的中心坐标（重心）
-            triangle_center_x = sum(center[0] for center in centers) / len(centers)
-            triangle_center_y = sum(center[1] for center in centers) / len(centers)
-            triangle_center = (triangle_center_x, triangle_center_y)
-            logger.debug(f"星光结晶中心坐标: {triangle_center}")
-        else:
-            self.update_task_result(status=STATE_TYPE_FAILED, message="地图上未找到星光结晶")
-            return "step_finish"
         
-        # 拖到屏幕中心
-        move_map(triangle_center)
+        first_try_find = True
+        while not self.need_stop():
+            # 移动地图后，再次识别当前地图画面的结晶
+            boxes = find_game_img(GameImgStarCrystal, itt.capture(), threshold=0.70, scale=1, count=3)
+
+            if boxes and len(boxes) > 0:
+                centers = [area_center(box) for box in boxes]
+                # 计算三个box的中心坐标（重心）
+                triangle_center_x = sum(center[0] for center in centers) / len(centers)
+                triangle_center_y = sum(center[1] for center in centers) / len(centers)
+                triangle_center = (triangle_center_x, triangle_center_y)
+                logger.debug(f"星光结晶中心屏幕坐标: {triangle_center}")
+                if euclidean_distance(triangle_center, itt.get_screen_center()) < 30:
+                    break
+            else:
+                if first_try_find:
+                    self.update_task_result(status=STATE_TYPE_FAILED, message="地图上未找到星光结晶")
+                    return "step_finish"
+                else:
+                    break
+            first_try_find = False
+            
+            # 拖到屏幕中心
+            move_map(triangle_center)
 
         self.target_loc = nikki_map.get_bigmap_posi()
         logger.debug(f"星光结晶地图坐标: {self.target_loc}")
@@ -102,7 +113,7 @@ class XinghaiRunTask(TaskTemplate):
     def step3(self):
         auto_path_dict = {
             "星海拾光_星光结晶收集_星梦群屿": (2865.0, 2155.0), 
-            "星海拾光_星光结晶收集_泡泡梦屿": (3100.0, 1900.0),
+            "星海拾光_星光结晶收集_泡泡梦屿": (3082.0, 1893.0), # 已校准
             "星海拾光_星光结晶收集_泡泡梦屿2": (3140, 1960),
             "星海拾光_星光结晶收集_无界枢纽": (1665.0, 2030.0),
             "星海拾光_星光结晶收集_晶簇之谷": (2247.0, 1495.0), # 已校准
@@ -111,7 +122,7 @@ class XinghaiRunTask(TaskTemplate):
             "星海拾光_星光结晶收集_繁星之滨2": (2375, 1605),
         }
         for path_name, loc in auto_path_dict.items():
-            if euclidean_distance(self.target_loc, loc) < 35:
+            if euclidean_distance(self.target_loc, loc) < 50:
 
                 should_start = global_config.get_bool("OneDragon", "start_magnet")
                 if should_start:

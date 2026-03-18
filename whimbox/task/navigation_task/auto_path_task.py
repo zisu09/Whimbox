@@ -142,6 +142,7 @@ class AutoPathTask(TaskTemplate):
         self.curr_position = nikki_map.get_position(use_cache=True)
         # 初始化能力盘
         ability_manager.reinit()
+        self.log_to_gui(f"开始跑图「{self.path_info.name}」")
 
 
     @register_step("自动跑图中……")
@@ -478,7 +479,7 @@ class AutoPathTask(TaskTemplate):
 
 
 if __name__ == "__main__":
-    task = AutoPathTask(session_id="debug", path_name="星海拾光_星光结晶收集_大舞台")
+    task = AutoPathTask(session_id="debug", path_name="巨森码头无限刷怪")
     task_result = task.task_run()
     print(task_result.to_dict())
 

@@ -106,7 +106,7 @@ class InteractionNormal(InteractionTemplate):
         """
         # 根据距离自动调整步数
         distance = (dx**2 + dy**2) ** 0.5
-        steps = max(10, int(distance / 20))  # 每20像素一步，最少10步
+        steps = max(2, int(distance / 5))  # 每5像素一步，最少2步
         
         step_x = dx / steps
         step_y = dy / steps
@@ -132,12 +132,12 @@ class InteractionNormal(InteractionTemplate):
         distance = (dx**2 + dy**2) ** 0.5
         
         # 如果距离很小，直接移动
-        if distance < 20:
+        if distance < 5:
             win32api.SetCursorPos((target_x, target_y))
             return
         
         # 根据距离自动调整步数
-        steps = max(2, int(distance / 20))  # 每20像素一步，最少2步
+        steps = max(2, int(distance / 5))  # 每5像素一步，最少2步
         delay = duration / steps
         
         # 分步移动

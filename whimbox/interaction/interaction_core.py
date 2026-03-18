@@ -83,6 +83,15 @@ class InteractionBGD:
             return ret
         return ret
 
+    def get_screen_center(self):
+        resolution = self.capture_obj.resolution
+        if resolution:
+            x = 1920/2
+            y = 1920/2 * resolution[0]/resolution[1]
+            print(x, y)
+            return(int(x), int(y))
+        else:
+            return (1920/2, 1080/2)
 
     def ocr_single_line(self, area: posi_manager.Area, padding=50, hsv_limit=None) -> str:
         cap = self.capture(anchor_posi = area.position)
