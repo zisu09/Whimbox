@@ -5,6 +5,8 @@ from whimbox.common.logger import logger
 from whimbox.common.notification import send_notification
 from whimbox.rpc_server import notify_event
 from whimbox.common.scripts_manager import scripts_manager
+from whimbox.task.common_task.start_game_task import StartGameTask
+from whimbox.task.common_task.goto_ui_task import GotoUITask
 from whimbox.task.daily_task import (
     JihuaTask,
     BlessTask,
@@ -198,6 +200,15 @@ def run_all_in_one(session_id: str, input: Dict[str, Any], context: Dict[str, An
     return TaskAdapter.run(AllInOneTask, session_id, input, context)
 
 
+def run_start_game(session_id: str, input: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+    return TaskAdapter.run(StartGameTask, session_id, input, context)
+
+
+@_with_game_check
+def run_goto_ui(session_id: str, input: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+    return TaskAdapter.run(GotoUITask, session_id, input, context)
+
+
 @_with_game_check
 def run_monthly_pass(session_id: str, input: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
     return TaskAdapter.run(MonthlyPassTask, session_id, input, context)
@@ -238,6 +249,8 @@ TOOL_FUNCS = {
     "nikki.open_path_folder": run_open_path_folder,
     "nikki.daily_photo": run_daily_photo,
     "nikki.all_in_one": run_all_in_one,
+    "nikki.start_game": run_start_game,
+    "nikki.goto_ui": run_goto_ui,
     "nikki.monthly_pass": run_monthly_pass,
     "nikki.weekly_realm": run_weekly_realm,
     "nikki.xinghai": run_xinghai,

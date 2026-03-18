@@ -143,6 +143,24 @@
       "output_schema": { "type": "object", "properties": { "status": { "type": "string" }, "message": { "type": "string" }, "data": {} } }
     },
     {
+      "id": "nikki.start_game",
+      "name": "打开游戏",
+      "description": "自动帮用户打开游戏",
+      "input_schema": { "type": "object", "properties": {}, "required": [] },
+      "output_schema": { "type": "object", "properties": { "status": { "type": "string" }, "message": { "type": "string" }, "data": {} } }
+    },
+    {
+      "id": "nikki.goto_ui",
+      "name": "前往指定界面",
+      "description": "前往指定界面",
+      "input_schema": {
+        "type": "object",
+        "properties": { "page_name": { "type": "string", "description": "界面名称，只支持输入：主界面，地图，美鸭梨，活动大厅，换装" } },
+        "required": ["page_name"]
+      },
+      "output_schema": { "type": "object", "properties": { "status": { "type": "string" }, "message": { "type": "string" }, "data": {} } }
+    },
+    {
       "id": "nikki.monthly_pass",
       "name": "临取大月卡奖励",
       "description": "领取奇迹之旅（大月卡）奖励",

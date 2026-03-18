@@ -32,7 +32,7 @@ class UI():
     def get_current_page(self):
         ret_page = None
         title_text = itt.ocr_single_line(area=AreaPageTitleFeature, hsv_limit=([0, 0, 220], [179, 35, 255]))
-        for page in ui_pages:
+        for page in ui_page_dict.values():
             if isinstance(page, TitlePage):
                 if page.title == title_text:
                     ret_page = page

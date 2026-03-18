@@ -31,31 +31,31 @@ page_event = TitlePage("活动大厅")
 page_setting = TitlePage("设置")
 page_play_music = TitlePage("演奏")
 
-ui_pages = [
-    page_main,
-    page_chat,
-    page_bigmap,
-    page_daily_task,
-    page_zxxy,
-    page_xhsg,
-    page_esc,
-    page_photo,
-    page_huanjing,
-    page_huanjing_jihua,
-    page_huanjing_bless,
-    page_huanjing_monster,
-    page_huanjing_weekly,
-    page_monthly_pass,
-    page_event,
-    page_setting,
-    page_dress,
-    page_ability,
-    page_daily_reward_1,
-    page_daily_reward_2,
-    page_shop,
-    page_gacha,
-    page_play_music,
-]
+ui_page_dict = {
+    "主界面": page_main,
+    "聊天": page_chat,
+    "地图": page_bigmap,
+    "奇想日历": page_daily_task,
+    "朝夕心愿": page_zxxy,
+    "星海拾光": page_xhsg,
+    "美鸭梨": page_esc,
+    "拍照": page_photo,
+    "幻境挑战": page_huanjing,
+    "素材激化幻境": page_huanjing_jihua,
+    "祝福闪光幻境": page_huanjing_bless,
+    "魔物试炼幻境": page_huanjing_monster,
+    "心之突破幻境": page_huanjing_weekly,
+    "奇迹之旅": page_monthly_pass,
+    "活动大厅": page_event,
+    "设置": page_setting,
+    "换装": page_dress,
+    "能力配置": page_ability,
+    "小月卡临取1": page_daily_reward_1,
+    "小月卡临取1": page_daily_reward_2,
+    "商城": page_shop,
+    "共鸣": page_gacha,
+    "演奏": page_play_music,
+}
 
 page_main.link(keybind.KEYBIND_CHAT, page_chat)
 page_main.link(keybind.KEYBIND_MAP, page_bigmap)
