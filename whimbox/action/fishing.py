@@ -227,7 +227,11 @@ class FishingTask(TaskTemplate):
     def fishing_loop(self):
         # 等待进入钓鱼状态
         is_started = False
+        wrong_timer = AdvanceTimer(5) # 5秒没进入钓鱼状态，说明没甩进水里
+        wrong_timer.start()
         while not self.need_stop():
+            if wrong_timer.reached():
+                return FishingResult.WRONG_POSITION
             current_state = self.get_current_state()
             if current_state != FishingState.FINISH:
                 # 因为有可能被“后台任务-自动钓鱼”调用，已经抛竿进入等待状态，就不需要再右键了
