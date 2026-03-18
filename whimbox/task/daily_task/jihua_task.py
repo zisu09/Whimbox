@@ -45,8 +45,11 @@ class JihuaTask(TaskTemplate):
 
     @register_step("正在前往激化台")
     def step3(self):
-        itt.wait_until_stable(threshold=0.95, timeout=2)
+        itt.delay(2, comment="稍等片刻，等待进入幻境加载界面")
+        itt.wait_until_stable(threshold=0.97, timeout=2)
         ui_control.ui_additional()
+        logger.info("加载结束，已进入幻境")
+
         if not wait_until_appear(IconPageMainFeature, retry_time=10):
             raise Exception("未进入素材激化幻境")
         
