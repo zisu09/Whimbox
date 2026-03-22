@@ -93,5 +93,27 @@ class TaskManager:
                     stopped.append(task.to_dict())
         return stopped
 
+    def has_active(self, session_id: str | None = None) -> bool:
+        with self._lock:
+            for task in self._tasks.values():
+                if task.state not in {"PENDING", "RUNNING"}:
+                    continue
+                if session_id is not None and task.session_id != session_id:
+                    continue
+                return True
+        return False
+
+    def stop_active_for_session(self, session_id: str) -> list[Dict[str, Any]]:
+        stopped: list[Dict[str, Any]] = []
+        with self._lock:
+            for task in self._tasks.values():
+                if task.session_id != session_id:
+                    continue
+                if task.state not in {"PENDING", "RUNNING"}:
+                    continue
+                task.stop_event.set()
+                stopped.append(task.to_dict())
+        return stopped
+
 
 task_manager = TaskManager()

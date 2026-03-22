@@ -12,16 +12,19 @@ from whimbox.common.cvars import RPC_CONFIG, has_foreground_task
 from whimbox.common.logger import logger
 from whimbox.config.config import global_config
 from whimbox.agent import whimbox_agent
+from whimbox.event_bus import set_notifier
 from whimbox.plugin_runtime import get_registry, init_plugins, get_loaded_plugins, get_plugins_version
 from whimbox.rpc_method_groups import (
     UNHANDLED,
     handle_background_method,
     handle_config_method,
     handle_script_method,
+    handle_weixin_method,
 )
 from whimbox.agent_workspace.session import compose_user_content, has_content
 from whimbox.session_manager import session_manager
 from whimbox.task_manager import task_manager
+from whimbox.weixin_service import weixin_service
 
 
 _clients: Set[Any] = set()
@@ -870,6 +873,10 @@ async def _dispatch(method: str, params: Dict[str, Any]) -> Any:
     if result is not UNHANDLED:
         return result
 
+    result = await handle_weixin_method(method, params)
+    if result is not UNHANDLED:
+        return result
+
     raise NotImplementedError(f"method not found: {method}")
 
 
@@ -945,6 +952,8 @@ async def start_rpc_server():
     logger.info(f"RPC server listening on ws://{host}:{port}")
     global _loop
     _loop = asyncio.get_running_loop()
+    set_notifier(notify_event)
+    asyncio.create_task(weixin_service.auto_restore())
     _start_overlay_hotkey_listener()
     async with websockets.serve(_ws_handler, host, port, max_size=10 * 1024 * 1024):
         await asyncio.Future()

@@ -96,7 +96,7 @@ class Agent:
             self.langchain_agent = create_agent(
                 model=self.llm,
                 tools=self.tools,
-                debug=DEBUG_MODE,
+                # debug=DEBUG_MODE,
             )
             self.err_msg = ""
             logger.info("AGENT 初始化完成")
@@ -134,7 +134,20 @@ class Agent:
             )
         return results
 
-    async def query_agent(self, message_content: MessageContent, thread_id="default", stream_callback=None, status_callback=None):
+    def is_tool_running(self, session_id: str | None = None) -> bool:
+        if session_id is None:
+            return bool(self._tool_running_sessions)
+        sid = session_id or "default"
+        return sid in self._tool_running_sessions
+
+    async def query_agent(
+        self,
+        message_content: MessageContent,
+        thread_id="default",
+        stream_callback=None,
+        status_callback=None,
+        model_turn_callback=None,
+    ):
         if not self.langchain_agent:
             err_msg = self.err_msg or "Agent 未就绪，请先完成初始化。"
             if status_callback:
@@ -170,6 +183,7 @@ class Agent:
 
         async def _run_stream():
             nonlocal full_response, active_tool_calls
+            current_model_response = ""
             async for event in self.langchain_agent.astream_events(input_payload):
                 event_type = event.get("event")
                 data = event.get("data", {})
@@ -182,6 +196,7 @@ class Agent:
                     content = self._extract_chunk_text(data.get("chunk"))
                     if content:
                         full_response += content
+                        current_model_response += content
                         if stream_callback and content.strip():
                             stream_callback(content)
 
@@ -212,8 +227,14 @@ class Agent:
                         status_callback("on_tool_error", tool_name, {"error": error})
 
                 elif event_type == "on_chat_model_start":
+                    current_model_response = ""
                     if status_callback:
                         status_callback("generating", "", None)
+
+                elif event_type == "on_chat_model_end":
+                    if model_turn_callback and current_model_response.strip():
+                        model_turn_callback(current_model_response)
+                    current_model_response = ""
 
                 elif event_type == "on_chain_end":
                     final_content = self._extract_output_text(data.get("output"))

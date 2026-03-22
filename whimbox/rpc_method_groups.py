@@ -9,6 +9,7 @@ from whimbox.common.scripts_manager import scripts_manager
 from whimbox.config.config import global_config
 from whimbox.config.default_config import DEFAULT_CONFIG
 from whimbox.task.background_task import BackgroundFeature, background_manager
+from whimbox.weixin_service import weixin_service
 
 
 UNHANDLED = object()
@@ -153,6 +154,28 @@ def handle_background_method(method: str, params: Dict[str, Any]) -> Any:
                 params.get("feature"), bool(params.get("enabled"))
             )
         return _get_background_state()
+
+    return UNHANDLED
+
+
+async def handle_weixin_method(method: str, params: Dict[str, Any]) -> Any:
+    if method == "weixin.login.start":
+        return await weixin_service.start_login()
+
+    if method == "weixin.login.poll":
+        return await weixin_service.poll_login()
+
+    if method == "weixin.status.get":
+        return weixin_service.get_status()
+
+    if method == "weixin.monitor.start":
+        return await weixin_service.start_monitor()
+
+    if method == "weixin.monitor.stop":
+        return await weixin_service.stop_monitor()
+
+    if method == "weixin.disconnect":
+        return await weixin_service.disconnect()
 
     return UNHANDLED
 
