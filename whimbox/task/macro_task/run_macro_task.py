@@ -60,9 +60,18 @@ class RunMacroTask(TaskTemplate):
             
             elif step.type == "wait_game_page":
                 # 等待某个特定游戏页面
-                if step.target_game_page == "page_main":
-                    while not page_main.is_current_page(itt):
+                if step.target_game_page not in ui_page_dict:
+                    raise Exception(f"不支持检测「{step.target_game_page}」页面")
+                else:
+                    while not ui_control.verify_page(ui_page_dict[step.target_game_page]):
                         time.sleep(0.1)
+            
+            elif step.type == "goto_game_page":
+                # 前往某个特定游戏页面
+                if step.target_game_page not in ui_page_dict:
+                    raise Exception(f"不支持前往「{step.target_game_page}」页面")
+                else:
+                    ui_control.goto_page(ui_page_dict[step.target_game_page])
                     
         except Exception as e:
             logger.error(f"执行步骤失败: {e}, step: {step}")
@@ -151,6 +160,6 @@ class RunMacroTask(TaskTemplate):
         # 不调用父类的 handle_finally，因为不需要返回主界面
 
 if __name__ == "__main__":
-    task = RunMacroTask(session_id="debug", macro_filename="拖动测试")
+    task = RunMacroTask(session_id="debug", macro_filename="进出幻境刷怪宏")
     task.task_run()
 
