@@ -65,6 +65,16 @@ class RunMacroTask(TaskTemplate):
                 else:
                     while not ui_control.verify_page(ui_page_dict[step.target_game_page]):
                         time.sleep(0.1)
+                    self.log_to_gui(f"检测到「{step.target_game_page}」页面")
+            
+            elif step.type == "wait_not_game_page":
+                # 等待不再是特定游戏页面
+                if step.target_game_page not in ui_page_dict:
+                    raise Exception(f"不支持检测「{step.target_game_page}」页面")
+                else:
+                    while ui_control.verify_page(ui_page_dict[step.target_game_page]):
+                        time.sleep(0.1)
+                    self.log_to_gui(f"检测到退出「{step.target_game_page}」页面")
             
             elif step.type == "goto_game_page":
                 # 前往某个特定游戏页面
@@ -72,6 +82,7 @@ class RunMacroTask(TaskTemplate):
                     raise Exception(f"不支持前往「{step.target_game_page}」页面")
                 else:
                     ui_control.goto_page(ui_page_dict[step.target_game_page])
+                self.log_to_gui(f"成功进入「{step.target_game_page}」页面")
                     
         except Exception as e:
             logger.error(f"执行步骤失败: {e}, step: {step}")

@@ -41,7 +41,7 @@ class MacroInfo(ScriptInfo):
 
 # 宏脚本步骤
 class MacroStep(BaseModel):
-    type: Literal["gap", "keyboard", "mouse", "loop", "wait_game_page", "goto_game_page"]  # 操作类型
+    type: Literal["gap", "keyboard", "mouse", "loop", "wait_game_page", "wait_not_game_page", "goto_game_page"]  # 操作类型
     key: Optional[str] = None  # 键盘按键名称或鼠标按键名称
     action: Optional[Literal["press", "release"]] = None  # 按键动作：按下/松开
     position: Optional[tuple[int, int]] = None  # 鼠标位置（窗口内坐标，归一化到 width=1920）
