@@ -248,6 +248,12 @@ class Map(MiniMap, BigMap):
             #     return self._move_bigmap(target_posi=target_posi, float_posi=float_posi + 45)
             # else:
             #     return self._move_bigmap(target_posi=target_posi)
+            stop_flag = get_current_stop_flag()
+            if stop_flag.is_set():
+                return list(
+                    convert_PngMapPx_to_InGameMapPx(target_posi, self.map_name)
+                    - convert_PngMapPx_to_InGameMapPx(after_move_posi, self.map_name)
+                    + np.array([screen_center_x, screen_center_y]))
             return self._move_bigmap(target_posi=target_posi)
 
     def find_closest_teleporter(self, posi: list, map_name: str):
@@ -285,6 +291,7 @@ class Map(MiniMap, BigMap):
                 self.region_name = REGION_NAME_HOME
                 self.map_name = MAP_NAME_HOME
                 itt.wait_until_stable()
+                wait_until_appear(IconUIBigmap)
                 return True
             else:
                 return False
@@ -299,7 +306,9 @@ class Map(MiniMap, BigMap):
                     # 如果目标province不在当前页面，说明当前province不是目标，就滑动并点击展开
                     if not scroll_find_click(AreaBigMapRegionSelect, tp_province):
                         return False
-                    itt.wait_until_stable()
+                    else:
+                        itt.wait_until_stable()
+                        wait_until_appear(IconUIBigmap)
                 else:
                     # 如果目标province在当前页面，需要判断是否已经展开
                     if tp_province == "心愿原野":
@@ -313,6 +322,7 @@ class Map(MiniMap, BigMap):
                 else:
                     if scroll_find_click(AreaBigMapRegionSelect, tp_region):
                         itt.wait_until_stable()
+                        wait_until_appear(IconUIBigmap)
                         self.update_region_and_map_name()
                         return True
                     else:
