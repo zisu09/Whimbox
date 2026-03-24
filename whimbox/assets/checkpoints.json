@@ -1577,5 +1577,128 @@
                 9033.282368272
             ]
         }
+    ],
+    "wanxiang": [
+        {
+            "region": "万相境",
+            "province": "伊赞之土",
+            "map": "wanxiang",
+            "type": "teleporter",
+            "name": "九华监",
+            "position": [
+                55562.653236292,
+                30809.276126011
+            ]
+        },
+        {
+            "region": "万相境",
+            "province": "伊赞之土",
+            "map": "wanxiang",
+            "type": "teleporter",
+            "name": "九华阙",
+            "position": [
+                120863.1254818,
+                74701.37630783
+            ]
+        },
+        {
+            "region": "万相境",
+            "province": "伊赞之土",
+            "map": "wanxiang",
+            "type": "teleporter",
+            "name": "彩靥城近郊",
+            "position": [
+                56153.856565793,
+                44087.910490142
+            ]
+        },
+        {
+            "region": "万相境",
+            "province": "伊赞之土",
+            "map": "wanxiang",
+            "type": "teleporter",
+            "name": "彩靥城集市",
+            "position": [
+                42548.032709229,
+                44073.352195552
+            ]
+        },
+        {
+            "region": "万相境",
+            "province": "伊赞之土",
+            "map": "wanxiang",
+            "type": "teleporter",
+            "name": "忘忧楼",
+            "position": [
+                122848.4297826,
+                95233.333498488
+            ]
+        },
+        {
+            "region": "万相境",
+            "province": "伊赞之土",
+            "map": "wanxiang",
+            "type": "teleporter",
+            "name": "悲木空鸣地",
+            "position": [
+                70109.003337311,
+                74016.287576197
+            ]
+        },
+        {
+            "region": "万相境",
+            "province": "伊赞之土",
+            "map": "wanxiang",
+            "type": "teleporter",
+            "name": "抽签大楼",
+            "position": [
+                43740.728668534,
+                55742.997994612
+            ]
+        },
+        {
+            "region": "万相境",
+            "province": "伊赞之土",
+            "map": "wanxiang",
+            "type": "teleporter",
+            "name": "深谷幽泉",
+            "position": [
+                104502.30388766,
+                74926.692732948
+            ]
+        },
+        {
+            "region": "万相境",
+            "province": "伊赞之土",
+            "map": "wanxiang",
+            "type": "teleporter",
+            "name": "火锅坊",
+            "position": [
+                38207.18352904,
+                55379.125260074
+            ]
+        },
+        {
+            "region": "万相境",
+            "province": "伊赞之土",
+            "map": "wanxiang",
+            "type": "teleporter",
+            "name": "空鸣峡入口",
+            "position": [
+                29891.89962791,
+                57550.64567823
+            ]
+        },
+        {
+            "region": "万相境",
+            "province": "伊赞之土",
+            "map": "wanxiang",
+            "type": "teleporter",
+            "name": "迷花甸",
+            "position": [
+                41592.409060375,
+                90761.169841741
+            ]
+        }
     ]
 }

@@ -413,6 +413,9 @@
   "IconAbilityWing": {
     "rel_path": "imgs\\Windows\\UI\\wardrobe\\IconAbilityWing.png"
   },
+  "IconBigMapHomeFeature": {
+    "rel_path": "imgs\\Windows\\BigMap\\IconBigMapHomeFeature.png"
+  },
   "IconBigMapMaterialTrackTypeAnimal_bk": {
     "rel_path": "imgs\\Windows\\Material\\IconBigMapMaterialTrackTypeAnimal_bk.png"
   },
@@ -1027,6 +1030,18 @@
   },
   "w14000000_v2_mask_0125x": {
     "rel_path": "imgs\\Maps\\w14000000_v2_mask_0125x.png"
+  },
+  "w4020034": {
+    "rel_path": "imgs\\Maps\\w4020034.png"
+  },
+  "w4020034_luma_0125x": {
+    "rel_path": "imgs\\Maps\\w4020034_luma_0125x.png"
+  },
+  "w4020034_luma_05x": {
+    "rel_path": "imgs\\Maps\\w4020034_luma_05x.png"
+  },
+  "w4020034_mask_0125x": {
+    "rel_path": "imgs\\Maps\\w4020034_mask_0125x.png"
   },
   "w8000001_v1": {
     "rel_path": "imgs\\Maps\\w8000001_v1.png"

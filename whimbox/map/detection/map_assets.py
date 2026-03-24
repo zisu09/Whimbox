@@ -59,6 +59,13 @@ HomeBigMap = MapAsset("w8000001_v1_luma_0125x")
 # 家园地图，可匹配位置遮罩
 HomeBigMapMask = MapAsset("w8000001_v1_mask_0125x")
 
+# 家园地图，用于小地图位置匹配
+WanXiangMap = MapAsset("w4020034_luma_05x")
+# 家园地图，用于大地图匹配
+WanXiangBigMap = MapAsset("w4020034_luma_0125x")
+# 家园地图，可匹配位置遮罩
+WanXiangBigMapMask = MapAsset("w4020034_mask_0125x")
+
 MAP_ASSETS_DICT = {
     MAP_NAME_MIRALAND: {
         "luma_05x": MiraLandMap,
@@ -74,5 +81,10 @@ MAP_ASSETS_DICT = {
         "luma_05x": HomeMap,
         "luma_0125x": HomeBigMap,
         "mask_0125x": HomeBigMapMask
+    },
+    MAP_NAME_WANXIANG: {
+        "luma_05x": WanXiangMap,
+        "luma_0125x": WanXiangBigMap,
+        "mask_0125x": WanXiangBigMapMask
     }
 }
