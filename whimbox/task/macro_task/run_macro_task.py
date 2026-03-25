@@ -7,7 +7,9 @@ from whimbox.common.scripts_manager import *
 from whimbox.common.handle_lib import HANDLE_OBJ
 from whimbox.ui.ui import ui_control
 from whimbox.ui.page_assets import *
+from whimbox.common.timer_module import TimeoutTimer
 
+DEFAULT_TIMEOUT = 10
 
 class RunMacroTask(TaskTemplate):
     """运行宏记录的任务"""
@@ -63,18 +65,32 @@ class RunMacroTask(TaskTemplate):
                 if step.target_game_page not in ui_page_dict:
                     raise Exception(f"不支持检测「{step.target_game_page}」页面")
                 else:
-                    while not ui_control.verify_page(ui_page_dict[step.target_game_page]):
+                    timeout_timer = TimeoutTimer(DEFAULT_TIMEOUT)
+                    is_timeout = False
+                    while not ui_control.verify_page(ui_page_dict[step.target_game_page]): 
+                        if timeout_timer.istimeout():
+                            is_timeout = True
+                            self.log_to_gui(f"等待进入「{step.target_game_page}」页面超时", is_error=True)
+                            break
                         time.sleep(0.1)
-                    self.log_to_gui(f"检测到「{step.target_game_page}」页面")
+                    if not is_timeout:
+                        self.log_to_gui(f"检测到进入「{step.target_game_page}」页面")
             
             elif step.type == "wait_not_game_page":
                 # 等待不再是特定游戏页面
                 if step.target_game_page not in ui_page_dict:
                     raise Exception(f"不支持检测「{step.target_game_page}」页面")
                 else:
+                    timeout_timer = TimeoutTimer(DEFAULT_TIMEOUT)
+                    is_timeout = False
                     while ui_control.verify_page(ui_page_dict[step.target_game_page]):
+                        if not timeout_timer.istimeout():
+                            is_timeout = True
+                            self.log_to_gui(f"等待退出「{step.target_game_page}」页面超时", is_error=True)
+                            break
                         time.sleep(0.1)
-                    self.log_to_gui(f"检测到退出「{step.target_game_page}」页面")
+                    if not is_timeout:
+                        self.log_to_gui(f"检测到退出「{step.target_game_page}」页面")
             
             elif step.type == "goto_game_page":
                 # 前往某个特定游戏页面
