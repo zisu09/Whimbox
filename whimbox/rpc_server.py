@@ -691,14 +691,6 @@ async def _dispatch(method: str, params: Dict[str, Any]) -> Any:
                     level = "info"
                     message = f"✅ 任务已完成：{result_message}" if result_message else "✅ 任务已完成"
                     raw_message = result_message or "任务已完成"
-                _notify_run_status(
-                    session_id=session_id,
-                    run_id=session_id,
-                    source="agent",
-                    phase=phase,
-                    detail=detail,
-                    tool_call_id=tool_call_id,
-                )
                 _notify_run_log(
                     session_id=session_id,
                     run_id=session_id,
@@ -709,6 +701,14 @@ async def _dispatch(method: str, params: Dict[str, Any]) -> Any:
                     level=level,
                     type_="finalize_ai_message",
                 )
+                _notify_run_status(
+                    session_id=session_id,
+                    run_id=session_id,
+                    source="agent",
+                    phase=phase,
+                    detail=detail,
+                    tool_call_id=tool_call_id,
+                )
                 _agent_stopping_sessions.discard(session_id)
                 _complete_agent_tool_call_id(session_id)
             elif status_type in {"on_tool_error", "error"}:
@@ -716,14 +716,6 @@ async def _dispatch(method: str, params: Dict[str, Any]) -> Any:
                 error_message = ""
                 if isinstance(meta, dict):
                     error_message = str(meta.get("error") or "").strip()
-                _notify_run_status(
-                    session_id=session_id,
-                    run_id=session_id,
-                    source="agent",
-                    phase="error",
-                    detail=detail,
-                    tool_call_id=tool_call_id,
-                )
                 _notify_run_log(
                     session_id=session_id,
                     run_id=session_id,
@@ -733,6 +725,14 @@ async def _dispatch(method: str, params: Dict[str, Any]) -> Any:
                     tool_call_id=tool_call_id,
                     level="error",
                     type_="finalize_ai_message",
+                )
+                _notify_run_status(
+                    session_id=session_id,
+                    run_id=session_id,
+                    source="agent",
+                    phase="error",
+                    detail=detail,
+                    tool_call_id=tool_call_id,
                 )
                 _agent_stopping_sessions.discard(session_id)
                 _complete_agent_tool_call_id(session_id)
