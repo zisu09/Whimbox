@@ -11,6 +11,7 @@ agent_workspace/
 ├─ AGENTS.md
 ├─ SOUL.md
 ├─ USER.md
+├─ TOOLS.md
 ├─ memory/
 │  ├─ MEMORY.md
 │  └─ HISTORY.md
@@ -32,6 +33,9 @@ agent_workspace/
 
 - `USER.md`
   用户画像，用户可以修改此文件，让奇想盒知道你的偏好、习惯和背景信息。
+
+- `TOOLS.md`
+  工具使用规则。适合记录具体工具的调用边界、前置条件和推荐流程。
 
 - `memory/MEMORY.md`
   长期记忆。奇想盒自动记录的稳定、重要、需要长期保留的信息。

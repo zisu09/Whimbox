@@ -132,9 +132,9 @@ class ScriptsManager:
                 if name.lower() not in path_record.info.name.lower():
                     match = False
 
-            # Filter by target (exact match)
+            # Filter by target (fuzzy match)
             if target is not None:
-                if path_record.info.target != target:
+                if path_record.info.target is None or target.lower() not in path_record.info.target.lower():
                     match = False
             
             # Filter by type (exact match)
@@ -154,6 +154,41 @@ class ScriptsManager:
             return res[0] if res else None
         else:
             return res
+
+    def search_path_items(
+        self,
+        name=None,
+        target=None,
+        type=None,
+        count=None,
+        limit=5,
+        show_default=False,
+    ) -> list[dict]:
+        path_records = self.query_path(
+            name=name,
+            target=target,
+            type=type,
+            count=count,
+            show_default=show_default,
+        )
+        if not path_records:
+            return []
+
+        sorted_records = sorted(path_records, key=lambda record: record.info.name)
+        if limit is not None and limit > 0:
+            sorted_records = sorted_records[:limit]
+
+        return [
+            {
+                "path_name": path_record.info.name,
+                # "target": path_record.info.target,
+                # "type": path_record.info.type,
+                # "count": path_record.info.count,
+                # "region": path_record.info.region,
+                # "map": path_record.info.map,
+            }
+            for path_record in sorted_records
+        ]
 
     def _is_macro_type(self, script_type: Optional[str]) -> bool:
         return script_type in ("宏", "乐谱")

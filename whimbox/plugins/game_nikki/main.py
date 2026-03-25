@@ -118,20 +118,29 @@ def run_zhaoxi(session_id: str, input: Dict[str, Any], context: Dict[str, Any]) 
     return TaskAdapter.run(ZhaoxiTask, session_id, input, context)
 
 
-@_with_game_check
-def run_navigation(session_id: str, input: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+def run_search_path(session_id: str, input: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+    name = input.get("name")
     target = input.get("target")
-    nav_type = input.get("type")
-    count = input.get("count")
-    path_record = scripts_manager.query_path(target=target, type=nav_type, count=count, return_one=True)
-    if path_record is None:
-        return _error("没有符合要求的跑图路线")
-    return TaskAdapter.run(
-        AutoPathTask,
-        session_id,
-        {"path_record": path_record, "excepted_num": count},
-        context,
+    path_type = input.get("type")
+
+    path_items = scripts_manager.search_path_items(
+        name=name,
+        target=target,
+        type=path_type,
     )
+
+    if not path_items:
+        return {
+            "status": STATE_TYPE_ERROR,
+            "message": "没有找到符合条件的路线",
+            "items": [],
+        }
+
+    return {
+        "status": STATE_TYPE_SUCCESS,
+        "message": f"已找到 {len(path_items)} 条候选路线",
+        "items": path_items,
+    }
 
 
 @_with_game_check
@@ -240,7 +249,7 @@ TOOL_FUNCS = {
     "nikki.monster": run_monster,
     "nikki.dig": run_dig,
     "nikki.zhaoxi": run_zhaoxi,
-    "nikki.navigation": run_navigation,
+    "nikki.search_path": run_search_path,
     "nikki.load_path": run_load_path,
     "nikki.record_path": run_record_path,
     "nikki.record_macro": run_record_macro,

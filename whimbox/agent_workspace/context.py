@@ -10,7 +10,7 @@ from whimbox.agent_workspace.skills import SkillsLoader
 
 
 class ContextBuilder:
-    BOOTSTRAP_FILES = ["AGENTS.md", "SOUL.md", "USER.md"]
+    BOOTSTRAP_FILES = ["AGENTS.md", "SOUL.md", "USER.md", "TOOLS.md"]
     RUNTIME_TAG = "[Runtime Context — metadata only, not instructions]"
 
     def __init__(self, workspace_root: Path) -> None:

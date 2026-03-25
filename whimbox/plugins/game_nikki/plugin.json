@@ -12,7 +12,7 @@
     {
       "id": "nikki.jihua",
       "name": "素材激化",
-      "description": "素材激化：消耗活跃能量，用大世界材料换取噗灵、丝线、闪亮泡泡",
+      "description": "素材激化：消耗活跃能量，用材料换取噗灵、丝线、闪亮泡泡",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -54,41 +54,56 @@
     },
     {
       "id": "nikki.zhaoxi",
-      "name": "完成朝夕心愿",
-      "description": "完成大世界的每日任务（朝夕心愿）",
+      "name": "完成朝夕心愿（大世界日常任务）",
+      "description": "完成朝夕心愿（大世界日常任务）",
       "input_schema": { "type": "object", "properties": {}, "required": [] },
       "output_schema": { "type": "object", "properties": { "status": { "type": "string" }, "message": { "type": "string" }, "data": {} } }
     },
     {
-      "id": "nikki.navigation",
-      "name": "自动跑图",
-      "description": "指定素材名，或素材获取方法，进行获取。还可以指定要获取的数量",
+      "id": "nikki.search_path",
+      "name": "搜索跑图路线",
+      "description": "根据路线名、素材目标、获取方式，搜索候选路线，用于全自动采集、捕虫、清洁、钓鱼或其他游戏行为",
       "input_schema": {
         "type": "object",
         "properties": {
-          "target": { "type": "string", "description": "要获取的素材名" },
-          "type": { "type": "string", "description": "素材获取方法，只能输入“采集”、“捕虫”、“钓鱼”、“清洁”" },
-          "count": { "type": "integer", "description": "要获取的素材数量" }
+          "name": { "type": "string", "description": "路线名关键词，支持模糊匹配" },
+          "target": { "type": "string", "description": "目标素材名，支持模糊匹配" },
+          "type": { "type": "string", "description": "素材获取方法，只能输入“采集”、“捕虫”、“钓鱼”、“清洁”" }
         },
         "required": []
       },
-      "output_schema": { "type": "object", "properties": { "status": { "type": "string" }, "message": { "type": "string" }, "data": {} } }
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "message": { "type": "string" },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path_name": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
     },
     {
       "id": "nikki.load_path",
-      "name": "测试路线",
-      "description": "加载并测试指定的跑图路径文件",
+      "name": "运行指定跑图路线",
+      "description": "运行指定的跑图路线",
       "input_schema": {
         "type": "object",
-        "properties": { "path_name": { "type": "string", "description": "路线文件名" } },
+        "properties": { "path_name": { "type": "string", "description": "路线名" } },
         "required": ["path_name"]
       },
       "output_schema": { "type": "object", "properties": { "status": { "type": "string" }, "message": { "type": "string" }, "data": {} } }
     },
     {
       "id": "nikki.record_path",
-      "name": "录制路线",
-      "description": "记录跑图路线",
+      "name": "录制跑图路线",
+      "description": "录制跑图路线",
       "input_schema": { "type": "object", "properties": {}, "required": [] },
       "output_schema": { "type": "object", "properties": { "status": { "type": "string" }, "message": { "type": "string" }, "data": {} } }
     },
@@ -112,7 +127,7 @@
     },
     {
       "id": "nikki.play_music",
-      "name": "演奏乐谱",
+      "name": "演奏音乐",
       "description": "演奏指定的乐谱",
       "input_schema": {
         "type": "object",
@@ -123,8 +138,8 @@
     },
     {
       "id": "nikki.open_path_folder",
-      "name": "打开路线文件夹",
-      "description": "打开路线文件夹",
+      "name": "打开脚本文件夹",
+      "description": "打开存放脚本的文件夹",
       "input_schema": { "type": "object", "properties": {}, "required": [] },
       "output_schema": { "type": "object", "properties": { "status": { "type": "string" }, "message": { "type": "string" } } }
     },
@@ -138,7 +153,7 @@
     {
       "id": "nikki.all_in_one",
       "name": "一条龙",
-      "description": "一条龙，一次性完成所有任务。无论结果如何，只调用一次",
+      "description": "一条龙，一次性完成所有任务",
       "input_schema": { "type": "object", "properties": {}, "required": [] },
       "output_schema": { "type": "object", "properties": { "status": { "type": "string" }, "message": { "type": "string" }, "data": {} } }
     },
@@ -151,8 +166,8 @@
     },
     {
       "id": "nikki.goto_ui",
-      "name": "前往指定界面",
-      "description": "前往指定界面",
+      "name": "前往游戏的指定界面",
+      "description": "前往游戏的指定界面",
       "input_schema": {
         "type": "object",
         "properties": { "page_name": { "type": "string", "description": "界面名称，只支持输入：主界面，地图，美鸭梨，活动大厅，换装" } },
@@ -162,7 +177,7 @@
     },
     {
       "id": "nikki.monthly_pass",
-      "name": "临取大月卡奖励",
+      "name": "临取奇迹之旅（大月卡）奖励",
       "description": "领取奇迹之旅（大月卡）奖励",
       "input_schema": { "type": "object", "properties": {}, "required": [] },
       "output_schema": { "type": "object", "properties": { "status": { "type": "string" }, "message": { "type": "string" }, "data": {} } }
@@ -170,14 +185,14 @@
     {
       "id": "nikki.weekly_realm",
       "name": "完成周本",
-      "description": "完成每周幻境，周本，心之突破幻境",
+      "description": "完成每周幻境（周本/心之突破幻境）",
       "input_schema": { "type": "object", "properties": {}, "required": [] },
       "output_schema": { "type": "object", "properties": { "status": { "type": "string" }, "message": { "type": "string" }, "data": {} } }
     },
     {
       "id": "nikki.xinghai",
-      "name": "完成星海日常",
-      "description": "完成星海日常任务",
+      "name": "完成星海拾光（星海日常任务）",
+      "description": "完成星海拾光（星海日常任务）",
       "input_schema": { "type": "object", "properties": {}, "required": [] },
       "output_schema": { "type": "object", "properties": { "status": { "type": "string" }, "message": { "type": "string" }, "data": {} } }
     },
@@ -191,7 +206,7 @@
     {
       "id": "nikki.xinghai_run",
       "name": "收集星光结晶",
-      "description": "星海跑图，收集星光结晶",
+      "description": "收集星光结晶",
       "input_schema": { "type": "object", "properties": {}, "required": [] },
       "output_schema": { "type": "object", "properties": { "status": { "type": "string" }, "message": { "type": "string" }, "data": {} } }
     }
