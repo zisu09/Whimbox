@@ -62,13 +62,13 @@
     {
       "id": "nikki.search_path",
       "name": "搜索跑图路线",
-      "description": "根据路线名、素材目标、获取方式，搜索候选路线，用于全自动采集、捕虫、清洁、钓鱼或其他游戏行为",
+      "description": "根据路线名、素材目标、获取方式，搜索候选路线，用于全自动采集、捕虫、清洁、钓鱼、刷噗灵等各类游戏行为",
       "input_schema": {
         "type": "object",
         "properties": {
           "name": { "type": "string", "description": "路线名关键词，支持模糊匹配" },
           "target": { "type": "string", "description": "目标素材名，支持模糊匹配" },
-          "type": { "type": "string", "description": "素材获取方法，只能输入“采集”、“捕虫”、“钓鱼”、“清洁”" }
+          "type": { "type": "string", "description": "路线类型，只能输入“采集”、“捕虫”、“钓鱼”、“清洁”、“综合”" }
         },
         "required": []
       },
