@@ -396,7 +396,7 @@ class AutoPathTask(TaskTemplate):
         if self.target_point.action == ACTION_TELEPORT:
             # 记录经过的传送点，重试时可以从该传送点重试
             self.last_teleport_point_id = self.curr_target_point_id
-            if target_dist >= not_teleport_offset:
+            if euclidean_distance(self.target_point.position, self.curr_position) >= not_teleport_offset:
                 self.log_to_gui(f"传送到附近的流转之柱")
                 self.stop_move()
                 self.change_to_walk()
@@ -479,7 +479,7 @@ class AutoPathTask(TaskTemplate):
 
 
 if __name__ == "__main__":
-    task = AutoPathTask(session_id="debug", path_name="巨森码头无限刷怪")
+    task = AutoPathTask(session_id="debug", path_name="咻咻快道刷噗灵")
     task_result = task.task_run()
     print(task_result.to_dict())
 
