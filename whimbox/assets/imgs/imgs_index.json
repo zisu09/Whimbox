@@ -146,6 +146,9 @@
   "AreaMonthlyPassTab2": {
     "rel_path": "imgs\\Windows\\UI\\monthly_pass\\AreaMonthlyPassTab2.png"
   },
+  "AreaMonthlyStart": {
+    "rel_path": "imgs\\Windows\\UI\\monthly_pass\\AreaMonthlyStart.png"
+  },
   "AreaMovementWalk": {
     "rel_path": "imgs\\Windows\\General\\AreaMovementWalk.png"
   },

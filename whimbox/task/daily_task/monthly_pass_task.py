@@ -12,6 +12,11 @@ class MonthlyPassTask(TaskTemplate):
     @register_step("打开奇迹之旅")
     def step1(self):
         ui_control.goto_page(page_monthly_pass)
+        if wait_until_appear(IconSkip, retry_time=1):
+            itt.key_down(keybind.KEYBIND_INTERACTION)
+            time.sleep(3)
+            itt.key_up(keybind.KEYBIND_INTERACTION)
+            wait_until_appear_then_click(TextMonthlyStart)
     
     @register_step("领取奖励")
     def step2(self):
