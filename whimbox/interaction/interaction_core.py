@@ -332,23 +332,17 @@ class InteractionBGD:
     @before_operation()
     def left_click(self):
         """左键点击"""
-        self.operation_lock.acquire()
         self.itt_exec.left_click()
-        self.operation_lock.release()
 
     @before_operation()
     def left_down(self):
         """左键按下"""
-        self.operation_lock.acquire()
         self.itt_exec.left_down()
-        self.operation_lock.release()
 
     @before_operation()
     def left_up(self):
         """左键抬起"""
-        self.operation_lock.acquire()
         self.itt_exec.left_up()
-        self.operation_lock.release()
 
     @before_operation()
     def left_double_click(self, dt=0.05):
@@ -357,37 +351,27 @@ class InteractionBGD:
         Args:
             dt (float, optional): 间隔时间. Defaults to 0.05.
         """
-        self.operation_lock.acquire()
         self.itt_exec.left_double_click(dt=dt)
-        self.operation_lock.release()
 
     @before_operation()
     def right_down(self):
         """右键按下"""
-        self.operation_lock.acquire()
         self.itt_exec.right_down()
-        self.operation_lock.release()
 
     @before_operation()
     def right_up(self):
         """右键抬起"""
-        self.operation_lock.acquire()
         self.itt_exec.right_up()
-        self.operation_lock.release()
 
     @before_operation()
     def right_click(self):
         """右键单击"""
-        self.operation_lock.acquire()
         self.itt_exec.right_click()
-        self.operation_lock.release()
 
     @before_operation()
     def middle_click(self):
         """点击鼠标中键"""
-        self.operation_lock.acquire()
         self.itt_exec.middle_click()
-        self.operation_lock.release()
     
     @before_operation()
     def middle_scroll(self, distance):
@@ -403,7 +387,6 @@ class InteractionBGD:
         Args:
             key (str): 按键代号。查阅vkCode.py
         """
-        self.operation_lock.acquire()
         if key == "mouse_left":
             self.itt_exec.left_down()
         elif key == "mouse_right":
@@ -412,7 +395,6 @@ class InteractionBGD:
             self.itt_exec.middle_down()
         else:
             self.itt_exec.key_down(key)
-        self.operation_lock.release()
 
     @before_operation()
     def key_up(self, key):
@@ -421,7 +403,6 @@ class InteractionBGD:
         Args:
             key (str): 按键代号。查阅vkCode.py
         """
-        self.operation_lock.acquire()
         if key == "mouse_left":
             self.itt_exec.left_up()
         elif key == "mouse_right":
@@ -430,7 +411,6 @@ class InteractionBGD:
             self.itt_exec.middle_up()
         else:
             self.itt_exec.key_up(key)
-        self.operation_lock.release()
 
     @before_operation()
     def key_press(self, key):
@@ -439,7 +419,6 @@ class InteractionBGD:
         Args:
             key (str): 按键代号。查阅vkCode.py
         """
-        self.operation_lock.acquire()
         if key == "mouse_left":
             self.itt_exec.left_click()
         elif key == "mouse_right":
@@ -448,7 +427,6 @@ class InteractionBGD:
             self.itt_exec.middle_click()
         else:
             self.itt_exec.key_press(key)
-        self.operation_lock.release()
 
     @before_operation(print_log=False)
     def move_to(self, position, anchor=ANCHOR_TOP_LEFT, relative=False, smooth=False):
@@ -485,16 +463,15 @@ class InteractionBGD:
             resolution=self.capture_obj.resolution,
             anchor=anchor,
             relative=False)
+        self.operation_lock.release()
         time.sleep(delay)
-        
+
         if type == 'left':
             self.itt_exec.left_click()
         elif type == 'right':
             self.itt_exec.right_click()
         elif type == 'middle':
             self.itt_exec.middle_click()
-        
-        self.operation_lock.release()
         
             
     def save_snapshot(self, reason:str = ''):
