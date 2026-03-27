@@ -194,6 +194,8 @@ ButtonPhotoDelete = Button(print_log=LOG_WHEN_TRUE, anchor=ANCHOR_BOTTOM_LEFT)
 ButtonPhotoDeleteConfirm = Button(print_log=LOG_WHEN_TRUE, anchor=ANCHOR_CENTER)
 
 # 大月卡，奇迹之旅
+AreaMonthlyStart = Area(anchor=ANCHOR_CENTER)
+TextMonthlyStart = Text("开启探索", cap_area=AreaMonthlyStart)
 ButtonMonthlyPassAward = Button(print_log=LOG_WHEN_TRUE, anchor=ANCHOR_CENTER)
 AreaMonthlyPassTab1 = Area(anchor=ANCHOR_TOP_CENTER)
 TextMonthlyPassTab1 = Text("旅行秘宝", cap_area=AreaMonthlyPassTab1)

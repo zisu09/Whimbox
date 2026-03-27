@@ -192,6 +192,8 @@ class TaskTemplate:
                     back_to_page_main()
                     self.task_result = TaskResult() # 重置一下任务结果
                     res = self._task_run()
+                    if res.status == STATE_TYPE_ERROR:
+                        back_to_page_main()
                     return res
                 else:
                     return res
