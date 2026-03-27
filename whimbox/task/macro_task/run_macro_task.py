@@ -9,7 +9,7 @@ from whimbox.ui.ui import ui_control
 from whimbox.ui.page_assets import *
 from whimbox.common.timer_module import TimeoutTimer
 
-DEFAULT_TIMEOUT = 10
+DEFAULT_TIMEOUT = 20
 
 class RunMacroTask(TaskTemplate):
     """运行宏记录的任务"""
