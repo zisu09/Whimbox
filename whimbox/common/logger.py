@@ -43,11 +43,14 @@ delete_files(LOG_PATH, 7)
 logger.remove(handler_id=None)
 logger.warning_once = types.MethodType(warning_once, logger)
 logger.demo = types.MethodType(demo, logger)
-logger.add(os.path.join(LOG_PATH, log_file_prefix + "{time:YYYY-MM-DD}.log"), level="TRACE", backtrace=True)
+logger.add(
+    os.path.join(LOG_PATH, log_file_prefix + "{time:YYYY-MM-DD}.log"),
+    level="TRACE",
+    backtrace=True,
+    enqueue=True,
+)
 if DEBUG_MODE:
-    logger.add(sys.stdout, level="TRACE", backtrace=True)
-else:
-    logger.add(sys.stdout, level="INFO", backtrace=True)
+    logger.add(sys.stdout, level="TRACE", backtrace=True, enqueue=True)
 
 def hr(title, level=3):
     title = str(title).upper()
