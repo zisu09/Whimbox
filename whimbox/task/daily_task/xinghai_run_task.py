@@ -69,7 +69,7 @@ class XinghaiRunTask(TaskTemplate):
                     itt.move_and_click(area_center(box))
                     itt.wait_until_stable(threshold=0.9995)
                 else:
-                    logger.info("跳转过去时，结晶已经消失")
+                    logger.info("结晶已经消失")
         else:
             # 如果没有，可能已经在当前湖面，可能被右上角地图ui覆盖无法识别
             box =  find_game_img(GameImgStarCrystal, itt.capture(), threshold=0.70, scale=1)
