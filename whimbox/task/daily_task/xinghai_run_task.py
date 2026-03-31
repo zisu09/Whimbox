@@ -60,13 +60,16 @@ class XinghaiRunTask(TaskTemplate):
                 logger.info("星光结晶不在当前地图画面，点击跳转")
                 # 点击y轴第二个结晶图标，尽量保证跳转到结晶的中心
                 boxes = find_game_img(GameImgStarCrystal, itt.capture(), threshold=0.90, scale=1, count=3)
-                if boxes and len(boxes) > 1:
-                    boxes.sort(key=lambda x: x[1])
-                    box = boxes[1]
+                if boxes:
+                    if len(boxes) == 1:
+                        box = boxes[0]
+                    elif len(boxes) > 1:
+                        boxes.sort(key=lambda x: x[1])
+                        box = boxes[1]
+                    itt.move_and_click(area_center(box))
+                    itt.wait_until_stable(threshold=0.9995)
                 else:
-                    box = boxes[0]
-                itt.move_and_click(area_center(box))
-                itt.wait_until_stable(threshold=0.9995)
+                    logger.info("跳转过去时，结晶已经消失")
         else:
             # 如果没有，可能已经在当前湖面，可能被右上角地图ui覆盖无法识别
             box =  find_game_img(GameImgStarCrystal, itt.capture(), threshold=0.70, scale=1)
