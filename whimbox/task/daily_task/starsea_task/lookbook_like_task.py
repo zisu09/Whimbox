@@ -23,7 +23,7 @@ class LookbookLikeTask(TaskTemplate):
     @register_step("随机点赞")
     def step2(self):
         itt.move_and_click((1920/2, 1080/2))
-        itt.delay(1, comment="等待页面稳定")
+        itt.delay(2, comment="等待页面稳定")
         itt.wait_until_stable(threshold=0.98)
         if wait_until_appear_then_click(ButtonXhsgBooklookLike):
             pass
