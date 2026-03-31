@@ -39,6 +39,7 @@ class Agent:
         self._active_session_id = "default"
         self._session_stop_events = {}
         self._tool_running_sessions = set()
+        self._current_tool_by_session = {}
         self._session_stream_tasks = {}
         self._consolidation_locks = {}
         self._consolidation_tasks = {}
@@ -140,6 +141,12 @@ class Agent:
         sid = session_id or "default"
         return sid in self._tool_running_sessions
 
+    def get_running_tool(self, session_id: str | None = None) -> str:
+        if session_id is None:
+            return ""
+        sid = session_id or "default"
+        return str(self._current_tool_by_session.get(sid) or "")
+
     async def query_agent(
         self,
         message_content: MessageContent,
@@ -206,6 +213,7 @@ class Agent:
                     if tool_name and tool_name not in tools_used:
                         tools_used.append(tool_name)
                     self._tool_running_sessions.add(session_id)
+                    self._current_tool_by_session[session_id] = tool_name
                     if status_callback:
                         status_callback("on_tool_start", tool_name, None)
 
@@ -213,6 +221,7 @@ class Agent:
                     active_tool_calls = max(0, active_tool_calls - 1)
                     tool_name = event.get("name", "")
                     self._tool_running_sessions.discard(session_id)
+                    self._current_tool_by_session.pop(session_id, None)
                     if status_callback:
                         status_callback("on_tool_end", tool_name, {"output": data.get("output")})
 
@@ -221,6 +230,7 @@ class Agent:
                     error = data.get("error", "")
                     tool_name = event.get("name", "")
                     self._tool_running_sessions.discard(session_id)
+                    self._current_tool_by_session.pop(session_id, None)
                     if stream_callback:
                         stream_callback(f"❌ 任务失败: {error}\n")
                     if status_callback:
@@ -258,6 +268,7 @@ class Agent:
             self._session_stream_tasks.pop(session_id, None)
             self._session_stop_events.pop(session_id, None)
             self._tool_running_sessions.discard(session_id)
+            self._current_tool_by_session.pop(session_id, None)
 
         if stop_event.is_set() and not full_response.strip():
             full_response = "已停止当前对话。"

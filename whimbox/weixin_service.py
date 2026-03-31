@@ -16,8 +16,8 @@ from urllib.request import Request, urlopen
 from whimbox.channel_gateway import (
     ChannelInboundMessage,
     ChannelReplyHandle,
-    DEFAULT_SESSION_ID,
     handle_inbound_message,
+    resolve_channel_session_id,
 )
 from whimbox.common.logger import logger
 from whimbox.common.path_lib import CONFIG_PATH
@@ -319,7 +319,7 @@ class WeixinService:
             channel="weixin",
             sender_id=sender_id,
             text=text,
-            session_id=DEFAULT_SESSION_ID,
+            session_id=resolve_channel_session_id(),
             reply=reply,
         )
         await handle_inbound_message(message)

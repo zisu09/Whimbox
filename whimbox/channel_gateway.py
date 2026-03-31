@@ -6,6 +6,8 @@ from typing import Any
 
 from whimbox.agent import whimbox_agent
 from whimbox.event_bus import emit_event
+from whimbox.plugin_runtime import get_registry
+from whimbox.session_manager import session_manager
 from whimbox.task_manager import task_manager
 
 
@@ -35,8 +37,55 @@ class ChannelInboundMessage:
     attachments: list[dict[str, Any]] = field(default_factory=list)
 
 
+def resolve_channel_session_id(session_id: str | None = None) -> str:
+    candidate = str(session_id or "").strip()
+    if candidate and candidate != DEFAULT_SESSION_ID:
+        return candidate
+
+    existing_session = session_manager.find_default_session()
+    existing_session_id = str((existing_session or {}).get("session_id") or "").strip()
+    if existing_session_id:
+        return existing_session_id
+
+    created_session = session_manager.create(name="default", profile="default")
+    return created_session.session_id
+
+
 def is_session_busy(session_id: str) -> bool:
     return whimbox_agent.is_tool_running(session_id) or task_manager.has_active(session_id)
+
+
+def _resolve_tool_display_name(tool_id: str) -> str:
+    resolved_tool_id = str(tool_id or "").strip()
+    if not resolved_tool_id:
+        return ""
+    try:
+        registry = get_registry()
+        for item in registry.list_tools():
+            if str(item.get("tool_id") or "").strip() == resolved_tool_id:
+                return str(item.get("name") or resolved_tool_id).strip()
+    except Exception:
+        pass
+    return resolved_tool_id
+
+
+def describe_session_activity(session_id: str) -> str:
+    active_tasks = task_manager.get_active_for_session(session_id)
+    if active_tasks:
+        tool_id = str(active_tasks[0].get("tool_id") or "").strip()
+        task_name = _resolve_tool_display_name(tool_id)
+        if task_name:
+            return f"当前已有任务在运行：{task_name}。请先发送“停止”或等待任务结束。"
+        return "当前已有任务在运行，请先发送“停止”或等待任务结束。"
+
+    running_tool = str(whimbox_agent.get_running_tool(session_id) or "").strip()
+    if running_tool:
+        return f"当前正在调用工具：{running_tool}。请先发送“停止”或等待任务结束。"
+
+    if whimbox_agent.is_tool_running(session_id):
+        return "当前正在调用工具，请先发送“停止”或等待任务结束。"
+
+    return "当前正在处理上一条消息。请先发送“停止”或等待任务结束。"
 
 
 def stop_session_work(session_id: str) -> dict[str, Any]:
@@ -101,7 +150,8 @@ def _broadcast_agent_status(session_id: str, phase: str, detail: str = "") -> No
 
 
 async def handle_inbound_message(message: ChannelInboundMessage) -> None:
-    session_id = message.session_id or DEFAULT_SESSION_ID
+    session_id = resolve_channel_session_id(message.session_id)
+    message.session_id = session_id
     text = _normalize_text(message.text)
     if not text:
         await message.reply.send_error("暂不支持该消息类型，请发送文本指令。")
@@ -118,7 +168,7 @@ async def handle_inbound_message(message: ChannelInboundMessage) -> None:
         return
 
     if is_session_busy(session_id):
-        await message.reply.send_text("当前已有任务在运行，请先发送“停止”或等待任务结束。")
+        await message.reply.send_text(describe_session_activity(session_id))
         return
 
     outbound_tasks: list[asyncio.Task[Any]] = []

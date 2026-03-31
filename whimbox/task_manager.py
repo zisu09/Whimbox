@@ -103,6 +103,21 @@ class TaskManager:
                 return True
         return False
 
+    def get_active_for_session(self, session_id: str) -> list[Dict[str, Any]]:
+        active: list[Dict[str, Any]] = []
+        with self._lock:
+            for task in self._tasks.values():
+                if task.session_id != session_id:
+                    continue
+                if task.state not in {"PENDING", "RUNNING"}:
+                    continue
+                active.append(task.to_dict())
+        active.sort(
+            key=lambda item: str(item.get("started_at") or item.get("created_at") or ""),
+            reverse=True,
+        )
+        return active
+
     def stop_active_for_session(self, session_id: str) -> list[Dict[str, Any]]:
         stopped: list[Dict[str, Any]] = []
         with self._lock:
