@@ -159,15 +159,15 @@ class AutoPathTask(TaskTemplate):
         self.move_controller = MoveController()
         self.jump_controller.start_threading()
         self.move_controller.start_threading()
-        # 初始化地图信息
-        self.log_to_gui("初始化地图信息")
-        nikki_map.reinit_smallmap()
-        self.curr_position = nikki_map.get_position(use_cache=True)
         # 初始化能力盘
         self.log_to_gui("初始化能力轮盘")
         need_ability_list = self.get_need_ability_list()
         _, msg = ability_manager.init_need_ability(need_ability_list)
         self.log_to_gui(msg)
+        # 初始化地图信息
+        self.log_to_gui("初始化地图信息")
+        nikki_map.reinit_smallmap()
+        self.curr_position = nikki_map.get_position(use_cache=True)
         self.log_to_gui(f"开始跑图「{self.path_info.name}」")
 
 
@@ -435,6 +435,7 @@ class AutoPathTask(TaskTemplate):
                 self.change_to_walk()
                 nikki_map.bigmap_tp(self.target_point.position, self.path_info.map)
                 self.curr_position = nikki_map.get_position()
+                self.clear_stuck()
             else:
                 ui_control.ensure_page(page_main)
             # 校准视角旋转比例
@@ -512,7 +513,7 @@ class AutoPathTask(TaskTemplate):
 
 
 if __name__ == "__main__":
-    task = AutoPathTask(session_id="debug", path_name="伊地峡谷五个钓鱼点 ( 采集+捕虫 )")
+    task = AutoPathTask(session_id="debug", path_name="万相境10个云绒玉絮树点")
     task_result = task.task_run()
     print(task_result.to_dict())
 
