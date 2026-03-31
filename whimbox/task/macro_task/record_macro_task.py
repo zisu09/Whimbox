@@ -274,6 +274,7 @@ class RecordMacroTask(TaskTemplate):
             steps=self.steps[:-2]
         )
         save_json(macro_record.model_dump(exclude_none=True), macro_filename, SCRIPT_PATH)
+        # scripts_manager.init_scripts_dict()
         logger.info(f"宏保存成功，路径：{os.path.join(SCRIPT_PATH, macro_filename)}")
         self.update_task_result(message=f"录制成功，宏文件名：{macro_filename}", force_update=True)
     

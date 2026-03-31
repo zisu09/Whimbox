@@ -348,6 +348,7 @@ class Map(MiniMap, BigMap):
 
         self.maximize_bigmap_scale()
         switch_success = self._switch_to_area(tp_province, tp_region)
+        itt.delay(0.5, comment="等待地图完全切换完成")
         self.maximize_bigmap_scale() # 切换区域后，地图缩放会变回默认，再给它放大回去
         if not switch_success:
             logger.error(f"地图切换到'{tp_province}-{tp_region}'失败")
