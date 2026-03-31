@@ -351,8 +351,9 @@ class Map(MiniMap, BigMap):
         itt.delay(0.5, comment="等待地图完全切换完成")
         self.maximize_bigmap_scale() # 切换区域后，地图缩放会变回默认，再给它放大回去
         if not switch_success:
-            logger.error(f"地图切换到'{tp_province}-{tp_region}'失败")
-            raise Exception(f"地图切换到'{tp_province}-{tp_region}'失败")
+            msg = f"地图切换到'{tp_province}-{tp_region}'失败，请确保已经解锁所有地图，比如“无忧岛、丹青屿这类”"
+            logger.error(msg)
+            raise Exception(msg)
 
         click_posi = self._move_bigmap(tp_posi)
         itt.move_and_click(click_posi, anchor=ANCHOR_CENTER)
