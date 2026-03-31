@@ -401,6 +401,9 @@
   "IconAbilityInsect": {
     "rel_path": "imgs\\Windows\\UI\\wardrobe\\IconAbilityInsect.png"
   },
+  "IconAbilityRhythms": {
+    "rel_path": "imgs\\Windows\\UI\\wardrobe\\IconAbilityRhythms.png"
+  },
   "IconAbilityShapeshifting": {
     "rel_path": "imgs\\Windows\\UI\\wardrobe\\IconAbilityShapeshifting.png"
   },
