@@ -156,7 +156,15 @@ class UI():
             if not success:
                 self.switch_ui_lock.release()
                 if retry_times >= max_retry:
-                    raise Exception(f"前往页面 {target_page} 失败")
+                    page_name = target_page.name
+                    for ch_name, page in ui_page_dict:
+                        if page.name == target_page.name:
+                            page_name = ch_name
+
+                    err_msg = f"前往页面 「{page_name}」 失败"
+                    if page_name == "能力配置":
+                        err_msg = f"前往页面 「{page_name} 」失败，请先确保接了“变强吧大喵”任务。接取该任务后，换装界面将更新成最新版"
+                    raise Exception(err_msg)
                 self.goto_page(target_page, retry_times=retry_times + 1, max_retry=max_retry)
             else:
                 logger.info(f"Successfully arrived at {target_page}")
