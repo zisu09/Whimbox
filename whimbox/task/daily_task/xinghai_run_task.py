@@ -1,6 +1,6 @@
-﻿from whimbox.task.task_template import *
+﻿from whimbox.ability.ability import ability_manager, ABILITY_NAME_SHAPESHIFTING
+from whimbox.task.task_template import *
 from whimbox.interaction.interaction_core import itt
-from whimbox.ui.ui import ui_control
 from whimbox.ui.page_assets import *
 from whimbox.map.convert import convert_GameLoc_to_PngMapPx
 from whimbox.map.map import nikki_map
@@ -124,16 +124,8 @@ class XinghaiRunTask(TaskTemplate):
         for path_name, loc in auto_path_dict.items():
             if euclidean_distance(self.target_loc, loc) < 50:
 
-                should_start = global_config.get_bool("OneDragon", "start_magnet")
-                if should_start:
-                    self.log_to_gui("开启扇子套吸金能力")
-                    from whimbox.action.magnet import MagnetTask
-                    magnet_task = MagnetTask(session_id=self.session_id)
-                    magnet_task.task_run()
-                else:
-                    self.log_to_gui("未设置开启扇子套吸金能力")
-
-                auto_path_task = AutoPathTask(session_id=self.session_id, path_name=path_name)
+                should_magnet = global_config.get_bool("OneDragon", "start_magnet")
+                auto_path_task = AutoPathTask(session_id=self.session_id, path_name=path_name, should_magnet=should_magnet)
                 task_result = auto_path_task.task_run()
                 if task_result.status == STATE_TYPE_SUCCESS:
                     self.update_task_result(status=STATE_TYPE_SUCCESS, message="收集星光结晶成功")

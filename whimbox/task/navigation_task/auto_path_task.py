@@ -20,9 +20,10 @@ from whimbox.ability.cvar import *
 
 
 class AutoPathTask(TaskTemplate):
-    def __init__(self, session_id, path_record: PathRecord=None, path_name: str=None, excepted_num=None):
+    def __init__(self, session_id, path_record: PathRecord=None, path_name: str=None, excepted_num=None, should_magnet=False):
         super().__init__(session_id=session_id, name="auto_path_task")
         self.excepted_num = excepted_num # 期望的素材数量，获取到该数量后就停止
+        self.should_magnet = should_magnet
         self.step_sleep = 0.01
         if path_record is not None:
             self.path_info = path_record.info
@@ -130,7 +131,28 @@ class AutoPathTask(TaskTemplate):
                 self.jump_controller.clear_jump_state()
 
 
-    @register_step("初始化各种信息")
+    def get_need_ability_list(self):
+        action_to_ability_map = {
+            ACTION_FLOURISH: ABILITY_NAME_FLOURISH,
+            ACTION_CATCH_INSECT: ABILITY_NAME_INSECT,
+            ACTION_CLEAN_ANIMAL: ABILITY_NAME_ANIMAL,
+            ACTION_FISHING: ABILITY_NAME_FISH,
+            ACTION_FISHING_STAR: ABILITY_NAME_STAR_COLLECT,
+            ACTION_BIG: ABILITY_NAME_BIG,
+            ACTION_SHAPESHIFTING: ABILITY_NAME_SHAPESHIFTING,
+        }
+        need_ability_set = set()
+        for point in self.path_points:
+            if point.action and point.action in action_to_ability_map:
+                need_ability_set.add(action_to_ability_map[point.action])
+        if ABILITY_NAME_FISH in need_ability_set:
+            if global_config.get_bool("OneDragon", "start_rhythms"):
+                need_ability_set.add(ABILITY_NAME_RHYTHMS)
+        if self.should_magnet:
+            need_ability_set.add(ABILITY_NAME_SHAPESHIFTING)
+        return list(need_ability_set)
+
+    @register_step("初始化中……")
     def step0(self):
         # 启动动作控制线程
         self.jump_controller = JumpController()
@@ -138,15 +160,26 @@ class AutoPathTask(TaskTemplate):
         self.jump_controller.start_threading()
         self.move_controller.start_threading()
         # 初始化地图信息
+        self.log_to_gui("初始化地图信息")
         nikki_map.reinit_smallmap()
         self.curr_position = nikki_map.get_position(use_cache=True)
         # 初始化能力盘
-        ability_manager.reinit()
+        self.log_to_gui("初始化能力轮盘")
+        need_ability_list = self.get_need_ability_list()
+        _, msg = ability_manager.init_need_ability(need_ability_list)
+        self.log_to_gui(msg)
         self.log_to_gui(f"开始跑图「{self.path_info.name}」")
 
 
     @register_step("自动跑图中……")
     def step1(self):
+
+        if self.should_magnet:
+            self.log_to_gui("提前开启扇子套小技能")
+            from whimbox.action.magnet import MagnetTask
+            magnet_task = MagnetTask(session_id=self.session_id)
+            magnet_task.task_run()
+
         while not self.need_stop():
             start_time = time.time()
             is_end = self.inner_step_update_target()
@@ -479,7 +512,7 @@ class AutoPathTask(TaskTemplate):
 
 
 if __name__ == "__main__":
-    task = AutoPathTask(session_id="debug", path_name="咻咻快道刷噗灵")
+    task = AutoPathTask(session_id="debug", path_name="伊地峡谷五个钓鱼点 ( 采集+捕虫 )")
     task_result = task.task_run()
     print(task_result.to_dict())
 

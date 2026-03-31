@@ -164,6 +164,7 @@ IconAbilityWing = ImgIcon()    # 飞鸟套跳跃
 IconAbilityAnimal = ImgIcon()    # 清洁
 IconAbilityInsect = ImgIcon()      # 捕虫
 IconAbilityFish = ImgIcon()     # 钓鱼
+IconAbilityRhythms = ImgIcon()  # 万物交响
 IconAbilityFly = ImgIcon()      # 滑翔
 IconAbilitySmall = ImgIcon()    # 变小
 IconAbilityBig = ImgIcon()    # 变大

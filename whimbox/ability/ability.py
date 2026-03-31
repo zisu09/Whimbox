@@ -30,15 +30,17 @@ class AbilityManager:
         self.ability_keymap = None
         self.jump_ability = None
         self.battle_ability = None
+        self.is_shapeshifting = False
         self._initialized = True
 
 
     def reinit(self):
-        # 每次自动跑图开始前，都应该再次初始化一遍，避免用户手动调整了能力
+        # 每次自动跑图开始前，都应该再次初始化一遍，避免用户手动调整过能力
         self.current_ability = None
         self.ability_keymap = None
         self.jump_ability = None
         self.battle_ability = None
+        self.is_shapeshifting = False
 
     def get_current_ability(self):
         cap = itt.capture(anchor_posi=AreaAbilityButton.position)
@@ -89,7 +91,7 @@ class AbilityManager:
                     if ability_name is None:
                         logger.error(f'unknown ability icon: {icon.name}')
                     else:
-                        ability_keymap[ability_name] = str(i+1)
+                        ability_keymap[ability_name] = i+1
                     break
         self.ability_keymap = ability_keymap
         return True
@@ -109,7 +111,7 @@ class AbilityManager:
             raise(f'能力方案只能是123')
     
 
-    def _set_ability(self, ability_name: str, ability_key: str):
+    def _set_ability(self, ability_name: str, ability_key):
         '''
         切换能力
         
@@ -117,36 +119,10 @@ class AbilityManager:
             ability_name: 能力名称，只能使用cvar中的ABILITY_NAME_XXX
             ability_key: 能力键位，只支持1~8和jump
         '''
+        if self.ability_keymap.get(ability_name, None) == ability_key:
+            return True
 
-        # 参数校验
-        if ability_key != 'jump':
-            if not is_int(ability_key):
-                raise(f'ability_key is not a int: {ability_key}')
-            ability_index = int(ability_key) - 1
-            if ability_index < 0 or ability_index >= len(ability_icon_centers):
-                raise(f'ability_key can only 1~8, but got {ability_key}')
-
-        # 获取当前能力配置
-        if self.jump_ability is None:
-            self._check_jump_ability()
-        if self.ability_keymap is None:
-            self._check_ability_keymap()
-
-        # 检查当前能力配置是否已经满足要求
-        if ability_key == 'jump':
-            if self.jump_ability == ability_name:
-                ui_control.goto_page(page_main)
-                return True
-        else:
-            if self.ability_keymap.get(ability_name, None) == ability_key:
-                ui_control.goto_page(page_main)
-                return True
-
-        # 开始配置能力
-        if ability_key == 'jump':
-            target_ability_icon_center = jump_ability_center
-        else:
-            target_ability_icon_center = ability_icon_centers[ability_index]
+        target_ability_icon_center = ability_icon_centers[ability_key-1]
         itt.move_and_click(target_ability_icon_center, anchor=ANCHOR_CENTER)
         time.sleep(0.2)
         # 切换能力列表展示形式
@@ -161,73 +137,97 @@ class AbilityManager:
         # 向下滚动，寻找指定的ability_name
         res = scroll_find_click(AreaAbilityChange, ability_name)
         if res:
-            itt.appear_then_click(ButtonAbilitySave)
-            if ability_key == 'jump':
-                self.jump_ability = ability_name
-            else:
-                self.ability_keymap[ability_name] = ability_key
-
-        ui_control.goto_page(page_main)
+            self.ability_keymap[ability_name] = ability_key
         return res
 
     def get_ability_keybind(self, ability_index: str):
-        if ability_index == '1':
+        if ability_index == 1:
             return keybind.KEYBIND_ABILITY_1
-        elif ability_index == '2':
+        elif ability_index == 2:
             return keybind.KEYBIND_ABILITY_2
-        elif ability_index == '3':
+        elif ability_index == 3:
             return keybind.KEYBIND_ABILITY_3
-        elif ability_index == '4':
+        elif ability_index == 4:
             return keybind.KEYBIND_ABILITY_4
-        elif ability_index == '5':
+        elif ability_index == 5:
             return keybind.KEYBIND_ABILITY_5
-        elif ability_index == '6':
+        elif ability_index == 6:
             return keybind.KEYBIND_ABILITY_6
-        elif ability_index == '7':
+        elif ability_index == 7:
             return keybind.KEYBIND_ABILITY_7
-        elif ability_index == '8':
+        elif ability_index == 8:
             return keybind.KEYBIND_ABILITY_8
         else:
             raise(f'ability_index can only 1~8, but got {ability_index}')
+
+    def init_need_ability(self, ability_name_list):
+        self.reinit()
+        if ability_name_list is None or len(ability_name_list) == 0:
+            return True, "当前路线不需要配置能力"
+        
+        if len(ability_name_list) > 8:
+            raise(f'一条路线最多只允许使用8个能力')
+
+        if len(ability_name_list) == 1:
+            ability_name = ability_name_list[0]
+            self.current_ability = self.get_current_ability()
+            if self.current_ability == ability_name:
+                return True, "当前能力已满足路线需求"
+
+        ui_control.goto_page(page_ability)
+        self._check_ability_keymap()
+        is_satisfied = True
+        for ability_name in ability_name_list:
+            if not ability_name in self.ability_keymap:
+                is_satisfied = False
+                break
+        if is_satisfied:
+            ui_control.goto_page(page_main)
+            return True, "当前能力轮盘已满足路线需求"
+        else:
+            self.ability_keymap = {}
+            self.current_ability = None
+            # 根据配置文件，配置到对应的方案
+            ability_plan = global_config.get_int("OneDragon", "ability_plan")
+            self._change_ability_plan(ability_plan)
+            itt.wait_until_stable(threshold=0.99)
+            # 检查当前能力键位
+            self._check_ability_keymap()
+            need_set_ability_name_list = []
+            already_key_set = set()
+            for ability_name in ability_name_list:
+                if ability_name not in self.ability_keymap:
+                    need_set_ability_name_list.append(ability_name)
+                else:
+                    already_key_set.add(self.ability_keymap[ability_name])
+            # 剩余可配置能力的键位
+            remain_key_set = set(range(1, 9))
+            remain_key_list = list(remain_key_set - already_key_set)
+            # 配置未配置的能力
+            for need_set_ability_name in need_set_ability_name_list:
+                self._set_ability(need_set_ability_name, remain_key_list.pop())
+            # 点击保存按钮
+            itt.appear_then_click(ButtonAbilitySave)
+            ui_control.goto_page(page_main)
+            return True, "配置能力轮盘成功"
 
     def change_ability(self, ability_name: str):
         # 如果当前能力已经符合，就直接返回
         if self.current_ability == ability_name:
             return True
-        back_to_page_main()
-        self.current_ability = self.get_current_ability()
-        if self.current_ability == ability_name:
-            return True
-        # 检查能力配置是否已初始化
-        if self.ability_keymap is None:
-            ui_control.goto_page(page_ability)
-            self._check_ability_keymap()
-        # 检查目标能力是否已配置
-        key = self.ability_keymap.get(ability_name, None)
-        if key is None:
-            # 如果没配置，根据配置文件，配置到对应的方案和键位
-            ability_plan = global_config.get_int("OneDragon", "ability_plan")
-            self._change_ability_plan(ability_plan)
-            itt.wait_until_stable(threshold=0.99)
-            self._check_ability_keymap()
+        # 否则根据能力轮盘进行切换
+        key = None
+        if self.ability_keymap:
             key = self.ability_keymap.get(ability_name, None)
-            if key is None:
-                ability_key = str(global_config.get_int("OneDragon", "ability_key"))
-                if self._set_ability(ability_name, ability_key):
-                    key = ability_key
-                else:
-                    key = None
+        else:
+            raise('能力轮盘未初始化')
         if key:
-            key = self.get_ability_keybind(key)
-
-        ui_control.goto_page(page_main)
-        if key:
-            itt.key_press(key)
+            itt.key_press(self.get_ability_keybind(key))
             self.current_ability = ability_name
             itt.delay(0.5, comment="等待能力切换完成")
             return True
         else:
-            return False
+            raise('切换能力失败')
 
     def check_subability_active(self):
         times = 3
@@ -250,11 +250,12 @@ ability_manager = AbilityManager()
 
 if __name__ == "__main__":
     # CV_DEBUG_MODE = True
-    # ability_manager.change_ability(ABILITY_NAME_SHAPESHIFTING)
+    ability_manager.init_need_ability([ABILITY_NAME_FISH, ABILITY_NAME_STAR_COLLECT, ABILITY_NAME_SHAPESHIFTING, ABILITY_NAME_INSECT])
+    ability_manager.change_ability(ABILITY_NAME_SHAPESHIFTING)
     # print(ability_manager.get_current_ability())
     # ability_manager._check_jump_ability()
     # ability_manager._check_ability_keymap()
     # print(ability_manager.ability_keymap)
-    while True:
-        print(ability_manager.check_subability_active())
-        time.sleep(1)
+    # while True:
+    #     print(ability_manager.check_subability_active())
+    #     time.sleep(1)

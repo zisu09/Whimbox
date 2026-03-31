@@ -4,7 +4,7 @@ import re
 import cv2
 
 from whimbox.common.timer_module import AdvanceTimer
-from whimbox.common.utils.ui_utils import skip_to_page_main
+from whimbox.common.utils.ui_utils import skip_to_page_main, wait_until_appear
 from whimbox.task.task_template import *
 from whimbox.interaction.interaction_core import itt
 from whimbox.ui.page_assets import page_main
@@ -12,7 +12,7 @@ from whimbox.ui.ui import ui_control
 from whimbox.ui.ui_assets import *
 from whimbox.common.utils.img_utils import count_px_with_hsv_limit, process_with_hsv_limit, similar_img
 from whimbox.ability.ability import ability_manager
-from whimbox.ability.cvar import ABILITY_NAME_FISH, ABILITY_NAME_STAR_COLLECT
+from whimbox.ability.cvar import ABILITY_NAME_FISH, ABILITY_NAME_RHYTHMS, ABILITY_NAME_STAR_COLLECT
 from whimbox.common.logger import logger
 from whimbox.common.keybind import keybind
 
@@ -179,6 +179,13 @@ class FishingTask(TaskTemplate):
                 else:
                     self.material_count_dict["陨星"] = 0
         else:
+            if global_config.get_bool("OneDragon", "start_rhythms"):
+                self.log_to_gui("钓鱼前使用打窝套能力")
+                if ability_manager.change_ability(ABILITY_NAME_RHYTHMS):
+                    itt.right_click()
+                    itt.delay(2, comment="等待进入打窝套能力动画")
+                    wait_until_appear(IconPageMainFeature, area=None, retry_time=20)
+
             if not ability_manager.change_ability(ABILITY_NAME_FISH):
                 self.update_task_result(status=STATE_TYPE_FAILED, message="切换钓鱼能力失败")
                 return STEP_NAME_FINISH

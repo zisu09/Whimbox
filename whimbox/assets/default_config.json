@@ -78,7 +78,11 @@
         },
         "start_magnet": {
             "value": "false",
-            "description": "收集结晶时开启扇子套吸金能力"
+            "description": "收集结晶时开启扇子套小技能"
+        },
+        "start_rhythms": {
+            "value": "false",
+            "description": "每次钓鱼前使用打窝套能力"
         },
         "energy_cost": {
             "value": "素材激化幻境",
@@ -114,11 +118,7 @@
         },
         "ability_plan": {
             "value": 3,
-            "description": "允许奇想盒使用第几号能力配置方案"
-        },
-        "ability_key": {
-            "value": 8,
-            "description": "允许奇想盒使用第几个能力槽位"
+            "description": "允许奇想盒使用几号能力配置方案"
         }
     },
     "OneDragonDefaultSteps": {
