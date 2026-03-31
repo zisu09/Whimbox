@@ -1,5 +1,16 @@
 from whimbox.config.config import global_config
 
+class KeybindRef:
+    def __init__(self, keybind_obj, attr_name: str):
+        self.keybind_obj = keybind_obj
+        self.attr_name = attr_name
+
+    def resolve(self):
+        return getattr(self.keybind_obj, self.attr_name)
+
+    def __str__(self):
+        return self.resolve()
+
 class Keybind:
     def __init__(self):
         self.KEYBIND_MAP = "m"
@@ -59,5 +70,8 @@ class Keybind:
         self.KEYBIND_ABILITY_6 = global_config.get('Keybinds', 'ability_6')
         self.KEYBIND_ABILITY_7 = global_config.get('Keybinds', 'ability_7')
         self.KEYBIND_ABILITY_8 = global_config.get('Keybinds', 'ability_8')
+
+    def ref(self, attr_name: str):
+        return KeybindRef(self, attr_name)
 
 keybind = Keybind()

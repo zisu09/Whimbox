@@ -57,17 +57,17 @@ ui_page_dict = {
     "演奏": page_play_music,
 }
 
-page_main.link(keybind.KEYBIND_CHAT, page_chat)
-page_main.link(keybind.KEYBIND_MAP, page_bigmap)
+page_main.link(keybind.ref("KEYBIND_CHAT"), page_chat)
+page_main.link(keybind.ref("KEYBIND_MAP"), page_bigmap)
 page_main.link('esc', page_esc)
-page_main.link(keybind.KEYBIND_DAILY_TASK, page_daily_task)
-page_main.link(keybind.KEYBIND_DRESS, page_dress)
-page_main.link(keybind.KEYBIND_TAKE_PHOTO, page_photo)
-page_main.link(keybind.KEYBIND_MONTHLY_PASS, page_monthly_pass)
-page_main.link(keybind.KEYBIND_EVENT, page_event)
+page_main.link(keybind.ref("KEYBIND_DAILY_TASK"), page_daily_task)
+page_main.link(keybind.ref("KEYBIND_DRESS"), page_dress)
+page_main.link(keybind.ref("KEYBIND_TAKE_PHOTO"), page_photo)
+page_main.link(keybind.ref("KEYBIND_MONTHLY_PASS"), page_monthly_pass)
+page_main.link(keybind.ref("KEYBIND_EVENT"), page_event)
 
 page_chat.link(ButtonPageChatClose, page_main)
-page_bigmap.link(keybind.KEYBIND_MAP, page_main)
+page_bigmap.link(keybind.ref("KEYBIND_MAP"), page_main)
 page_esc.link('esc', page_main)
 
 page_daily_task.link('esc', page_main)
@@ -102,8 +102,8 @@ page_event.link('esc', page_main)
 
 page_setting.link('esc', page_esc)
 
-page_daily_reward_1.link(keybind.KEYBIND_INTERACTION, page_daily_reward_2)
-page_daily_reward_2.link(keybind.KEYBIND_INTERACTION, page_main)
+page_daily_reward_1.link(keybind.ref("KEYBIND_INTERACTION"), page_daily_reward_2)
+page_daily_reward_2.link(keybind.ref("KEYBIND_INTERACTION"), page_main)
 
 page_shop.link('esc', page_main)
 page_gacha.link('esc', page_main)

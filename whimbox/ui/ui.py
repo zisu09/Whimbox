@@ -2,6 +2,7 @@ from whimbox.common.cvars import *
 from whimbox.interaction.interaction_core import itt
 from whimbox.ui.page_assets import *
 from whimbox.ui.template.button_manager import Button
+from whimbox.common.keybind import KeybindRef
 from whimbox.common.logger import logger
 from whimbox.ui.page import TitlePage
 from whimbox.common.utils.ui_utils import back_to_page_main
@@ -126,6 +127,9 @@ class UI():
                 logger.debug(f'Page switch: {from_page} -> {to_page}')
                 
                 # Click the button
+                if isinstance(button, KeybindRef):
+                    button = button.resolve()
+
                 if isinstance(button, str):
                     itt.key_press(button)
                 elif isinstance(button, Button):
