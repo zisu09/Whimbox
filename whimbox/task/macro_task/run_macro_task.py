@@ -84,7 +84,7 @@ class RunMacroTask(TaskTemplate):
                     timeout_timer = TimeoutTimer(DEFAULT_TIMEOUT)
                     is_timeout = False
                     while ui_control.verify_page(ui_page_dict[step.target_game_page]):
-                        if not timeout_timer.istimeout():
+                        if timeout_timer.istimeout():
                             is_timeout = True
                             self.log_to_gui(f"等待退出「{step.target_game_page}」页面超时", is_error=True)
                             break
