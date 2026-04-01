@@ -121,12 +121,10 @@ def run_zhaoxi(session_id: str, input: Dict[str, Any], context: Dict[str, Any]) 
 def run_search_path(session_id: str, input: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
     name = input.get("name")
     target = input.get("target")
-    path_type = input.get("type")
 
     path_items = scripts_manager.search_path_items(
         name=name,
         target=target,
-        type=path_type,
     )
 
     if not path_items:

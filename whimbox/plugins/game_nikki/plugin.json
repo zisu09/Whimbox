@@ -67,8 +67,7 @@
         "type": "object",
         "properties": {
           "name": { "type": "string", "description": "路线名关键词，支持模糊匹配" },
-          "target": { "type": "string", "description": "目标素材名，支持模糊匹配" },
-          "type": { "type": "string", "description": "路线类型，只能输入“采集”、“捕虫”、“钓鱼”、“清洁”、“综合”" }
+          "target": { "type": "string", "description": "目标素材名，支持模糊匹配" }
         },
         "required": []
       },
