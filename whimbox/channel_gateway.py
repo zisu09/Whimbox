@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 from dataclasses import dataclass, field
 from typing import Any
+from uuid import uuid4
 
 from whimbox.agent import whimbox_agent
 from whimbox.event_bus import emit_event
@@ -136,17 +137,22 @@ def _broadcast_agent_message(session_id: str, chunk: str) -> None:
     )
 
 
-def _broadcast_agent_status(session_id: str, phase: str, detail: str = "") -> None:
-    emit_event(
-        "event.run.status",
-        {
-            "session_id": session_id or DEFAULT_SESSION_ID,
-            "run_id": session_id or DEFAULT_SESSION_ID,
-            "source": "agent",
-            "phase": phase,
-            "detail": detail,
-        },
-    )
+def _broadcast_agent_status(
+    session_id: str,
+    phase: str,
+    detail: str = "",
+    tool_call_id: str = "",
+) -> None:
+    payload = {
+        "session_id": session_id or DEFAULT_SESSION_ID,
+        "run_id": session_id or DEFAULT_SESSION_ID,
+        "source": "agent",
+        "phase": phase,
+        "detail": detail,
+    }
+    if tool_call_id:
+        payload["tool_call_id"] = tool_call_id
+    emit_event("event.run.status", payload)
 
 
 async def handle_inbound_message(message: ChannelInboundMessage) -> None:
@@ -173,8 +179,9 @@ async def handle_inbound_message(message: ChannelInboundMessage) -> None:
 
     outbound_tasks: list[asyncio.Task[Any]] = []
     sent_model_turns = False
+    tool_call_id = f"tool_{uuid4().hex}"
 
-    _broadcast_agent_status(session_id, "started", "thinking")
+    _broadcast_agent_status(session_id, "started", "thinking", tool_call_id=tool_call_id)
 
     def _queue_send(coro: Any) -> None:
         outbound_tasks.append(asyncio.create_task(coro))
@@ -200,16 +207,16 @@ async def handle_inbound_message(message: ChannelInboundMessage) -> None:
         meta: dict[str, Any] | None = None,
     ) -> None:
         if status_type == "generating":
-            _broadcast_agent_status(session_id, "running", "generating")
+            _broadcast_agent_status(session_id, "running", "generating", tool_call_id=tool_call_id)
             return
         if status_type == "completed":
-            _broadcast_agent_status(session_id, "completed", detail or "completed")
+            _broadcast_agent_status(session_id, "completed", detail or "completed", tool_call_id=tool_call_id)
             return
         if status_type == "cancelled":
-            _broadcast_agent_status(session_id, "cancelled", detail or "cancelled")
+            _broadcast_agent_status(session_id, "cancelled", detail or "cancelled", tool_call_id=tool_call_id)
             return
         if status_type in {"error", "on_tool_error"}:
-            _broadcast_agent_status(session_id, "error", detail or "error")
+            _broadcast_agent_status(session_id, "error", detail or "error", tool_call_id=tool_call_id)
             return
         if status_type != "on_tool_start":
             return
@@ -232,7 +239,7 @@ async def handle_inbound_message(message: ChannelInboundMessage) -> None:
                 _broadcast_agent_message(session_id, final_text)
                 await message.reply.send_text(final_text)
     except Exception as exc:  # noqa: BLE001
-        _broadcast_agent_status(session_id, "error", "error")
+        _broadcast_agent_status(session_id, "error", "error", tool_call_id=tool_call_id)
         await message.reply.send_error(f"处理微信消息失败：{exc}")
     finally:
         if outbound_tasks:
