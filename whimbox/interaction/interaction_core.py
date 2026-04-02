@@ -316,15 +316,17 @@ class InteractionBGD:
                     raise Exception("中断操作：误入商城和抽卡界面")
                 
                 if not self.hwnd_handler.is_foreground():
-                    stop_flag = get_current_stop_flag()
-                    while True:
-                        if stop_flag.is_set():
-                            return None
-                        if self.hwnd_handler.is_foreground():
-                            logger.info("恢复操作")
-                            break
-                        logger.info(f"前台窗口不是目标窗口，操作暂停 {str(5 - (time.time()%5))} 秒")
-                        time.sleep(5 - (time.time()%5))
+                    # stop_flag = get_current_stop_flag()
+                    # while True:
+                    #     if stop_flag.is_set():
+                    #         return None
+                    #     if self.hwnd_handler.is_foreground():
+                    #         logger.info("恢复操作")
+                    #         break
+                    #     logger.info(f"前台窗口不是目标窗口，操作暂停 {str(5 - (time.time()%5))} 秒")
+                    #     time.sleep(5 - (time.time()%5))
+                    self.hwnd_handler.set_foreground()
+                    logger.info("游戏窗口丢失焦点，已强制恢复")
                 return func(self, *args, **kwargs)
             return wrapper
         return outwrapper
