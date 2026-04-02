@@ -161,7 +161,7 @@ class UI():
                 self.switch_ui_lock.release()
                 if retry_times >= max_retry:
                     page_name = target_page.name
-                    for ch_name, page in ui_page_dict:
+                    for ch_name, page in ui_page_dict.items():
                         if page.name == target_page.name:
                             page_name = ch_name
 
