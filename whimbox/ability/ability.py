@@ -212,6 +212,7 @@ class AbilityManager:
             return True, "配置能力轮盘成功"
 
     def change_ability(self, ability_name: str):
+        ui_control.ensure_page(page_main)
         # 如果当前能力已经符合，就直接返回
         if self.current_ability == ability_name:
             return True

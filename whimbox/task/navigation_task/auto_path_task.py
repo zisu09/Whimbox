@@ -173,13 +173,6 @@ class AutoPathTask(TaskTemplate):
 
     @register_step("自动跑图中……")
     def step1(self):
-
-        if self.should_magnet:
-            self.log_to_gui("提前开启扇子套小技能")
-            from whimbox.action.magnet import MagnetTask
-            magnet_task = MagnetTask(session_id=self.session_id)
-            magnet_task.task_run()
-
         while not self.need_stop():
             start_time = time.time()
             is_end = self.inner_step_update_target()
@@ -440,6 +433,11 @@ class AutoPathTask(TaskTemplate):
                 ui_control.ensure_page(page_main)
             # 校准视角旋转比例
             calibrate_view_rotation_ratio()
+
+            if self.should_magnet:
+                from whimbox.action.magnet import MagnetTask
+                magnet_task = MagnetTask(session_id=self.session_id)
+                magnet_task.task_run()
         return is_end
 
 
@@ -513,7 +511,7 @@ class AutoPathTask(TaskTemplate):
 
 
 if __name__ == "__main__":
-    task = AutoPathTask(session_id="debug", path_name="万相境10个云绒玉絮树点")
+    task = AutoPathTask(session_id="debug", path_name="星海拾光_星光结晶收集_无界枢纽", should_magnet=True)
     task_result = task.task_run()
     print(task_result.to_dict())
 

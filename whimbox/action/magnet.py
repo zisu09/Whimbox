@@ -24,7 +24,7 @@ class MagnetTask(TaskTemplate):
         itt.delay(2, comment="等待扇子套小技能开启")
         _, new_px_count = ability_manager.check_subability_active()
         logger.info(f"扇子套小技能开启前px_count: {px_count}, 开启后px_count: {new_px_count}")
-        if new_px_count >= px_count:
+        if new_px_count > px_count:
             pass
         else:
             # 可能之前是开的，被我关了
