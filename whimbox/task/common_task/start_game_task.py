@@ -99,6 +99,8 @@ class StartGameTask(TaskTemplate):
         retry_time = 20
         while not self.need_stop():
             if HANDLE_OBJ.is_alive():
+                if not HANDLE_OBJ.is_foreground():
+                    HANDLE_OBJ.set_foreground()
                 retry_time -= 1
                 shape_ok, width, height = HANDLE_OBJ.check_shape()
                 if shape_ok:
