@@ -75,7 +75,7 @@ class Track:
             raise Exception("材料选择失败")
 
         # 点击“精确追踪”
-        time.sleep(0.2) # 等待一会，避免识别到上一个素材的追踪按钮
+        time.sleep(0.5) # 等待一会，避免识别到上一个素材的追踪按钮
         button_text = itt.ocr_single_line(AreaBigMapMaterialTrackConfirm, padding=50)
         if button_text == "精确追踪":
             AreaBigMapMaterialTrackConfirm.click()
@@ -169,7 +169,7 @@ class Track:
 material_track = Track()
 
 if __name__ == "__main__":
-    CV_DEBUG_MODE = True
+    # CV_DEBUG_MODE = True
     material_track.change_tracking_material("美甲金龟")
     # while True:
     #     print(material_track.get_material_track_degree())
