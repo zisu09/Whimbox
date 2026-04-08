@@ -221,14 +221,14 @@ class AbilityManager:
         if self.ability_keymap:
             key = self.ability_keymap.get(ability_name, None)
         else:
-            raise('能力轮盘未初始化')
+            raise Exception('能力轮盘未初始化')
         if key:
             itt.key_press(self.get_ability_keybind(key))
             self.current_ability = ability_name
             itt.delay(0.5, comment="等待能力切换完成")
             return True
         else:
-            raise('切换能力失败')
+            raise Exception('切换能力失败')
 
     def check_subability_active(self):
         times = 3
