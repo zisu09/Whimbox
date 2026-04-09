@@ -13,6 +13,8 @@ from whimbox.map.convert import convert_GameLoc_to_PngMapPx
 from whimbox.common.handle_lib import HANDLE_OBJ
 from whimbox.common.scripts_manager import scripts_manager
 from whimbox.task.daily_task.xinghai_run_task import XinghaiRunTask
+from whimbox.ui.page_assets import page_bigmap
+from whimbox.ui.ui import ui_control
 
 
 DEFAULT_STEP_CONFIG = [
@@ -37,6 +39,7 @@ class AllInOneTask(TaskTemplate):
         self.default_step_states = {
             key: STEP_RESULT_SKIPPED for key, _, _ in DEFAULT_STEP_CONFIG
         }
+        self.has_meteor_today = False
         self.custom_step_results = []
         self.default_step_enabled = self._load_default_step_enabled()
         self.custom_steps = self._load_custom_steps()
@@ -196,6 +199,15 @@ class AllInOneTask(TaskTemplate):
         task_result = home_task.task_run()
         self._set_default_step_result("step_home_task", task_result)
 
+        self.log_to_gui("检测是否有巨陨星")
+        ui_control.goto_page(page_bigmap)
+        from whimbox.interaction.interaction_core import itt
+        from whimbox.ui.ui_assets import AreaBigMapMeteorText
+        text = itt.ocr_single_line(AreaBigMapMeteorText)
+        if "巨陨星" in text:
+            self.log_to_gui("今日有巨陨星❗")
+            self.has_meteor_today = True
+
     @register_step("检查是否在家园")
     def step_check_in_home(self):
         from whimbox.map.map import nikki_map
@@ -271,6 +283,9 @@ class AllInOneTask(TaskTemplate):
         for key, _, label in DEFAULT_STEP_CONFIG:
             msg_lines.append(self._format_default_summary_line(key, label))
 
+        if self.has_meteor_today:
+            msg_lines.append("❗发现今日有巨陨星❗")
+
         if self.custom_step_results:
             msg_lines.append("自定义步骤：")
             for item in self.custom_step_results:
@@ -293,4 +308,5 @@ if __name__ == "__main__":
     task = AllInOneTask(session_id="debug")
     # result = task.task_run()
     # print(result.to_dict())
-    task.step_check_in_home()
+    # task.step_check_in_home()
+    task.step_home_task()

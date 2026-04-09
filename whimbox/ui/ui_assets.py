@@ -44,6 +44,7 @@ AreaBigMapRegionName = Area(anchor=ANCHOR_TOP_RIGHT)
 AreaBigMapRegionSelect = Area(anchor=ANCHOR_TOP_RIGHT, expand=True)
 IconBigMapHomeFeature = ImgIcon(threshold=0.90, hsv_limit=([10, 0, 190], [30, 80, 255]))
 AreaBigMapTeleporterSelect = Area(anchor=ANCHOR_RIGHT_CENTER)
+AreaBigMapMeteorText = Area(anchor=ANCHOR_TOP_LEFT)
 # 大地图材料追踪
 AreaBigMapMaterialTypeSelect = Area(anchor=ANCHOR_CENTER)
 AreaBigMapMaterialSelect = Area(anchor=ANCHOR_CENTER)
