@@ -115,20 +115,29 @@ def handle_config_method(method: str, params: Dict[str, Any]) -> Any:
         return {"ok": True}
 
     if method == "one_dragon.flow.get":
+        pre_custom_steps = _get_one_dragon_pre_custom_steps()
+        post_custom_steps = _get_one_dragon_post_custom_steps()
         return {
             "default_steps": _get_one_dragon_default_steps(),
-            "custom_steps": _get_one_dragon_custom_steps(),
+            "pre_custom_steps": pre_custom_steps,
+            "post_custom_steps": post_custom_steps,
+            "custom_steps": post_custom_steps,
         }
 
     if method == "one_dragon.flow.update":
         _update_one_dragon_flow(
             default_steps=params.get("default_steps"),
-            custom_steps=params.get("custom_steps"),
+            pre_custom_steps=params.get("pre_custom_steps"),
+            post_custom_steps=params.get("post_custom_steps"),
         )
+        pre_custom_steps = _get_one_dragon_pre_custom_steps()
+        post_custom_steps = _get_one_dragon_post_custom_steps()
         return {
             "ok": True,
             "default_steps": _get_one_dragon_default_steps(),
-            "custom_steps": _get_one_dragon_custom_steps(),
+            "pre_custom_steps": pre_custom_steps,
+            "post_custom_steps": post_custom_steps,
+            "custom_steps": post_custom_steps,
         }
 
     return UNHANDLED
@@ -332,10 +341,10 @@ def _normalize_one_dragon_custom_step(step: Any) -> Dict[str, Any]:
     }
 
 
-def _get_one_dragon_custom_steps() -> list[Dict[str, Any]]:
+def _get_one_dragon_custom_steps_from_section(section_name: str) -> list[Dict[str, Any]]:
     raw_items = []
     try:
-        raw_items = global_config.get("OneDragonCustomSteps", "items", [])
+        raw_items = global_config.get(section_name, "items", [])
     except Exception:
         raw_items = []
     if not isinstance(raw_items, list):
@@ -349,7 +358,25 @@ def _get_one_dragon_custom_steps() -> list[Dict[str, Any]]:
     return items
 
 
-def _update_one_dragon_flow(default_steps: Any = None, custom_steps: Any = None) -> None:
+def _get_one_dragon_pre_custom_steps() -> list[Dict[str, Any]]:
+    return _get_one_dragon_custom_steps_from_section("OneDragonPreCustomSteps")
+
+
+def _get_one_dragon_post_custom_steps() -> list[Dict[str, Any]]:
+    post_items = _get_one_dragon_custom_steps_from_section("OneDragonPostCustomSteps")
+    if post_items:
+        return post_items
+    legacy_items = _get_one_dragon_custom_steps_from_section("OneDragonCustomSteps")
+    if _get_one_dragon_pre_custom_steps():
+        return post_items
+    return legacy_items
+
+
+def _update_one_dragon_flow(
+    default_steps: Any = None,
+    pre_custom_steps: Any = None,
+    post_custom_steps: Any = None,
+) -> None:
     valid_default_keys = set((DEFAULT_CONFIG.get("OneDragonDefaultSteps") or {}).keys())
 
     if default_steps is not None:
@@ -360,11 +387,20 @@ def _update_one_dragon_flow(default_steps: Any = None, custom_steps: Any = None)
                 raise ValueError(f"invalid default step: {key}")
             global_config.set("OneDragonDefaultSteps", key, "true" if _coerce_bool(enabled) else "false")
 
-    if custom_steps is not None:
-        if not isinstance(custom_steps, list):
-            raise ValueError("custom_steps must be a list")
-        normalized_steps = [_normalize_one_dragon_custom_step(item) for item in custom_steps]
-        global_config.set("OneDragonCustomSteps", "items", normalized_steps)
+    if pre_custom_steps is not None:
+        if not isinstance(pre_custom_steps, list):
+            raise ValueError("pre_custom_steps must be a list")
+        normalized_pre_steps = [_normalize_one_dragon_custom_step(item) for item in pre_custom_steps]
+        global_config.set("OneDragonPreCustomSteps", "items", normalized_pre_steps)
+
+    if post_custom_steps is not None:
+        if not isinstance(post_custom_steps, list):
+            raise ValueError("post_custom_steps must be a list")
+        normalized_post_steps = [_normalize_one_dragon_custom_step(item) for item in post_custom_steps]
+        global_config.set("OneDragonPostCustomSteps", "items", normalized_post_steps)
+
+    if pre_custom_steps is not None or post_custom_steps is not None:
+        global_config.set("OneDragonCustomSteps", "items", [])
 
     if not global_config.save():
         raise ValueError("config save failed")

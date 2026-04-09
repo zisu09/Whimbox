@@ -161,6 +161,18 @@
             "description": "一条龙自定义步骤"
         }
     },
+    "OneDragonPreCustomSteps": {
+        "items": {
+            "value": [],
+            "description": "一条龙前置自定义步骤"
+        }
+    },
+    "OneDragonPostCustomSteps": {
+        "items": {
+            "value": [],
+            "description": "一条龙后置自定义步骤"
+        }
+    },
     "Keybinds": {
         "map":{
             "value": "m",

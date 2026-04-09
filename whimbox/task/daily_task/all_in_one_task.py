@@ -40,9 +40,11 @@ class AllInOneTask(TaskTemplate):
             key: STEP_RESULT_SKIPPED for key, _, _ in DEFAULT_STEP_CONFIG
         }
         self.has_meteor_today = False
-        self.custom_step_results = []
+        self.pre_custom_step_results = []
+        self.post_custom_step_results = []
         self.default_step_enabled = self._load_default_step_enabled()
-        self.custom_steps = self._load_custom_steps()
+        self.pre_custom_steps = self._load_custom_steps("OneDragonPreCustomSteps")
+        self.post_custom_steps = self._load_post_custom_steps()
         self._rebuild_step_order()
 
     def _load_default_step_enabled(self):
@@ -51,8 +53,8 @@ class AllInOneTask(TaskTemplate):
             for key, _, _ in DEFAULT_STEP_CONFIG
         }
 
-    def _load_custom_steps(self):
-        raw_items = global_config.get("OneDragonCustomSteps", "items", [])
+    def _load_custom_steps(self, section_name):
+        raw_items = global_config.get(section_name, "items", [])
         if not isinstance(raw_items, list):
             return []
 
@@ -77,8 +79,19 @@ class AllInOneTask(TaskTemplate):
             )
         return items
 
+    def _load_post_custom_steps(self):
+        post_items = self._load_custom_steps("OneDragonPostCustomSteps")
+        if post_items:
+            return post_items
+        if self._load_custom_steps("OneDragonPreCustomSteps"):
+            return post_items
+        return self._load_custom_steps("OneDragonCustomSteps")
+
     def _rebuild_step_order(self):
         step_order = ["step_start_game"]
+
+        if any(step.get("enabled", True) for step in self.pre_custom_steps):
+            step_order.append("step_pre_custom_steps")
 
         if self.default_step_enabled.get("step_dig", True):
             step_order.append("step_dig")
@@ -95,8 +108,8 @@ class AllInOneTask(TaskTemplate):
             for key in later_enabled_keys:
                 step_order.append(next(step_name for config_key, step_name, _ in DEFAULT_STEP_CONFIG if config_key == key))
 
-        if any(step.get("enabled", True) for step in self.custom_steps):
-            step_order.append("step_custom_steps")
+        if any(step.get("enabled", True) for step in self.post_custom_steps):
+            step_order.append("step_post_custom_steps")
 
         step_order.append("step8")
         self.step_order = step_order
@@ -112,8 +125,8 @@ class AllInOneTask(TaskTemplate):
             self.default_step_states[key] = STEP_RESULT_FAILED
             # self.log_to_gui(task_result.message, is_error=True)
 
-    def _append_custom_step_result(self, step, status, message=""):
-        self.custom_step_results.append(
+    def _append_custom_step_result(self, result_list, step, status, message=""):
+        result_list.append(
             {
                 "id": step.get("id", ""),
                 "type": step.get("type", ""),
@@ -173,6 +186,34 @@ class AllInOneTask(TaskTemplate):
         if message:
             return f"❌{title}失败：{message}"
         return f"❌{title}失败"
+
+    def _run_custom_steps(self, steps, result_list):
+        for step in steps:
+            if not step.get("enabled", True):
+                self._append_custom_step_result(result_list, step, STEP_RESULT_SKIPPED)
+                continue
+
+            self.log_to_gui(self._get_custom_step_title(step))
+            task_result = self._run_custom_step(step)
+            status = getattr(task_result, "status", "")
+            message = str(getattr(task_result, "message", "") or "")
+
+            if status == STATE_TYPE_SUCCESS:
+                self._append_custom_step_result(result_list, step, STEP_RESULT_SUCCESS, message)
+                continue
+
+            if status == STATE_TYPE_STOP:
+                self._append_custom_step_result(
+                    result_list,
+                    step,
+                    STEP_RESULT_SKIPPED,
+                    message or "任务已停止",
+                )
+                self.update_task_result(status=STATE_TYPE_STOP, message=message or "任务已停止")
+                return STEP_NAME_FINISH
+
+            self._append_custom_step_result(result_list, step, STEP_RESULT_FAILED, message)
+        return None
 
     @register_step("自动启动游戏")
     def step_start_game(self):
@@ -254,28 +295,13 @@ class AllInOneTask(TaskTemplate):
         task_result = monthly_pass_task.task_run()
         self._set_default_step_result("step_monthly_pass", task_result)
 
-    @register_step("执行自定义步骤")
-    def step_custom_steps(self):
-        for step in self.custom_steps:
-            if not step.get("enabled", True):
-                self._append_custom_step_result(step, STEP_RESULT_SKIPPED)
-                continue
+    @register_step("执行前置自定义步骤")
+    def step_pre_custom_steps(self):
+        return self._run_custom_steps(self.pre_custom_steps, self.pre_custom_step_results)
 
-            self.log_to_gui(self._get_custom_step_title(step))
-            task_result = self._run_custom_step(step)
-            status = getattr(task_result, "status", "")
-            message = str(getattr(task_result, "message", "") or "")
-
-            if status == STATE_TYPE_SUCCESS:
-                self._append_custom_step_result(step, STEP_RESULT_SUCCESS, message)
-                continue
-
-            if status == STATE_TYPE_STOP:
-                self._append_custom_step_result(step, STEP_RESULT_SKIPPED, message or "任务已停止")
-                self.update_task_result(status=STATE_TYPE_STOP, message=message or "任务已停止")
-                return STEP_NAME_FINISH
-
-            self._append_custom_step_result(step, STEP_RESULT_FAILED, message)
+    @register_step("执行后置自定义步骤")
+    def step_post_custom_steps(self):
+        return self._run_custom_steps(self.post_custom_steps, self.post_custom_step_results)
 
     @register_step("一条龙结束")
     def step8(self):
@@ -286,16 +312,23 @@ class AllInOneTask(TaskTemplate):
         if self.has_meteor_today:
             msg_lines.append("❗发现今日有巨陨星❗")
 
-        if self.custom_step_results:
-            msg_lines.append("自定义步骤：")
-            for item in self.custom_step_results:
+        if self.pre_custom_step_results:
+            msg_lines.append("前置步骤：")
+            for item in self.pre_custom_step_results:
+                msg_lines.append(self._format_custom_summary_line(item))
+
+        if self.post_custom_step_results:
+            msg_lines.append("后置步骤：")
+            for item in self.post_custom_step_results:
                 msg_lines.append(self._format_custom_summary_line(item))
 
         self.update_task_result(
             message="\n".join(msg_lines),
             data={
                 "default_steps": dict(self.default_step_states),
-                "custom_steps": list(self.custom_step_results),
+                "pre_custom_steps": list(self.pre_custom_step_results),
+                "post_custom_steps": list(self.post_custom_step_results),
+                "custom_steps": list(self.post_custom_step_results),
             },
         )
 
