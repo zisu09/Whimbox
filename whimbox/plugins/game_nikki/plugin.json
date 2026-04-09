@@ -16,8 +16,14 @@
       "input_schema": {
         "type": "object",
         "properties": {
-          "target_material": { "type": "string" },
-          "cost_material": { "type": "string" }
+          "target_material": { 
+            "type": "string",
+            "description": "可选。不传时会使用一条龙配置中的设置"
+          },
+          "cost_material": { 
+            "type": "string",
+            "description": "可选。不传时会使用一条龙配置中的设置"
+          }
         },
         "required": []
       },
