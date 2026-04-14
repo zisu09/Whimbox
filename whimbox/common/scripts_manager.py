@@ -190,6 +190,34 @@ class ScriptsManager:
             for path_record in sorted_records
         ]
 
+    def search_macro_items(
+        self,
+        name=None,
+        *,
+        is_play_music=False,
+        limit=5,
+        show_default=False,
+    ) -> list[dict]:
+        macro_records = self.query_macro(
+            name=name,
+            is_play_music=is_play_music,
+            show_default=show_default,
+        )
+        if not macro_records:
+            return []
+
+        sorted_records = sorted(macro_records, key=lambda record: record.info.name)
+        if limit is not None and limit > 0:
+            sorted_records = sorted_records[:limit]
+
+        return [
+            {
+                "macro_name": macro_record.info.name,
+                "type": macro_record.info.type,
+            }
+            for macro_record in sorted_records
+        ]
+
     def _is_macro_type(self, script_type: Optional[str]) -> bool:
         return script_type in ("宏", "乐谱")
 

@@ -126,18 +126,46 @@ def run_search_path(session_id: str, input: Dict[str, Any], context: Dict[str, A
         name=name,
         target=target,
     )
+    macro_items = []
+    music_items = []
+    if name:
+        macro_items = scripts_manager.search_macro_items(
+            name=name,
+            is_play_music=False,
+        )
+        music_items = scripts_manager.search_macro_items(
+            name=name,
+            is_play_music=True,
+        )
 
-    if not path_items:
+    items = (
+        [{"item_type": "path", **item} for item in path_items]
+        + [{"item_type": "macro", **item} for item in macro_items]
+        + [{"item_type": "music", **item} for item in music_items]
+    )
+
+    if not items:
         return {
             "status": STATE_TYPE_ERROR,
-            "message": "没有找到符合条件的路线",
+            "message": "没有找到符合条件的路线或宏",
             "items": [],
         }
 
+    path_count = len(path_items)
+    macro_count = len(macro_items)
+    music_count = len(music_items)
+    summary_parts = []
+    if path_count:
+        summary_parts.append(f"路线 {path_count} 条")
+    if macro_count:
+        summary_parts.append(f"宏 {macro_count} 条")
+    if music_count:
+        summary_parts.append(f"乐谱 {music_count} 条")
+
     return {
         "status": STATE_TYPE_SUCCESS,
-        "message": f"已找到 {len(path_items)} 条候选路线",
-        "items": path_items,
+        "message": f"已找到 {len(items)} 条候选脚本（{'，'.join(summary_parts)}）",
+        "items": items,
     }
 
 
