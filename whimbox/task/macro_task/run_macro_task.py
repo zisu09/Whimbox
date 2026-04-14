@@ -165,7 +165,7 @@ class RunMacroTask(TaskTemplate):
                 if step.target_game_page not in ui_page_dict:
                     raise Exception(f"不支持前往「{step.target_game_page}」页面")
                 else:
-                    ui_control.goto_page(ui_page_dict[step.target_game_page])
+                    ui_control.goto_page(ui_page_dict[step.target_game_page], max_retry=2)
                 self.log_to_gui(f"成功进入「{step.target_game_page}」页面")
                     
         except Exception as e:
