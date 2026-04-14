@@ -1,4 +1,5 @@
 from whimbox.common.cvars import *
+from whimbox.common.timer_module import AdvanceTimer
 from whimbox.interaction.interaction_core import itt
 from whimbox.ui.page_assets import *
 from whimbox.ui.template.button_manager import Button
@@ -15,13 +16,20 @@ class UI():
     def __init__(self) -> None:
         self.switch_ui_lock = Lock()
 
-    def ui_additional(self):
+    def ui_additional(self, timeout=None):
         """
         Handle all annoying popups during UI switching.
         """
+        timer = None
+        if timeout:
+            timer = AdvanceTimer(timeout)
+            timer.start()
         stop_flag = get_current_stop_flag()
         while page_loading.is_current_page(itt) and not stop_flag.is_set():
             itt.delay(1, comment='game is loading...')
+            if timer and timer.reached():
+                logger.warning("UI loading timeout")
+                break
 
     def is_valid_page(self):
         try:
