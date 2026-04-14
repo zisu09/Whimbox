@@ -48,6 +48,7 @@ class AutoPathTask(TaskTemplate):
         # 各种状态记录
         self.stuck_time = None
         self.stuck_position = None
+        self.has_try_break_stuck = False
         self.last_position = None
         self.curr_position = None
         self.curr_target_point_id = 0
@@ -203,8 +204,15 @@ class AutoPathTask(TaskTemplate):
         else:
             if euclidean_distance(self.curr_position, self.stuck_position) < 1:
                 # 连续10秒都在同一位置，则认为卡住了
-                if time.time() - self.stuck_time > 10:
-                    return True
+                stuck_time = time.time() - self.stuck_time
+                if stuck_time > 10:
+                    raise Exception("卡住10秒了")
+                elif stuck_time > 5 and (not self.has_try_break_stuck):
+                    self.log_to_gui("卡住5秒了，尝试跳一下", is_loading=True)
+                    itt.key_down(keybind.KEYBIND_JUMP)
+                    time.sleep(1)
+                    itt.key_up(keybind.KEYBIND_JUMP)
+                    self.has_try_break_stuck = True
             else:
                 self.clear_stuck()
         return False
@@ -212,6 +220,7 @@ class AutoPathTask(TaskTemplate):
     def clear_stuck(self):
         self.stuck_time = None
         self.stuck_position = None
+        self.has_try_break_stuck = False
 
 
     def check_interruption(self):
@@ -434,7 +443,7 @@ class AutoPathTask(TaskTemplate):
             # 校准视角旋转比例
             calibrate_view_rotation_ratio()
 
-            if self.should_magnet:
+            if self.should_magnet and (not ability_manager.is_shapeshifting):
                 from whimbox.action.magnet import MagnetTask
                 magnet_task = MagnetTask(session_id=self.session_id)
                 magnet_task.task_run()
@@ -511,7 +520,7 @@ class AutoPathTask(TaskTemplate):
 
 
 if __name__ == "__main__":
-    task = AutoPathTask(session_id="debug", path_name="星海拾光_星光结晶收集_无界枢纽", should_magnet=True)
+    task = AutoPathTask(session_id="debug", path_name="测试卡住", should_magnet=True)
     task_result = task.task_run()
     print(task_result.to_dict())
 
