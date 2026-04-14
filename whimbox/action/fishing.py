@@ -151,13 +151,20 @@ class FishingTask(TaskTemplate):
                     break
 
     def check_subability(self):
-        cap = itt.capture(anchor_posi=AreaSubAbilityButton.position)
-        lower_white = [0, 0, 230]
-        upper_white = [180, 60, 255]
-        img = process_with_hsv_limit(cap, lower_white, upper_white)
-        resize_icon = cv2.resize(IconAbilityFish.image, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_LINEAR)
-        rate = similar_img(img, resize_icon[:, :, 0], ret_mode=IMG_RATE)
-        return rate > 0.8
+        times = 3
+        while times > 0 and not self.need_stop():
+            cap = itt.capture(anchor_posi=AreaSubAbilityButton.position)
+            lower_white = [0, 0, 230]
+            upper_white = [180, 60, 255]
+            img = process_with_hsv_limit(cap, lower_white, upper_white)
+            resize_icon = cv2.resize(IconAbilityFish.image, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_LINEAR)
+            rate = similar_img(img, resize_icon[:, :, 0], ret_mode=IMG_RATE)
+            logger.info(f"钓星小技能图标相似度: {rate}")
+            if rate > 0.8:
+                return True
+            times -= 1
+            time.sleep(1)
+        return False
 
     @register_step("切换钓鱼能力")
     def step1(self):
@@ -318,7 +325,6 @@ class FishingTask(TaskTemplate):
 if __name__ == "__main__":
     # # CV_DEBUG_MODE = True
     task = FishingTask(session_id="debug", fishing_type=FISHING_TYPE_HOME)
-    # task.check_subability()
     task.task_run()
     # from whimbox.common.utils.img_utils import IMG_RATE
     # while True:
