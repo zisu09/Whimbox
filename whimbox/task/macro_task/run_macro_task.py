@@ -8,8 +8,11 @@ from whimbox.common.handle_lib import HANDLE_OBJ
 from whimbox.ui.ui import ui_control
 from whimbox.ui.page_assets import *
 from whimbox.common.timer_module import TimeoutTimer
+import math
 
 DEFAULT_TIMEOUT = 20
+MIN_SMOOTH_DRAG_DURATION = 0.08
+MIN_SMOOTH_DRAG_DISTANCE = 10
 
 class RunMacroTask(TaskTemplate):
     """运行宏记录的任务"""
@@ -29,6 +32,71 @@ class RunMacroTask(TaskTemplate):
 
         self.current_step_index = 0
         self.pressing_keys = set()
+
+    def _find_drag_release_step(self, steps: list[MacroStep], press_index: int):
+        """查找可平滑执行的拖拽释放步骤。仅支持 press-gap...-release 简单序列。"""
+        press_step = steps[press_index]
+        if (
+            press_step.type != "mouse"
+            or press_step.action != "press"
+            or not press_step.position
+            or not press_step.key
+        ):
+            return None
+
+        drag_duration = 0.0
+        release_index = press_index + 1
+        while release_index < len(steps):
+            step = steps[release_index]
+            if step.type == "gap":
+                drag_duration += step.duration or 0
+                release_index += 1
+                continue
+
+            if (
+                step.type == "mouse"
+                and step.action == "release"
+                and step.key == press_step.key
+                and step.position
+            ):
+                distance = math.dist(press_step.position, step.position)
+                if (
+                    drag_duration < MIN_SMOOTH_DRAG_DURATION
+                    or distance < MIN_SMOOTH_DRAG_DISTANCE
+                ):
+                    return None
+                return release_index, drag_duration
+
+            return None
+
+        return None
+
+    def _execute_drag_step(self, press_step: MacroStep, release_step: MacroStep, drag_duration: float):
+        """执行拖拽：瞬移到按下点，按住后平滑移动到释放点。"""
+        itt.move_to(press_step.position)
+        itt.key_down(press_step.key)
+        self.pressing_keys.add(press_step.key)
+        itt.move_to(release_step.position, smooth=True, smooth_duration=drag_duration)
+        itt.key_up(release_step.key)
+        self.pressing_keys.discard(release_step.key)
+
+    def _execute_steps(self, steps: list[MacroStep]):
+        """顺序执行步骤，支持拖拽段平滑回放。"""
+        i = 0
+        while i < len(steps):
+            if self.need_stop() or (self.check_stop_func and self.check_stop_func()):
+                break
+
+            step = steps[i]
+            drag_release_info = self._find_drag_release_step(steps, i)
+            if drag_release_info:
+                release_index, drag_duration = drag_release_info
+                self._execute_drag_step(step, steps[release_index], drag_duration)
+                i = release_index + 1
+                continue
+
+            self._execute_step(step)
+            i += 1
     
     def _execute_step(self, step: MacroStep):
         """执行单个宏步骤"""
@@ -137,7 +205,7 @@ class RunMacroTask(TaskTemplate):
             
             step = self.macro_record.steps[i]
             self.current_step_index = i
-            
+
             # 处理循环步骤
             if step.type == "loop":
                 if step.loop_count and step.loop_steps:
@@ -159,12 +227,7 @@ class RunMacroTask(TaskTemplate):
                             break
                         
                         self.log_to_gui(f"循环第 {loop_iteration + 1}/{step.loop_count} 次")
-                        
-                        # 执行循环内的每个步骤
-                        for loop_step in loop_steps:
-                            if self.need_stop() or (self.check_stop_func and self.check_stop_func()):
-                                break
-                            self._execute_step(loop_step)
+                        self._execute_steps(loop_steps)
                     
                     # 跳过已经循环执行的步骤
                     i = loop_end_index
@@ -172,7 +235,12 @@ class RunMacroTask(TaskTemplate):
                 else:
                     logger.warning(f"循环步骤缺少必要参数: loop_count={step.loop_count}, loop_steps={step.loop_steps}")
             else:
-                # 普通步骤，直接执行
+                drag_release_info = self._find_drag_release_step(self.macro_record.steps, i)
+                if drag_release_info:
+                    release_index, drag_duration = drag_release_info
+                    self._execute_drag_step(step, self.macro_record.steps[release_index], drag_duration)
+                    i = release_index + 1
+                    continue
                 self._execute_step(step)
             
             i += 1

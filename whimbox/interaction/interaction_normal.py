@@ -149,7 +149,7 @@ class InteractionNormal(InteractionTemplate):
             win32api.SetCursorPos((intermediate_x, intermediate_y))
             time.sleep(delay)
 
-    def move_to(self, x: int, y: int, resolution=None, anchor=ANCHOR_TOP_LEFT, relative=False, smooth=False):
+    def move_to(self, x: int, y: int, resolution=None, anchor=ANCHOR_TOP_LEFT, relative=False, smooth=False, smooth_duration=0.2):
         x = int(x)
         y = int(y)
         standard_w = 1920
@@ -164,7 +164,7 @@ class InteractionNormal(InteractionTemplate):
             x = int(x * scale)
             y = int(y * scale)
             if smooth:
-                self.smooth_move_relative(x, y, duration=0.2)
+                self.smooth_move_relative(x, y, duration=smooth_duration)
             else:
                 win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x, y)
         else:
@@ -186,7 +186,7 @@ class InteractionNormal(InteractionTemplate):
             screen_x, screen_y = win32gui.ClientToScreen(self.hwnd_handler.get_handle(), (x, y))
             
             if smooth:
-                self.smooth_move_absolute(screen_x, screen_y, duration=0.2)
+                self.smooth_move_absolute(screen_x, screen_y, duration=smooth_duration)
             else:
                 win32api.SetCursorPos((screen_x, screen_y))
 
